@@ -1,45 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
-import 'package:fresh_news_mobile/core/theme/fn_typography.dart';
-
-enum FNBadgeStatus { draft, published, error, info }
+import '../../core/theme/fn_colors.dart';
+import '../../core/theme/fn_theme.dart';
 
 class FNBadge extends StatelessWidget {
   final String label;
-  final FNBadgeStatus status;
+  final Color? color;
+  final Color? backgroundColor;
 
   const FNBadge({
     super.key,
     required this.label,
-    this.status = FNBadgeStatus.info,
+    this.color,
+    this.backgroundColor,
   });
 
-  Color get _color {
-    switch (status) {
-      case FNBadgeStatus.draft:
-        return FNColors.warning;
-      case FNBadgeStatus.published:
-        return FNColors.success;
-      case FNBadgeStatus.error:
-        return FNColors.error;
-      case FNBadgeStatus.info:
-        return FNColors.info;
-    }
+  factory FNBadge.category(String category) {
+    final color = FNColors.forCategory(category);
+    return FNBadge(
+      label: category,
+      color: color,
+      backgroundColor: color.withOpacity(0.12),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final color = _color;
+    final effectiveColor = color ?? Theme.of(context).colorScheme.primary;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.4)),
+        color: backgroundColor ?? effectiveColor.withOpacity(0.12),
+        border: Border.all(color: effectiveColor.withOpacity(0.4), width: 1),
       ),
       child: Text(
-        label,
-        style: FNTypography.label.copyWith(color: color),
+        label.toUpperCase(),
+        style: FNTypography.techLabelSmall.copyWith(color: effectiveColor),
       ),
     );
   }

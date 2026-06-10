@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:fresh_news_mobile/core/constants/worlds.dart';
+import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/core/network/supabase_client.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 

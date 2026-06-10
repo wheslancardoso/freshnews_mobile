@@ -1,38 +1,60 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
-import 'package:fresh_news_mobile/core/theme/fn_spacing.dart';
+import '../../core/theme/fn_colors.dart';
 
 class GlassCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
-  final double borderRadius;
-  final double blurSigma;
+  final double? width;
+  final double? height;
+  final double blur;
+  final Color? borderColor;
+  final Color? backgroundColor;
+  final VoidCallback? onTap;
+  final BorderRadius? borderRadius;
 
   const GlassCard({
     super.key,
     required this.child,
     this.padding,
-    this.borderRadius = 16,
-    this.blurSigma = 12,
+    this.width,
+    this.height,
+    this.blur = FNColors.glassBlur,
+    this.borderColor,
+    this.backgroundColor,
+    this.onTap,
+    this.borderRadius,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
+    final effectiveBorderRadius = borderRadius ?? BorderRadius.zero;
+
+    Widget card = ClipRRect(
+      borderRadius: effectiveBorderRadius,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
-          padding: padding ?? const EdgeInsets.all(FNSpacing.lg),
+          width: width,
+          height: height,
+          padding: padding ?? const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: FNColors.surface.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: FNColors.border.withOpacity(0.6)),
+            color: backgroundColor ?? FNColors.glassBg,
+            borderRadius: effectiveBorderRadius,
+            border: Border.all(
+              color: borderColor ?? FNColors.glassBorder,
+              width: 1,
+            ),
           ),
           child: child,
         ),
       ),
     );
+
+    if (onTap != null) {
+      card = GestureDetector(onTap: onTap, child: card);
+    }
+
+    return card;
   }
 }

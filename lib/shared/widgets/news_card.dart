@@ -1,86 +1,143 @@
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
-import 'package:fresh_news_mobile/core/theme/fn_spacing.dart';
-import 'package:fresh_news_mobile/core/theme/fn_typography.dart';
-import 'package:fresh_news_mobile/core/utils/formatters.dart';
-import 'package:fresh_news_mobile/shared/widgets/fn_card.dart';
+import 'package:flutter/material.dart';
+import '../../core/theme/fn_colors.dart';
+import '../../core/theme/fn_theme.dart';
+import 'fn_badge.dart';
+import 'glass_card.dart';
+
+class NewsCardData {
+  final String id;
+  final String title;
+  final String intro;
+  final String? imageUrl;
+  final String edition;
+  final String date;
+  final List<String> categories;
+
+  const NewsCardData({
+    required this.id,
+    required this.title,
+    required this.intro,
+    this.imageUrl,
+    required this.edition,
+    required this.date,
+    this.categories = const [],
+  });
+}
 
 class NewsCard extends StatelessWidget {
-  final String title;
-  final String summary;
-  final String? imageUrl;
-  final DateTime date;
-  final String category;
+  final NewsCardData data;
   final VoidCallback? onTap;
+  final VoidCallback? onEdit;
 
   const NewsCard({
     super.key,
-    required this.title,
-    required this.summary,
-    this.imageUrl,
-    required this.date,
-    required this.category,
+    required this.data,
     this.onTap,
+    this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FNCard(
-      onTap: onTap,
+    return GlassCard(
       padding: EdgeInsets.zero,
+      onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (imageUrl != null)
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: CachedNetworkImage(
-                imageUrl: imageUrl!,
-                height: 160,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  height: 160,
-                  color: FNColors.surfaceVariant,
-                ),
-                errorWidget: (context, url, error) => Container(
-                  height: 160,
-                  color: FNColors.surfaceVariant,
-                  child: const Icon(Icons.image_not_supported, color: FNColors.textMuted),
-                ),
-              ),
-            ),
+          if (data.imageUrl != null) _buildImage(),
           Padding(
-            padding: const EdgeInsets.all(FNSpacing.lg),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(category.toUpperCase(), style: FNTypography.label),
-                const SizedBox(height: FNSpacing.sm),
+                _buildMeta(context),
+                const SizedBox(height: 10),
                 Text(
-                  title,
-                  style: FNTypography.headingSmall,
+                  data.title,
+                  style: FNTypography.h3.copyWith(
+                    color: FNColors.foreground,
+                    fontSize: 20,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: FNSpacing.sm),
+                const SizedBox(height: 8),
                 Text(
-                  summary,
-                  style: FNTypography.bodyMedium,
-                  maxLines: 2,
+                  data.intro,
+                  style: FNTypography.bodySmall.copyWith(
+                    color: FNColors.mutedForeground,
+                  ),
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: FNSpacing.md),
-                Text(
-                  Formatters.formatRelativeDate(date),
-                  style: FNTypography.bodySmall,
-                ),
+                const SizedBox(height: 12),
+                if (data.categories.isNotEmpty) _buildCategories(),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImage() {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: CachedNetworkImage(
+        imageUrl: data.imageUrl!,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => Container(
+          color: FNColors.surface,
+          child: const Center(
+            child: CircularProgressIndicator(strokeWidth: 1),
+          ),
+        ),
+        errorWidget: (_, __, ___) => Container(
+          color: FNColors.surface,
+          child: const Icon(Icons.broken_image_outlined,
+              color: FNColors.mutedForeground),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMeta(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          data.edition,
+          style: FNTypography.techLabel.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Container(width: 1, height: 10, color: FNColors.glassBorder),
+        const SizedBox(width: 12),
+        Text(
+          data.date,
+          style: FNTypography.techLabelSmall.copyWith(
+            color: FNColors.mutedForeground,
+          ),
+        ),
+        const Spacer(),
+        if (onEdit != null)
+          GestureDetector(
+            onTap: onEdit,
+            child: const Icon(Icons.edit_outlined,
+                size: 16, color: FNColors.mutedForeground),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildCategories() {
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: data.categories
+          .map((c) => FNBadge.category(c))
+          .toList(),
     );
   }
 }

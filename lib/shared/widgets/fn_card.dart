@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
-import 'package:fresh_news_mobile/core/theme/fn_spacing.dart';
+import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
 
 class FNCard extends StatelessWidget {
   final Widget child;

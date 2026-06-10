@@ -1,0 +1,266 @@
+Você é um Engenheiro de UI/UX em Flutter. Nosso objetivo é implementar o sistema de design visual do multiverso do Fresh News e o seletor de mundos no diretório "mobile/".
+
+Use as especificações técnicas abaixo como guia absoluto:
+
+=========================================
+ESPECIFICAÇÃO DE DESIGN SYSTEM E MULTIVERSO (09_DESIGN_SYSTEM.md)
+=========================================
+
+# 09 — Design System // Fresh News Mobile
+
+> **Destinatário**: Membro 1 (Líder / Fundação)
+> **Objetivo**: Implementar o design system completo em Flutter com todos os tokens, componentes base e utilitários visuais.
+> **Pré-requisito**: Módulo 00 executado.
+
+---
+
+## Design Tokens (Extraídos do CSS Web)
+
+### Paleta de Cores
+
+```dart
+class FNColors {
+  // === Base (Dark Theme) ===
+  static const background     = Color(0xFF0A0A0B);       // hsl(240, 10%, 3.9%)
+  static const surface        = Color(0xFF111113);       // Um tom acima do bg
+  static const card           = Color(0xFF141416);       // Card bg
+  static const foreground     = Color(0xFFFAFAFA);       // Branco quase puro
+  static const mutedForeground = Color(0xFFA1A1AA);      // Cinza zinc-400
+
+  // === Primária (Default TECH) ===
+  static const primaryViolet  = Color(0xFF8B5CF6);       // hsl(275, 80%, 55%)
+  static const primaryGreen   = Color(0xFF22C55E);       // TECH world
+  static const primaryYellow  = Color(0xFFEAB308);       // MUSIC world
+  static const primaryAmber   = Color(0xFFF59E0B);       // GEAR world
+  static const primaryPurple  = Color(0xFFA855F7);       // GAME world
+
+  // === Glass (Glassmorphism) ===
+  static Color glassBg        = Colors.white.withOpacity(0.03);
+  static Color glassBorder    = Colors.white.withOpacity(0.08);
+  static const double glassBlur = 24.0;
+
+  // === Semânticas ===
+  static const success        = Color(0xFF10B981);       // Emerald
+  static const error          = Color(0xFFEF4444);       // Red
+  static const warning        = Color(0xFFF59E0B);       // Amber
+  static const info           = Color(0xFF3B82F6);       // Blue
+
+  // === Categorias ===
+  static const catIA          = Color(0xFFA78BFA);       // Lavender
+  static const catDev         = Color(0xFF10B981);       // Emerald
+  static const catSec         = Color(0xFFF43F5E);       // Rose
+  static const catStartup     = Color(0xFFF59E0B);       // Amber
+  static const catDefault     = Color(0xFF8B5CF6);       // Violet
+
+  // === Hacker Mode (CRT) ===
+  static const hackerGreen    = Color(0xFF3DF13D);       // Fósforo verde
+  static const hackerBg       = Color(0xFF0A0A0A);       // Preto absoluto
+}
+```
+
+### Tipografia
+
+```dart
+import 'package:google_fonts/google_fonts.dart';
+
+class FNTypography {
+  // === Font Families ===
+  static TextStyle get body => GoogleFonts.inter();
+  static TextStyle get heading => GoogleFonts.outfit();
+  static TextStyle get mono => GoogleFonts.jetBrainsMono();
+
+  // === Text Styles ===
+  
+  // Headlines (Outfit)
+  static TextStyle h1 = GoogleFonts.outfit(
+    fontSize: 48,
+    fontWeight: FontWeight.w900,
+    letterSpacing: -2,
+    height: 0.85,
+  );
+  static TextStyle h2 = GoogleFonts.outfit(
+    fontSize: 36,
+    fontWeight: FontWeight.w900,
+    letterSpacing: -1.5,
+    height: 0.9,
+  );
+  static TextStyle h3 = GoogleFonts.outfit(
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    letterSpacing: -1,
+  );
+
+  // Body (Inter)
+  static TextStyle bodyLarge = GoogleFonts.inter(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    height: 1.6,
+  );
+  static TextStyle bodyMedium = GoogleFonts.inter(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+  );
+  static TextStyle bodySmall = GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 1.4,
+  );
+
+  // Labels (Tech Label — estilo brutalista)
+  static TextStyle techLabel = GoogleFonts.inter(
+    fontSize: 10,
+    fontWeight: FontWeight.w900,
+    letterSpacing: 3,
+    height: 1,
+  );
+  static TextStyle techLabelSmall = GoogleFonts.inter(
+    fontSize: 9,
+    fontWeight: FontWeight.w900,
+    letterSpacing: 4,
+    height: 1,
+  );
+
+  // Monospace (JetBrains Mono)
+  static TextStyle code = GoogleFonts.jetBrainsMono(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 1.6,
+  );
+}
+```
+
+### Espaçamento
+
+```dart
+class FNSpacing {
+  static const double xs   = 4;
+  static const double sm   = 8;
+  static const double md   = 12;
+  static const double base = 16;
+  static const double lg   = 24;
+  static const double xl   = 32;
+  static const double xxl  = 48;
+  static const double xxxl = 64;
+
+  static const pagePadding = EdgeInsets.symmetric(horizontal: 24);
+  static const sectionPadding = EdgeInsets.symmetric(vertical: 48);
+}
+```
+
+### ThemeData Principal
+
+```dart
+class FNTheme {
+  static ThemeData darkTheme({Color? primaryColor}) {
+    final primary = primaryColor ?? FNColors.primaryViolet;
+
+    return ThemeData(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: FNColors.background,
+      colorScheme: ColorScheme.dark(
+        primary: primary,
+        secondary: primary.withOpacity(0.7),
+        surface: FNColors.surface,
+        onPrimary: Colors.white,
+        onSurface: FNColors.foreground,
+        error: FNColors.error,
+      ),
+      textTheme: TextTheme(
+        displayLarge: FNTypography.h1.copyWith(color: FNColors.foreground),
+        displayMedium: FNTypography.h2.copyWith(color: FNColors.foreground),
+        displaySmall: FNTypography.h3.copyWith(color: FNColors.foreground),
+        bodyLarge: FNTypography.bodyLarge.copyWith(color: FNColors.foreground),
+        bodyMedium: FNTypography.bodyMedium.copyWith(color: FNColors.foreground),
+        bodySmall: FNTypography.bodySmall.copyWith(color: FNColors.mutedForeground),
+        labelSmall: FNTypography.techLabel.copyWith(color: FNColors.mutedForeground),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: FNTypography.h3.copyWith(
+          color: FNColors.foreground,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: FNColors.card,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: FNColors.glassBorder),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.05),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: FNColors.glassBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: primary.withOpacity(0.5), width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        hintStyle: FNTypography.bodyMedium.copyWith(
+          color: FNColors.mutedForeground.withOpacity(0.3),
+        ),
+      ),
+      dividerTheme: DividerThemeData(
+        color: FNColors.glassBorder,
+        thickness: 1,
+      ),
+    );
+  }
+}
+```
+
+### Widgets Base (GlassCard, FNButton, FNBadge, NewsCard, FNInput, GlassNavBar)
+Os widgets devem ser implementados seguindo a estrutura visual brutalista combinada com Glassmorphism.
+
+1. **GlassCard**: Translúcido com BackdropFilter blur de 24.0.
+2. **FNButton**: Botão brutalista (sem border radius, canto quadrado), com variantes primary, outline, ghost e destructive.
+3. **FNBadge**: Tag retangular simples para categorização.
+4. **NewsCard**: Exibição de newsletters com CachedNetworkImage, edição, título, data e intro.
+5. **FNInput**: Caixa de texto estilizada.
+6. **GlassNavBar**: Barra flutuante inferior com blur e itens de navegação (Home, Arquivo, Sobre, Admin).
+
+---
+
+=========================================
+ESPECIFICAÇÃO DE SELETOR DE MUNDOS (08_WORLD_SELECTOR.md)
+=========================================
+
+# 08 — World Selector // Fresh News Mobile
+
+O Fresh News opera em **4 mundos** que alteram completamente a experiência: cores, conteúdo, categorias e personalidade editorial:
+- **TECH**: 💻 | #22c55e | CÓDIGO & IA | Categorias: DEV, IA, SEGURANÇA, STARTUPS, CLOUD
+- **MUSIC**: 🎵 | #eab308 | BEATS & NOISE | Categorias: ARTISTAS, PRODUÇÃO, INDIE, CHARTS, LANÇAMENTOS
+- **GEAR**: ⚙️ | #f59e0b | RPM & GADGETS | Categorias: AUTOMOTIVO, GADGETS, WEARABLES, DIY, INOVAÇÃO
+- **GAME**: 🎮 | #a855f7 | ARCADE & PIXEL | Categorias: PC, CONSOLE, MOBILE, ESPORTS, INDIE
+
+### Persistência e Notifier
+A escolha do mundo deve ser persistida via `SharedPreferences` usando a chave `'active_world'`. O app escuta a mudança e atualiza reativamente a cor primária de todo o design system.
+
+=========================================
+
+---
+REGRAS RÍGIDAS DE RETORNO (Siga à risca para integração automática):
+1. Retorne APENAS os caminhos dos arquivos e seus respectivos blocos de código completos.
+2. NÃO adicione introduções, explicações teóricas, ou textos conversacionais antes ou depois do código.
+3. Formate cada arquivo exatamente usando este padrão markdown:
+
+### ARQUIVO: `mobile/caminho/do/arquivo.dart`
+```dart
+// Código completo sem truncamento ou placeholders
+```
+
+Arquivos esperados:
+- O enum de mundos e metadados em `mobile/lib/core/constants/world.dart`.
+- O StateNotifier em `mobile/lib/features/world_selector/application/world_controller.dart` persistindo no SharedPreferences e atualizando o estado do mundo.
+- A paleta de cores de cada mundo em `mobile/lib/core/theme/fn_colors.dart`.
+- O tema dinâmico e tipografia em `mobile/lib/core/theme/fn_theme.dart` (usando google_fonts e suportando cores variáveis de acordo com o mundo ativo).
+- Os widgets comuns de design em `mobile/lib/shared/widgets/` (`glass_card.dart`, `fn_button.dart`, `fn_badge.dart`, `news_card.dart`, `fn_input.dart` e `glass_nav_bar.dart`).
+- Extensões úteis de animações usando `flutter_animate` em `mobile/lib/core/utils/animations.dart` (se necessário).

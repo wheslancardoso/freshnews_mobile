@@ -3,31 +3,64 @@ import 'package:flutter/material.dart';
 class FNColors {
   FNColors._();
 
-  // Base
-  static const Color background = Color(0xFF0A0A0A);
-  static const Color surface = Color(0xFF141414);
-  static const Color surfaceVariant = Color(0xFF1F1F1F);
-  static const Color border = Color(0xFF2A2A2A);
+  // === Base (Dark Theme) ===
+  static const background      = Color(0xFF0A0A0B);
+  static const surface         = Color(0xFF111113);
+  static const card            = Color(0xFF141416);
+  static const foreground      = Color(0xFFFAFAFA);
+  static const mutedForeground = Color(0xFFA1A1AA);
 
-  // Text
-  static const Color textPrimary = Color(0xFFF5F5F5);
-  static const Color textSecondary = Color(0xFFA0A0A0);
-  static const Color textMuted = Color(0xFF6B6B6B);
+  // === World Primaries ===
+  static const primaryViolet = Color(0xFF8B5CF6);
+  static const primaryGreen  = Color(0xFF22C55E);
+  static const primaryYellow = Color(0xFFEAB308);
+  static const primaryAmber  = Color(0xFFF59E0B);
+  static const primaryPurple = Color(0xFFA855F7);
 
-  // Status
-  static const Color success = Color(0xFF00FF9C);
-  static const Color warning = Color(0xFFFFC400);
-  static const Color error = Color(0xFFFF3C5C);
-  static const Color info = Color(0xFF00B8FF);
+  // === Glass ===
+  static Color glassBg     = Colors.white.withOpacity(0.03);
+  static Color glassBorder = Colors.white.withOpacity(0.08);
+  static const glassBlur   = 24.0;
 
-  // Worlds
-  static const Color worldTech = Color(0xFF00FF9C);
-  static const Color worldMusic = Color(0xFFFF3CAC);
-  static const Color worldGear = Color(0xFFFFC400);
-  static const Color worldGame = Color(0xFF00B8FF);
+  // === Semantic ===
+  static const success = Color(0xFF10B981);
+  static const error   = Color(0xFFEF4444);
+  static const warning = Color(0xFFF59E0B);
+  static const info    = Color(0xFF3B82F6);
 
-  // Hacker mode (CRT)
-  static const Color hackerBackground = Color(0xFF000000);
-  static const Color hackerGreen = Color(0xFF00FF41);
-  static const Color hackerGreenDim = Color(0xFF008F11);
+  // === Categories ===
+  static const catIA      = Color(0xFFA78BFA);
+  static const catDev     = Color(0xFF10B981);
+  static const catSec     = Color(0xFFF43F5E);
+  static const catStartup = Color(0xFFF59E0B);
+  static const catDefault = Color(0xFF8B5CF6);
+
+  // === Hacker / CRT ===
+  static const hackerGreen = Color(0xFF3DF13D);
+  static const hackerBg    = Color(0xFF0A0A0A);
+
+  // === Compatibility Fields ===
+  static const textPrimary = Color(0xFFFAFAFA);
+  static const textSecondary = Color(0xFFA1A1AA);
+  static const textMuted = Color(0xFF71717A);
+  static const border = Color(0xFF27272A);
+  static const surfaceVariant = Color(0xFF1F1F1F);
+  static const hackerBackground = hackerBg;
+  static const hackerGreenDim = Color(0xFF008F11);
+
+  // === Category color helper ===
+  static Color forCategory(String category) {
+    switch (category.toUpperCase()) {
+      case 'IA':
+        return catIA;
+      case 'DEV':
+        return catDev;
+      case 'SEGURANÇA':
+        return catSec;
+      case 'STARTUPS':
+        return catStartup;
+      default:
+        return catDefault;
+    }
+  }
 }

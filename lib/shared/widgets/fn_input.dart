@@ -1,45 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
-import 'package:fresh_news_mobile/core/theme/fn_typography.dart';
+import '../../core/theme/fn_colors.dart';
+import '../../core/theme/fn_theme.dart';
 
 class FNInput extends StatelessWidget {
   final TextEditingController? controller;
-  final String? hintText;
-  final String? labelText;
+  final String? hint;
+  final String? label;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final Widget? prefix;
+  final Widget? suffix;
+  final ValueChanged<String>? onChanged;
   final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
+  final int? maxLines;
+  final bool readOnly;
+  final FocusNode? focusNode;
 
   const FNInput({
     super.key,
     this.controller,
-    this.hintText,
-    this.labelText,
+    this.hint,
+    this.label,
     this.obscureText = false,
     this.keyboardType,
-    this.validator,
+    this.prefix,
+    this.suffix,
     this.onChanged,
+    this.validator,
+    this.maxLines = 1,
+    this.readOnly = false,
+    this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        if (labelText != null) ...[
-          Text(labelText!, style: FNTypography.label),
+        if (label != null) ...[
+          Text(
+            label!.toUpperCase(),
+            style: FNTypography.techLabelSmall.copyWith(
+              color: FNColors.mutedForeground,
+            ),
+          ),
           const SizedBox(height: 8),
         ],
         TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          validator: validator,
           onChanged: onChanged,
-          style: FNTypography.bodyLarge.copyWith(color: FNColors.textPrimary),
+          validator: validator,
+          maxLines: obscureText ? 1 : maxLines,
+          readOnly: readOnly,
+          focusNode: focusNode,
+          style: FNTypography.bodyMedium.copyWith(color: FNColors.foreground),
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: hint,
+            prefixIcon: prefix,
+            suffixIcon: suffix,
           ),
         ),
       ],

@@ -1,1 +1,1 @@
-export 'package:fresh_news_mobile/core/constants/worlds.dart';
+export 'package:fresh_news_mobile/core/constants/world.dart';

@@ -1,4 +1,4 @@
-import 'package:fresh_news_mobile/core/constants/worlds.dart';
+import 'package:fresh_news_mobile/core/constants/world.dart';
 
 class Post {
   final String id;

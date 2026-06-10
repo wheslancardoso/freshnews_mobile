@@ -1,90 +1,142 @@
 import 'package:flutter/material.dart';
-import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
-import 'package:fresh_news_mobile/core/theme/fn_typography.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'fn_colors.dart';
+
+// ─── Typography ─────────────────────────────────────────────────────────────
+
+class FNTypography {
+  FNTypography._();
+
+  static TextStyle get body    => GoogleFonts.inter();
+  static TextStyle get heading => GoogleFonts.outfit();
+  static TextStyle get mono    => GoogleFonts.jetBrainsMono();
+
+  // Compatibility getter for HackerModeTheme and other references
+  static TextStyle get monospace => mono;
+
+  // Headlines
+  static TextStyle h1 = GoogleFonts.outfit(
+    fontSize: 48, fontWeight: FontWeight.w900,
+    letterSpacing: -2, height: 0.85,
+  );
+  static TextStyle h2 = GoogleFonts.outfit(
+    fontSize: 36, fontWeight: FontWeight.w900,
+    letterSpacing: -1.5, height: 0.9,
+  );
+  static TextStyle h3 = GoogleFonts.outfit(
+    fontSize: 28, fontWeight: FontWeight.w800,
+    letterSpacing: -1,
+  );
+
+  // Body
+  static TextStyle bodyLarge = GoogleFonts.inter(
+    fontSize: 18, fontWeight: FontWeight.w500, height: 1.6,
+  );
+  static TextStyle bodyMedium = GoogleFonts.inter(
+    fontSize: 16, fontWeight: FontWeight.w400, height: 1.5,
+  );
+  static TextStyle bodySmall = GoogleFonts.inter(
+    fontSize: 14, fontWeight: FontWeight.w400, height: 1.4,
+  );
+
+  // Tech labels
+  static TextStyle techLabel = GoogleFonts.inter(
+    fontSize: 10, fontWeight: FontWeight.w900,
+    letterSpacing: 3, height: 1,
+  );
+  static TextStyle techLabelSmall = GoogleFonts.inter(
+    fontSize: 9, fontWeight: FontWeight.w900,
+    letterSpacing: 4, height: 1,
+  );
+
+  // Mono
+  static TextStyle code = GoogleFonts.jetBrainsMono(
+    fontSize: 14, fontWeight: FontWeight.w400, height: 1.6,
+  );
+}
+
+// ─── Spacing ────────────────────────────────────────────────────────────────
+
+class FNSpacing {
+  FNSpacing._();
+
+  static const double xs   = 4;
+  static const double sm   = 8;
+  static const double md   = 12;
+  static const double base = 16;
+  static const double lg   = 24;
+  static const double xl   = 32;
+  static const double xxl  = 48;
+  static const double xxxl = 64;
+
+  static const pagePadding    = EdgeInsets.symmetric(horizontal: 24);
+  static const sectionPadding = EdgeInsets.symmetric(vertical: 48);
+}
+
+// ─── Theme ──────────────────────────────────────────────────────────────────
 
 class FNTheme {
   FNTheme._();
 
-  static ThemeData get darkTheme {
+  static ThemeData darkTheme({Color? primaryColor}) {
+    final primary = primaryColor ?? FNColors.primaryViolet;
+
     return ThemeData(
-      useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: FNColors.background,
-      primaryColor: FNColors.worldTech,
-      colorScheme: const ColorScheme.dark(
-        primary: FNColors.worldTech,
-        secondary: FNColors.worldMusic,
+      colorScheme: ColorScheme.dark(
+        primary: primary,
+        secondary: primary.withOpacity(0.7),
         surface: FNColors.surface,
+        onPrimary: Colors.white,
+        onSurface: FNColors.foreground,
         error: FNColors.error,
-        onPrimary: FNColors.background,
-        onSecondary: FNColors.background,
-        onSurface: FNColors.textPrimary,
-        onError: FNColors.textPrimary,
       ),
       textTheme: TextTheme(
-        displayLarge: FNTypography.displayLarge,
-        displayMedium: FNTypography.displayMedium,
-        headlineLarge: FNTypography.headingLarge,
-        headlineMedium: FNTypography.headingMedium,
-        headlineSmall: FNTypography.headingSmall,
-        bodyLarge: FNTypography.bodyLarge,
-        bodyMedium: FNTypography.bodyMedium,
-        bodySmall: FNTypography.bodySmall,
-        labelLarge: FNTypography.label,
+        displayLarge:  FNTypography.h1.copyWith(color: FNColors.foreground),
+        displayMedium: FNTypography.h2.copyWith(color: FNColors.foreground),
+        displaySmall:  FNTypography.h3.copyWith(color: FNColors.foreground),
+        bodyLarge:     FNTypography.bodyLarge.copyWith(color: FNColors.foreground),
+        bodyMedium:    FNTypography.bodyMedium.copyWith(color: FNColors.foreground),
+        bodySmall:     FNTypography.bodySmall.copyWith(color: FNColors.mutedForeground),
+        labelSmall:    FNTypography.techLabel.copyWith(color: FNColors.mutedForeground),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: FNColors.background,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: FNTypography.headingMedium,
-        iconTheme: const IconThemeData(color: FNColors.textPrimary),
-      ),
-      cardTheme: CardThemeData(
-        color: FNColors.surface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: FNColors.border, width: 1),
+        titleTextStyle: FNTypography.h3.copyWith(
+          color: FNColors.foreground,
+          fontStyle: FontStyle.italic,
         ),
       ),
-      dividerTheme: const DividerThemeData(
-        color: FNColors.border,
-        thickness: 1,
-        space: 1,
+      cardTheme: CardThemeData(
+        color: FNColors.card,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: Color(0x14FFFFFF)),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: FNColors.surfaceVariant,
+        fillColor: Colors.white.withOpacity(0.05),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: FNColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: FNColors.border),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: FNColors.glassBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: FNColors.worldTech, width: 1.5),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: primary.withOpacity(0.5), width: 2),
         ),
-        hintStyle: FNTypography.bodyMedium,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: FNColors.worldTech,
-          foregroundColor: FNColors.background,
-          textStyle: FNTypography.headingSmall,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        hintStyle: FNTypography.bodyMedium.copyWith(
+          color: FNColors.mutedForeground.withOpacity(0.3),
         ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: FNColors.surface,
-        selectedItemColor: FNColors.worldTech,
-        unselectedItemColor: FNColors.textMuted,
-        type: BottomNavigationBarType.fixed,
+      dividerTheme: DividerThemeData(
+        color: FNColors.glassBorder,
+        thickness: 1,
       ),
     );
   }

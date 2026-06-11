@@ -48,7 +48,7 @@ class WorldRegistry {
       world: World.gear,
       label: 'GEAR',
       emoji: '⚙️',
-      primaryColor: Color(0xFFF59E0B),
+      primaryColor: const Color(0xFFEF4444),
       tagline: 'RPM & GADGETS',
       categories: ['AUTOMOTIVO', 'GADGETS', 'WEARABLES', 'DIY', 'INOVAÇÃO'],
     ),

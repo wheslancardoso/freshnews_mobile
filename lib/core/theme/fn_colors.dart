@@ -16,6 +16,7 @@ class FNColors {
   static const primaryYellow = Color(0xFFEAB308);
   static const primaryAmber  = Color(0xFFF59E0B);
   static const primaryPurple = Color(0xFFA855F7);
+  static const primaryRed    = Color(0xFFEF4444);
 
   // === Glass ===
   static Color glassBg     = Colors.white.withOpacity(0.03);

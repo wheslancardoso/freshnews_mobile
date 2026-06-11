@@ -30,7 +30,7 @@ class SupabasePostRepository implements PostRepository {
       query = query.eq('category', category);
     }
 
-    final response = await query.order('published_at', ascending: false).range(from, to);
+    final response = await query.order('created_at', ascending: false).range(from, to);
 
     return (response as List<dynamic>)
         .map((json) => Post.fromJson(json as Map<String, dynamic>))

@@ -28,7 +28,7 @@ class SupabaseNewsletterRepository implements NewsletterRepository {
         .select()
         .eq('world', world.config.slug)
         .eq('status', 'published')
-        .order('published_at', ascending: false)
+        .order('created_at', ascending: false)
         .range(from, to);
 
     return (response as List<dynamic>)

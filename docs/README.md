@@ -38,14 +38,14 @@ O desenvolvimento é feito de forma colaborativa entre o grupo de **3 integrante
 ---
 
 ## 🚦 Status dos Passos (Steps)
-
+ 
 | Passo | Módulo / Funcionalidade | Responsável | Status | Data de Conclusão |
 | :--- | :--- | :--- | :--- | :--- |
-| **[Step 1](file:///home/lan/tech-news-platform/docs/mobile/step_1_setup.md)** | Setup Inicial, Supabase & DI | *A definir* | 🔴 Pendente | — |
-| **[Step 2](file:///home/lan/tech-news-platform/docs/mobile/step_2_auth.md)** | Autenticação, Cadastro & Preferências | *A definir* | 🔴 Pendente | — |
-| **[Step 3](file:///home/lan/tech-news-platform/docs/mobile/step_3_feed.md)** | Feed Principal (TECH/MUSIC) & Chameleon Theme | *A definir* | 🔴 Pendente | — |
-| **[Step 4](file:///home/lan/tech-news-platform/docs/mobile/step_4_reader.md)** | Leitor Brutalista & Debate de IAs | *A definir* | 🔴 Pendente | — |
-| **[Step 5](file:///home/lan/tech-news-platform/docs/mobile/step_5_notifications.md)** | Push Notifications & Polimento Final | *A definir* | 🔴 Pendente | — |
+| **[Step 1](step_1_setup.md)** | Setup Inicial, Supabase & DI | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
+| **[Step 2](step_2_auth.md)** | Autenticação, Cadastro & Preferências | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
+| **[Step 3](step_3_feed.md)** | Feed Principal (TECH/MUSIC) & Chameleon Theme | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
+| **[Step 4](step_4_reader.md)** | Leitor Brutalista & Debate de IAs | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
+| **[Step 5](step_5_notifications.md)** | Push Notifications & Polimento Final | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
 
 ---
 

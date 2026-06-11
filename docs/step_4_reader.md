@@ -1,9 +1,9 @@
 # 📱 Step 4: Leitor Brutalista & Debate de IAs
 
 > **Módulo:** Leitor Imersivo & Chat de Debate das IAs  
-> **Status:** 🔴 Pendente  
-> **Responsável:** *A definir*  
-> **Data de Início:** — | **Data de Conclusão:** —
+> **Status:** 🟢 Concluído  
+> **Responsável:** Lan & Antigravity  
+> **Data de Início:** 11/06/2026 | **Data de Conclusão:** 11/06/2026  
 
 ---
 
@@ -31,11 +31,8 @@ Edite as seções abaixo para descrever como a IA deve construir a tela de leitu
 
 ---
 
-## 💬 [PROMPT PARA A IA - PREENCHA AQUI]
-> **Atenção integrante do grupo:** Substitua este bloco de citação pelo prompt detalhado que você quer passar para a IA gerar a tela de leitura e o debate das IAs.
->
-> *Exemplo de prompt:*
-> "Crie a feature de leitura em /mobile/lib/features/reader. Ela deve conter a tela do artigo com o título grande em Space Grotesk, corpo do texto legível, e abaixo uma seção sanfonada (ExpansionTile brutalista) chamada 'Bastidores do Debate de IAs'. Ao abrir, mostre a conversa de chat vinda do campo debate_log da newsletter correspondente. O chat deve mostrar cada mensagem com um balão brutalista usando a cor específica de cada IA especialista."
+## 💬 [PROMPT PARA A IA - EXECUTADO]
+> "Crie a tela de leitura imersiva de posts e newsletters (`NewsletterDetailScreen`). Carregue o campo `debate_log` do Supabase e renderize as discussões de curadoria em um chat estilo retro brutalista com balões de conversa coloridos e estilizados de forma customizada para cada especialista de IA."
 
 ---
 

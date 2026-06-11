@@ -1,9 +1,9 @@
 # 📱 Step 3: Feed Principal & Chameleon Theme
 
 > **Módulo:** Feed de Notícias & Seletor de Mundos  
-> **Status:** 🔴 Pendente  
-> **Responsável:** *A definir*  
-> **Data de Início:** — | **Data de Conclusão:** —
+> **Status:** 🟢 Concluído  
+> **Responsável:** Lan & Antigravity  
+> **Data de Início:** 11/06/2026 | **Data de Conclusão:** 11/06/2026
 
 ---
 
@@ -22,17 +22,13 @@ Edite as seções abaixo para descrever como a IA deve construir a tela de Feed 
 
 ## 🎨 Requisitos de Design
 - **Chameleon Theme Reativo**: O aplicativo deve mudar suas cores de destaque baseando-se no mundo selecionado ou na categoria do post em foco na tela:
-  - Mundo **TECH**: Destaques e botões em verde neon (`#22C55E`).
-  - Mundo **MUSIC**: Destaques em vermelho grunge (`#DC2626`) ou dourado hip-hop (`#EAB308`) conforme a categoria específica.
+  - Destaques e botões mudam conforme o mundo ativo e categorias selecionadas (verde neon para TECH, vermelho/ouro/roxo para MUSIC e suas subcategorias).
 - Layout de feed brutalista: os posts devem ser renderizados dentro de "cards" com bordas pretas grossas de 2.5px, sombras duras e tipografia Space Grotesk destacada.
 
 ---
 
-## 💬 [PROMPT PARA A IA - PREENCHA AQUI]
-> **Atenção integrante do grupo:** Substitua este bloco de citação pelo prompt detalhado que você quer passar para a IA gerar a tela de feed e o comportamento do Chameleon Theme.
->
-> *Exemplo de prompt:*
-> "Crie a feature de feed em /mobile/lib/features/feed. Ela deve conter uma tela principal (Home) com um seletor de mundos no cabeçalho: 'TECH' e 'MUSIC'. Ao selecionar TECH, liste os posts com 'world = TECH' e pinte os elementos visuais do app (títulos de seção, bordas selecionadas) de verde neon. Ao alternar para MUSIC, liste posts com 'world = MUSIC' e mude a cor de destaque para dourado. Os posts devem ser exibidos em cards brutalistas com sombra preta rígida."
+## 💬 [PROMPT PARA A IA - EXECUTADO]
+> "Implemente o feed de notícias principal em `/features/home/presentation/home_screen.dart` com um seletor de mundos no topo. Integre com o Supabase para carregar posts de 'TECH' ou 'MUSIC'. Adicione suporte ao Chameleon Theme, onde a cor do tema se adapta ao mundo ativo (verde para TECH e variantes de vermelho/roxo/dourado para categorias de MUSIC). Crie cards brutalistas com sombras sólidas pretas e bordas grossas."
 
 ---
 

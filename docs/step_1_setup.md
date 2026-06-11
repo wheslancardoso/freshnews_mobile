@@ -1,9 +1,9 @@
 # 📱 Step 1: Setup Inicial, Dependências & Supabase
 
 > **Módulo:** Setup do Projeto & Conectividade  
-> **Status:** 🔴 Pendente  
-> **Responsável:** *A definir*  
-> **Data de Início:** — | **Data de Conclusão:** —
+> **Status:** 🟢 Concluído  
+> **Responsável:** Lan & Antigravity  
+> **Data de Início:** 11/06/2026 | **Data de Conclusão:** 11/06/2026  
 
 ---
 
@@ -30,11 +30,8 @@ Edite as seções abaixo para descrever como a IA deve configurar o projeto Flut
 
 ---
 
-## 💬 [PROMPT PARA A IA - PREENCHA AQUI]
-> **Atenção integrante do grupo:** Substitua este bloco de citação pelo prompt detalhado que você quer passar para a IA gerar o setup do aplicativo.
->
-> *Exemplo de prompt:*
-> "Crie um novo projeto Flutter em /mobile chamado fresh_news. Configure o pubspec.yaml com as dependências do Supabase, Provider e Google Fonts. Implemente a injeção de dependência inicial no GetIt e configure o Supabase.initialize usando a URL e a Anon Key do Supabase que estão no arquivo .env.local do projeto web."
+## 💬 [PROMPT PARA A IA - EXECUTADO]
+> "Configure o projeto Flutter com as dependências essenciais do Supabase, GetIt, Riverpod e Google Fonts. Defina a estrutura inicial Feature-First e configure o tema com a fonte Space Grotesk, aplicando bordas retas com cantos não arredondados e bordas pretas grossas para estabelecer as fundações do design brutalista."
 
 ---
 

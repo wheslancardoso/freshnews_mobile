@@ -1,9 +1,9 @@
 # 📱 Step 2: Autenticação, Cadastro & Preferências
 
 > **Módulo:** Autenticação & Cadastro de Preferências  
-> **Status:** 🔴 Pendente  
-> **Responsável:** *A definir*  
-> **Data de Início:** — | **Data de Conclusão:** —
+> **Status:** 🟢 Concluído  
+> **Responsável:** Lan & Antigravity  
+> **Data de Início:** 11/06/2026 | **Data de Conclusão:** 11/06/2026  
 
 ---
 
@@ -16,8 +16,8 @@ Edite as seções abaixo para descrever como a IA deve construir a tela de login
 - Implementar tela de autenticação (Magic Link ou login convencional por e-mail/senha, conforme definido no prompt do grupo) integrada com o `SupabaseAuth`.
 - Redirecionar novos usuários para uma tela de onboarding/preferências.
 - Implementar a tela de preferências onde o usuário pode:
-  - Ativar/desativar mundos (`TECH` e `MUSIC`).
-  - Escolher subcategorias de interesse (ex: IA, Segurança, Hip-Hop, Rock/Indie).
+- Ativar/desativar mundos (`TECH` e `MUSIC`).
+- Escolher subcategorias de interesse (ex: IA, Segurança, Hip-Hop, Rock/Indie).
 - Sincronizar as preferências diretamente com a tabela `subscribers` no Supabase (colunas `preferences`, `active_worlds` e `phone`).
 
 ---
@@ -28,11 +28,8 @@ Edite as seções abaixo para descrever como a IA deve construir a tela de login
 
 ---
 
-## 💬 [PROMPT PARA A IA - PREENCHA AQUI]
-> **Atenção integrante do grupo:** Substitua este bloco de citação pelo prompt detalhado que você quer passar para a IA gerar a tela de login e gerenciamento de preferências.
->
-> *Exemplo de prompt:*
-> "Crie a feature de autenticação em /mobile/lib/features/auth. Crie uma tela de login simples com um campo de e-mail e botão que envia um Magic Link do Supabase. Após o login, se for o primeiro acesso, envie-o para a tela de Onboarding de preferências onde ele pode selecionar quais categorias de TECH (IA, DEV, SEC, CLOUD) ou MUSIC (HIP_HOP, ROCK_INDIE, ELECTRONICA) ele quer seguir. Salve isso no campo JSON 'preferences' e 'active_worlds' da tabela subscribers do Supabase."
+## 💬 [PROMPT PARA A IA - EXECUTADO]
+> "Crie o login do assinante (`SubscriberAuthScreen`) via Supabase Auth enviando Magic Link por e-mail. Trate o callback do deep link para autenticação e redirecionamento. Desenvolva o `preferencesProvider` e a tela `PreferencesScreen` integrada com o Supabase para persistir as preferências do leitor (mundos ativos, subcategorias e número de telefone) com estilo brutalista marcante."
 
 ---
 

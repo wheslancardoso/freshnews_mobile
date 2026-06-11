@@ -1,9 +1,9 @@
 # 📱 Step 5: Notificações Push & Polimento Visual Brutalista
 
 > **Módulo:** Notificações & Ajustes de UX/UI Retro-Futurista  
-> **Status:** 🔴 Pendente  
-> **Responsável:** *A definir*  
-> **Data de Início:** — | **Data de Conclusão:** —
+> **Status:** 🟢 Concluído  
+> **Responsável:** Lan & Antigravity  
+> **Data de Início:** 11/06/2026 | **Data de Conclusão:** 11/06/2026  
 
 ---
 
@@ -26,11 +26,8 @@ Edite as seções abaixo para descrever como a IA deve integrar push notificatio
 
 ---
 
-## 💬 [PROMPT PARA A IA - PREENCHA AQUI]
-> **Atenção integrante do grupo:** Substitua este bloco de citação pelo prompt detalhado que você quer passar para a IA gerar a integração de push notifications e fazer o polimento visual do app.
->
-> *Exemplo de prompt:*
-> "Configure a integração de push notifications no Flutter usando a biblioteca Firebase Cloud Messaging (FCM). Quando o token do dispositivo for gerado, atualize o registro do subscriber no Supabase. Adicione também um efeito de Scanline com gradiente de opacidade preta sutil sobre a tela de feed, e aplique feedback tátil com HapticFeedback toda vez que o usuário curtir ou alternar de mundo."
+## 💬 [PROMPT PARA A IA - EXECUTADO]
+> "Adicione e configure o Firebase Cloud Messaging (`firebase_messaging`) e `flutter_local_notifications` no aplicativo. Sincronize o FCM Token gerado com a coluna `fcm_token` da tabela `subscribers` do Supabase. Crie o overlay estético de CRT (`ScanlineOverlay`) sobre o Feed e aplique `HapticFeedback` nas principais interações táteis (cards de posts, switches e abas)."
 
 ---
 

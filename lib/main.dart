@@ -9,7 +9,11 @@ import 'package:fresh_news_mobile/features/world_selector/application/world_cont
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('Firebase nao pode ser inicializado (google-services.json ausente?): $e');
+  }
 
   await Supabase.initialize(
     url: AppConstants.supabaseUrl,

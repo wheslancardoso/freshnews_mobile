@@ -44,7 +44,7 @@ O desenvolvimento é feito de forma colaborativa entre o grupo de **3 integrante
 | **[Step 1](step_1_setup.md)** | Setup Inicial, Supabase & DI | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
 | **[Step 2](step_2_auth.md)** | Autenticação, Cadastro & Preferências | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
 | **[Step 3](step_3_feed.md)** | Feed Principal (TECH/MUSIC) & Chameleon Theme | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
-| **[Step 4](step_4_reader.md)** | Leitor Brutalista & Debate de IAs | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
+| **[Step 4](step_4_reader.md)** | Leitor Brutalista & Debate de IAs | Lan & Antigravity | ⚠️ Concluído com Ressalvas | 11/06/2026 |
 | **[Step 5](step_5_notifications.md)** | Push Notifications & Polimento Final | Lan & Antigravity | 🟢 Concluído | 11/06/2026 |
 
 ---
@@ -81,6 +81,9 @@ O aplicativo deve trazer a mesma identidade visual da versão Web para o celular
   - `HIP_HOP`: Gold (`#EAB308`)
   - `ROCK_INDIE`: Red (`#DC2626`)
   - `ELECTRONICA`: Purple (`#A855F7`)
+
+Para diretrizes detalhadas sobre listeners de rolagem e efeitos gráficos customizados (Scanlines, Blueprint Grid), consulte o [Chameleon Engine: Guia de Implementação no Flutter](step_3_chameleon_engine.md).
+
 
 ---
 

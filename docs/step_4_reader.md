@@ -1,7 +1,7 @@
 # 📱 Step 4: Leitor Brutalista & Debate de IAs
 
 > **Módulo:** Leitor Imersivo & Chat de Debate das IAs  
-> **Status:** 🟢 Concluído  
+> **Status:** ⚠️ Concluído com Ressalvas (Pendente Chameleon Scroll Observer)  
 > **Responsável:** Lan & Antigravity  
 > **Data de Início:** 11/06/2026 | **Data de Conclusão:** 11/06/2026  
 
@@ -42,3 +42,9 @@ Edite as seções abaixo para descrever como a IA deve construir a tela de leitu
 3. Desenvolver os componentes UI da tela de leitura com suporte a rolagem suave.
 4. Implementar o widget de renderização do `debate_log`, mapeando cada item do JSON (IA remetente, mensagem, timestamp) para um balão de chat brutalista colorido.
 5. Garantir que o Chameleon Theme se adapte à subcategoria do artigo que está sendo lido enquanto o usuário estiver nessa tela.
+
+---
+
+## ⚠️ Ressalva Importante (Chameleon Scroll Observer)
+Atualmente o aplicativo altera o tema de forma global baseado no post inteiro ao abrir a tela. Contudo, para newsletters compostas (que trazem múltiplos tópicos na mesma edição), o aplicativo ainda não atualiza a cor reativamente à medida que o usuário rola a tela por cada assunto (Scroll Observer).
+Para implementar isso no Flutter, consulte as diretrizes detalhadas de código e listeners no arquivo [step_3_chameleon_engine.md](file:///c:/Users/wheslan.quintanilha/Documents/freshnews_mobile/docs/step_3_chameleon_engine.md).

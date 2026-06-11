@@ -36,7 +36,7 @@ class HomeScreen extends ConsumerWidget {
           body: CustomScrollView(
             slivers: [
               _buildAppBar(context, ref, activeWorld),
-              SliverToBoxAdapter(child: _buildHeroSection(context)),
+              SliverToBoxAdapter(child: _buildHeroSection(context, activeWorld)),
               SliverToBoxAdapter(child: _buildWorldChips(ref, activeWorld)),
               SliverToBoxAdapter(child: _buildCategoryTabs(ref, activeWorld)),
               SliverPadding(
@@ -125,7 +125,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeroSection(BuildContext context) {
+  Widget _buildHeroSection(BuildContext context, World activeWorld) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(FNSpacing.lg, FNSpacing.xl, FNSpacing.lg, FNSpacing.xl),
       child: Column(
@@ -174,7 +174,9 @@ class HomeScreen extends ConsumerWidget {
           const SizedBox(height: FNSpacing.xl),
           FNButton(
             label: 'VER_EDICOES_ANTERIORES',
-            leading: const Icon(LucideIcons.archive, size: 16, color: Colors.white),
+            variant: FNButtonVariant.outline,
+            primaryColor: activeWorld.config.primaryColor,
+            leading: Icon(LucideIcons.archive, size: 16, color: activeWorld.config.primaryColor),
             onPressed: () => context.push('/archive'),
           ),
         ],
@@ -387,17 +389,20 @@ class HomeScreen extends ConsumerWidget {
           childCount: 4,
         ),
       ),
-      error: (error, stack) => SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: FNSpacing.xxxl),
-          child: Center(
-            child: Text(
-              'Erro ao carregar edições. Tente novamente.',
-              style: FNTypography.bodyMedium.copyWith(color: FNColors.error),
+      error: (error, stack) {
+        debugPrint('Erro na HomeScreen: $error\n$stack');
+        return SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: FNSpacing.xxxl),
+            child: Center(
+              child: Text(
+                'Erro ao carregar edições. Tente novamente.',
+                style: FNTypography.bodyMedium.copyWith(color: FNColors.error),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

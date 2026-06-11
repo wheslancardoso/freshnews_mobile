@@ -66,7 +66,9 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: GlassCard(
-              borderRadius: BorderRadius.circular(56),
+              borderRadius: BorderRadius.circular(4),
+              borderColor: Colors.black,
+              borderWidth: 2.5,
               padding: const EdgeInsets.all(FNSpacing.xxl),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -146,7 +148,7 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
                     child: Text(
                       'É um editor? Acessar área restrita →',
                       style: FNTypography.bodySmall.copyWith(
-                        color: FNColors.primaryViolet,
+                        color: Theme.of(context).colorScheme.primary,
                         decoration: TextDecoration.underline,
                       ),
                     ),

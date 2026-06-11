@@ -44,7 +44,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: GlassCard(
-              borderRadius: BorderRadius.circular(56),
+              borderRadius: BorderRadius.circular(4),
+              borderColor: Colors.black,
+              borderWidth: 2.5,
               padding: const EdgeInsets.all(FNSpacing.xxl),
               child: Column(
                 mainAxisSize: MainAxisSize.min,

@@ -78,12 +78,21 @@ class PreferencesScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? meta.primaryColor.withValues(alpha: 0.15)
-                                : FNColors.surfaceVariant,
-                            borderRadius: BorderRadius.circular(20),
+                                : FNColors.surface,
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
-                              color: isSelected ? meta.primaryColor : FNColors.border,
-                              width: 1.5,
+                              color: isSelected ? meta.primaryColor : Colors.black,
+                              width: 2.0,
                             ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: meta.primaryColor.withValues(alpha: 0.3),
+                                      offset: const Offset(2, 2),
+                                      blurRadius: 0,
+                                    )
+                                  ]
+                                : null,
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -118,7 +127,7 @@ class PreferencesScreen extends ConsumerWidget {
                   const SizedBox(height: FNSpacing.md),
                   
                   // Pegar categorias dos mundos ativos
-                  _buildCategoriesSelector(state, notifier),
+                  _buildCategoriesSelector(context, state, notifier),
                   const SizedBox(height: FNSpacing.xl),
 
                   // Mensagem de feedback
@@ -152,7 +161,7 @@ class PreferencesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoriesSelector(PreferencesState state, PreferencesNotifier notifier) {
+  Widget _buildCategoriesSelector(BuildContext context, PreferencesState state, PreferencesNotifier notifier) {
     // Coleta todas as categorias exclusivas dos mundos selecionados pelo usuário
     final availableCategories = <String>{};
     for (final world in state.selectedWorlds) {
@@ -182,18 +191,27 @@ class PreferencesScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                  ? FNColors.primaryViolet.withValues(alpha: 0.15)
-                  : FNColors.surfaceVariant,
-              borderRadius: BorderRadius.circular(20),
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
+                  : FNColors.surface,
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: isSelected ? FNColors.primaryViolet : FNColors.border,
-                width: 1.5,
+                color: isSelected ? Theme.of(context).colorScheme.primary : Colors.black,
+                width: 2.0,
               ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                        offset: const Offset(2, 2),
+                        blurRadius: 0,
+                      )
+                    ]
+                  : null,
             ),
             child: Text(
               category,
               style: FNTypography.bodySmall.copyWith(
-                color: isSelected ? FNColors.primaryViolet : FNColors.textSecondary,
+                color: isSelected ? Theme.of(context).colorScheme.primary : FNColors.textSecondary,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),

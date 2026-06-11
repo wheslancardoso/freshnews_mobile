@@ -79,19 +79,34 @@ class FNButton extends StatelessWidget {
       case FNButtonVariant.primary:
         return BoxDecoration(
           color: onPressed == null ? primary.withOpacity(0.4) : primary,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black, width: 2.0),
+          boxShadow: onPressed == null
+              ? null
+              : [
+                  const BoxShadow(
+                    color: Colors.black,
+                    offset: Offset(3, 3),
+                    blurRadius: 0,
+                  )
+                ],
         );
       case FNButtonVariant.outline:
         return BoxDecoration(
           color: Colors.transparent,
-          border: Border.all(color: primary, width: 1.5),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: primary, width: 2.0),
         );
       case FNButtonVariant.ghost:
         return BoxDecoration(
           color: primary.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(4),
         );
       case FNButtonVariant.destructive:
-        return const BoxDecoration(
+        return BoxDecoration(
           color: FNColors.error,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black, width: 2.0),
         );
     }
   }

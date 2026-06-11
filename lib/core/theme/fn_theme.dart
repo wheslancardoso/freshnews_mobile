@@ -84,7 +84,7 @@ class FNTheme {
   FNTheme._();
 
   static ThemeData darkTheme({Color? primaryColor}) {
-    final primary = primaryColor ?? FNColors.primaryViolet;
+    final primary = primaryColor ?? FNColors.primaryGreen;
 
     return ThemeData(
       brightness: Brightness.dark,
@@ -125,14 +125,18 @@ class FNTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: FNColors.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: FNColors.glassBorder),
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: FNColors.textPrimary, width: 2.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: FNColors.border, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: primary.withOpacity(0.5), width: 2),
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide(color: primary, width: 2.5),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         hintStyle: FNTypography.bodyMedium.copyWith(

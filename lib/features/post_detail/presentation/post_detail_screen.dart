@@ -76,7 +76,14 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 
-  Future<void> _launchUrl(String url) async {
+  Future<void> _launchUrl(String url, String category) async {
+    final subscriberId = ref.read(subscriberIdProvider);
+    if (subscriberId != null) {
+      ref.read(trackingRepositoryProvider).trackClick(
+            subscriberId: subscriberId,
+            category: category,
+          );
+    }
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -188,7 +195,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     FNButton(
                       label: 'LER FONTE ORIGINAL',
                       leading: Icon(LucideIcons.external_link, size: 16, color: Colors.white),
-                      onPressed: () => _launchUrl(post.url),
+                      onPressed: () => _launchUrl(post.url, post.category),
                     ),
                 ],
               ),

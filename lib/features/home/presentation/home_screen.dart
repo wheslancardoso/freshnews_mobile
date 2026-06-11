@@ -14,6 +14,7 @@ import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_card.dart';
 import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
+import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
 import 'package:fresh_news_mobile/shared/widgets/news_card.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -83,6 +84,12 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       actions: [
+        if (ref.watch(subscriberIdProvider) != null) ...[
+          IconButton(
+            icon: const Icon(LucideIcons.settings, color: Colors.white),
+            onPressed: () => context.push('/preferences/${ref.read(subscriberIdProvider)}'),
+          ),
+        ],
         Padding(
           padding: const EdgeInsets.only(right: FNSpacing.lg),
           child: PopupMenuButton<World>(

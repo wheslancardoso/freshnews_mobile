@@ -14,14 +14,46 @@ import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
 import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
+import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
+import 'package:fresh_news_mobile/shared/infrastructure/tracking_repository.dart';
 
-class NewsletterDetailScreen extends ConsumerWidget {
+class NewsletterDetailScreen extends ConsumerStatefulWidget {
   final String id;
 
   const NewsletterDetailScreen({
     super.key,
     required this.id,
   });
+
+  @override
+  ConsumerState<NewsletterDetailScreen> createState() => _NewsletterDetailScreenState();
+}
+
+class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen> {
+  bool _tracked = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _triggerTracking();
+  }
+
+  void _triggerTracking() {
+    if (_tracked) return;
+
+    final newsletterAsyncValue = ref.watch(newsletterDetailProvider(widget.id));
+    newsletterAsyncValue.whenData((newsletter) {
+      final subscriberId = ref.read(subscriberIdProvider);
+      if (subscriberId != null) {
+        ref.read(trackingRepositoryProvider).trackClick(
+              subscriberId: subscriberId,
+              category: newsletter.category ?? 'MASTER',
+              newsletterId: newsletter.id,
+            );
+        _tracked = true;
+      }
+    });
+  }
 
   Color _getCategoryColor(String name) {
     final upper = name.toUpperCase();
@@ -36,7 +68,15 @@ class NewsletterDetailScreen extends ConsumerWidget {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 
-  Future<void> _launchUrl(String url) async {
+  Future<void> _launchUrl(String url, String category) async {
+    final subscriberId = ref.read(subscriberIdProvider);
+    if (subscriberId != null) {
+      ref.read(trackingRepositoryProvider).trackClick(
+            subscriberId: subscriberId,
+            category: category,
+            newsletterId: widget.id,
+          );
+    }
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -44,15 +84,15 @@ class NewsletterDetailScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final newsletterAsync = ref.watch(newsletterDetailProvider(id));
+  Widget build(BuildContext context) {
+    final newsletterAsync = ref.watch(newsletterDetailProvider(widget.id));
     final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: FNColors.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(LucideIcons.arrow_left, color: Colors.white),
+          icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -321,13 +361,13 @@ class NewsletterDetailScreen extends ConsumerWidget {
         ),
         const SizedBox(height: FNSpacing.base),
         // News Items List
-        ...category.items.map((item) => _buildNewsItemCard(item, catColor)),
+        ...category.items.map((item) => _buildNewsItemCard(item, catColor, category.name)),
         const SizedBox(height: FNSpacing.lg),
       ],
     );
   }
 
-  Widget _buildNewsItemCard(NewsItem item, Color catColor) {
+  Widget _buildNewsItemCard(NewsItem item, Color catColor, String categoryName) {
     return Container(
       margin: const EdgeInsets.only(bottom: FNSpacing.lg),
       padding: const EdgeInsets.only(left: FNSpacing.base),
@@ -355,7 +395,7 @@ class NewsletterDetailScreen extends ConsumerWidget {
             const SizedBox(height: 12),
           ],
           InkWell(
-            onTap: () => _launchUrl(item.link),
+            onTap: () => _launchUrl(item.link, categoryName),
             child: Text(
               item.headline,
               style: FNTypography.headingSmall.copyWith(
@@ -376,7 +416,7 @@ class NewsletterDetailScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           GestureDetector(
-            onTap: () => _launchUrl(item.link),
+            onTap: () => _launchUrl(item.link, categoryName),
             child: Text(
               'Ler fonte original →',
               style: FNTypography.techLabelSmall.copyWith(

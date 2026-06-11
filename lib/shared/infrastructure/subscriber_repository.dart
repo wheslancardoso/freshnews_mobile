@@ -4,11 +4,18 @@ import 'package:fresh_news_mobile/core/network/supabase_client.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/shared/domain/subscriber.entity.dart';
 
+class UnsubscribeResult {
+  final bool success;
+  final String message;
+  const UnsubscribeResult({required this.success, required this.message});
+}
+
 abstract class SubscriberRepository {
   Future<Subscriber> create({required String email, required List<World> worlds});
   Future<Subscriber?> getByEmail(String email);
   Future<Subscriber?> getById(String id);
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active});
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences});
+  Future<UnsubscribeResult> unsubscribe(String token);
 }
 
 class SupabaseSubscriberRepository implements SubscriberRepository {
@@ -46,14 +53,41 @@ class SupabaseSubscriberRepository implements SubscriberRepository {
   }
 
   @override
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active}) async {
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences}) async {
     final updates = <String, dynamic>{};
     if (worlds != null) updates['worlds'] = worlds.map((w) => w.config.slug).toList();
     if (active != null) updates['active'] = active;
+    if (preferences != null) updates['preferences'] = preferences;
 
     if (updates.isEmpty) return;
 
     await _client.from('subscribers').update(updates).eq('id', id);
+  }
+
+  @override
+  Future<UnsubscribeResult> unsubscribe(String token) async {
+    try {
+      final response = await _client
+          .from('subscribers')
+          .select('id, email')
+          .eq('unsubscribe_token', token)
+          .maybeSingle();
+
+      if (response == null) {
+        return const UnsubscribeResult(success: false, message: 'Link inválido ou expirado.');
+      }
+
+      final id = response['id'] as String;
+
+      await _client
+          .from('subscribers')
+          .update({'status': 'unsubscribed', 'active': false})
+          .eq('id', id);
+
+      return const UnsubscribeResult(success: true, message: 'Inscrição cancelada com sucesso.');
+    } catch (e) {
+      return UnsubscribeResult(success: false, message: 'Erro ao processar cancelamento: $e');
+    }
   }
 }
 

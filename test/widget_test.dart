@@ -38,7 +38,9 @@ class FakeSubscriberRepository implements SubscriberRepository {
   @override
   Future<Subscriber?> getById(String id) async => null;
   @override
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active}) async {}
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences}) async {}
+  @override
+  Future<UnsubscribeResult> unsubscribe(String token) async => const UnsubscribeResult(success: true, message: 'Sucesso');
 }
 
 void main() {

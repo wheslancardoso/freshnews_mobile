@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/subscriber_repository.dart';
+import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
+import 'package:fresh_news_mobile/shared/domain/subscriber.entity.dart';
 
 enum SubscribeStatus { idle, loading, success, error }
 
@@ -37,8 +39,9 @@ class SubscribeState {
 
 class SubscribeController extends StateNotifier<SubscribeState> {
   final SubscriberRepository _repository;
+  final Ref _ref;
 
-  SubscribeController(this._repository) : super(const SubscribeState());
+  SubscribeController(this._repository, this._ref) : super(const SubscribeState());
 
   void toggleCategory(String category) {
     final categories = List<String>.from(state.selectedCategories);
@@ -61,13 +64,17 @@ class SubscribeController extends StateNotifier<SubscribeState> {
 
     try {
       final worlds = state.selectedWorlds.isEmpty ? [world] : state.selectedWorlds;
+      final Subscriber subscriber;
 
       final existing = await _repository.getByEmail(email.trim());
       if (existing != null) {
         await _repository.updatePreferences(existing.id, worlds: worlds, active: true);
+        subscriber = existing.copyWith(worlds: worlds, active: true);
       } else {
-        await _repository.create(email: email.trim(), worlds: worlds);
+        subscriber = await _repository.create(email: email.trim(), worlds: worlds);
       }
+
+      await _ref.read(subscriberIdProvider.notifier).setSubscriberId(subscriber.id);
 
       state = state.copyWith(status: SubscribeStatus.success);
       return true;
@@ -88,5 +95,5 @@ class SubscribeController extends StateNotifier<SubscribeState> {
 final subscribeControllerProvider =
     StateNotifierProvider.autoDispose<SubscribeController, SubscribeState>((ref) {
   final repository = ref.read(subscriberRepositoryProvider);
-  return SubscribeController(repository);
+  return SubscribeController(repository, ref);
 });

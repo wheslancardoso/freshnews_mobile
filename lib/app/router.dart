@@ -9,6 +9,9 @@ import 'package:fresh_news_mobile/features/archive/presentation/archive_screen.d
 import 'package:fresh_news_mobile/features/newsletter_detail/presentation/newsletter_detail_screen.dart';
 import 'package:fresh_news_mobile/features/post_detail/presentation/post_detail_screen.dart';
 
+import 'package:fresh_news_mobile/features/unsubscribe/presentation/unsubscribe_screen.dart';
+import 'package:fresh_news_mobile/features/preferences/presentation/preferences_screen.dart';
+
 final routerProvider = Provider<GoRouter>((ref) {
   final authNotifier = ref.watch(authProvider.notifier);
   final authState = ref.watch(authProvider);
@@ -59,7 +62,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'unsubscribe',
         builder: (context, state) {
           final token = state.uri.queryParameters['token'];
-          return _PlaceholderScreen(title: 'Unsubscribe (token: ${token ?? '-'})');
+          return UnsubscribeScreen(token: token);
         },
       ),
       GoRoute(
@@ -67,7 +70,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'preferences',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
-          return _PlaceholderScreen(title: 'Preferences: $id');
+          return PreferencesScreen(subscriberId: id);
         },
       ),
       GoRoute(

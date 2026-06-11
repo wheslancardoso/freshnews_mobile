@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
@@ -7,8 +8,28 @@ import 'package:fresh_news_mobile/shared/infrastructure/newsletter_repository.da
 import 'package:fresh_news_mobile/shared/infrastructure/post_repository.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/subscriber_repository.dart';
 
+class SubscriberIdNotifier extends StateNotifier<String?> {
+  final SharedPreferences _prefs;
+
+  SubscriberIdNotifier(this._prefs) : super(null) {
+    state = _prefs.getString('subscriber_id');
+  }
+
+  Future<void> setSubscriberId(String? id) async {
+    if (id == null) {
+      await _prefs.remove('subscriber_id');
+    } else {
+      await _prefs.setString('subscriber_id', id);
+    }
+    state = id;
+  }
+}
+
 /// ID do assinante (pode vir de SharedPrefs ou deep link)
-final subscriberIdProvider = StateProvider<String?>((ref) => null);
+final subscriberIdProvider = StateNotifierProvider<SubscriberIdNotifier, String?>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return SubscriberIdNotifier(prefs);
+});
 
 /// Subscriber data (se logado)
 final subscriberProvider = FutureProvider.autoDispose<Subscriber?>((ref) async {

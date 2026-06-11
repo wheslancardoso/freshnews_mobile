@@ -107,7 +107,7 @@ extension WorldExtension on World {
   WorldConfigCompat get config => WorldConfigCompat(
         world: this,
         label: WorldRegistry.get(this).label,
-        slug: name,
+        slug: name.toUpperCase(),
         primaryColor: WorldRegistry.get(this).primaryColor,
         icon: icon,
       );

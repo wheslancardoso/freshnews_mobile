@@ -59,8 +59,9 @@ class HomeScreen extends ConsumerWidget {
       floating: true,
       backgroundColor: FNColors.background.withValues(alpha: 0.85),
       elevation: 0,
-      titleSpacing: FNSpacing.lg,
+      centerTitle: true,
       title: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 36,
@@ -68,8 +69,8 @@ class HomeScreen extends ConsumerWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: activeWorld.config.primaryColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: activeWorld.config.primaryColor.withValues(alpha: 0.4)),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: activeWorld.config.primaryColor, width: 2.0),
             ),
             child: Text(
               'FN',
@@ -91,59 +92,37 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       actions: [
-        if (ref.watch(subscriberIdProvider) != null) ...[
-          IconButton(
-            icon: const Icon(LucideIcons.settings, color: Colors.white),
-            onPressed: () => context.push('/preferences/${ref.read(subscriberIdProvider)}'),
-          ),
-        ],
-        Padding(
-          padding: const EdgeInsets.only(right: FNSpacing.lg),
-          child: PopupMenuButton<World>(
-            icon: Icon(activeWorld.config.icon, color: activeWorld.config.primaryColor),
-            color: FNColors.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: FNColors.border),
+        if (ref.watch(subscriberIdProvider) != null)
+          Padding(
+            padding: const EdgeInsets.only(right: FNSpacing.lg),
+            child: IconButton(
+              icon: const Icon(LucideIcons.settings, color: Colors.white),
+              onPressed: () => context.push('/preferences/${ref.read(subscriberIdProvider)}'),
             ),
-            onSelected: (world) => ref.read(worldControllerProvider.notifier).setWorld(world),
-            itemBuilder: (context) => World.values.map((world) {
-              return PopupMenuItem(
-                value: world,
-                child: Row(
-                  children: [
-                    Icon(world.config.icon, color: world.config.primaryColor, size: 18),
-                    const SizedBox(width: FNSpacing.sm),
-                    Text(world.config.label, style: FNTypography.bodyMedium.copyWith(color: FNColors.textPrimary)),
-                  ],
-                ),
-              );
-            }).toList(),
           ),
-        ),
       ],
     );
   }
 
   Widget _buildHeroSection(BuildContext context, World activeWorld) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(FNSpacing.lg, FNSpacing.xl, FNSpacing.lg, FNSpacing.xl),
+      padding: const EdgeInsets.fromLTRB(FNSpacing.lg, FNSpacing.xl, FNSpacing.lg, FNSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: FNColors.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: FNColors.success.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: FNColors.success, width: 1.5),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 8,
-                  height: 8,
+                  width: 6,
+                  height: 6,
                   decoration: const BoxDecoration(
                     color: FNColors.success,
                     shape: BoxShape.circle,
@@ -152,15 +131,15 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(width: FNSpacing.sm),
                 Text(
                   'STATUS // ONLINE // TRANSMITINDO',
-                  style: FNTypography.label.copyWith(color: FNColors.success),
+                  style: FNTypography.techLabelSmall.copyWith(color: FNColors.success),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: FNSpacing.lg),
+          const SizedBox(height: FNSpacing.md),
           Text(
             'INFORMAÇÃO DESTILADA.\nSEM RUÍDO.',
-            style: FNTypography.displayLarge.copyWith(
+            style: FNTypography.headingLarge.copyWith(
               fontWeight: FontWeight.w800,
               fontStyle: FontStyle.italic,
               height: 1.1,
@@ -171,7 +150,7 @@ class HomeScreen extends ConsumerWidget {
             'Curadoria editorial direta, sem distrações. As notícias mais relevantes do mundo selecionado, condensadas para você.',
             style: FNTypography.bodyLarge.copyWith(color: FNColors.textSecondary),
           ),
-          const SizedBox(height: FNSpacing.xl),
+          const SizedBox(height: FNSpacing.md),
           FNButton(
             label: 'VER_EDICOES_ANTERIORES',
             variant: FNButtonVariant.outline,
@@ -185,54 +164,68 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildWorldChips(WidgetRef ref, World activeWorld) {
-    return SizedBox(
-      height: 56,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
-        itemCount: World.values.length,
-        separatorBuilder: (_, __) => const SizedBox(width: FNSpacing.sm),
-        itemBuilder: (context, index) {
-          final world = World.values[index];
-          final isSelected = world == activeWorld;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: FNSpacing.md),
+      child: SizedBox(
+        height: 48,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
+          padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
+          itemCount: World.values.length,
+          separatorBuilder: (_, __) => const SizedBox(width: FNSpacing.sm),
+          itemBuilder: (context, index) {
+            final world = World.values[index];
+            final isSelected = world == activeWorld;
 
-          return GestureDetector(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              ref.read(worldControllerProvider.notifier).setWorld(world);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              decoration: BoxDecoration(
-                color: isSelected ? world.config.primaryColor.withValues(alpha: 0.15) : FNColors.surface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected ? world.config.primaryColor : FNColors.border,
-                  width: isSelected ? 1.5 : 1,
+            return GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                ref.read(worldControllerProvider.notifier).setWorld(world);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOutCubic,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? world.config.primaryColor : FNColors.surface,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: isSelected ? Colors.black : FNColors.border,
+                    width: 2.0,
+                  ),
+                  boxShadow: isSelected
+                      ? const [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(2, 2),
+                            blurRadius: 0,
+                          )
+                        ]
+                      : null,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      world.config.icon,
+                      size: 16,
+                      color: isSelected ? Colors.black : FNColors.textMuted,
+                    ),
+                    const SizedBox(width: FNSpacing.sm),
+                    Text(
+                      world.config.label.toUpperCase(),
+                      style: FNTypography.label.copyWith(
+                        color: isSelected ? Colors.black : FNColors.textMuted,
+                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    world.config.icon,
-                    size: 18,
-                    color: isSelected ? world.config.primaryColor : FNColors.textMuted,
-                  ),
-                  const SizedBox(width: FNSpacing.sm),
-                  Text(
-                    world.config.label.toUpperCase(),
-                    style: FNTypography.label.copyWith(
-                      color: isSelected ? world.config.primaryColor : FNColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ).animate(target: isSelected ? 1 : 0).scaleXY(begin: 1.0, end: 1.03, duration: 200.ms);
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -242,11 +235,12 @@ class HomeScreen extends ConsumerWidget {
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return Padding(
-      padding: const EdgeInsets.only(top: FNSpacing.lg),
+      padding: const EdgeInsets.only(bottom: FNSpacing.lg),
       child: SizedBox(
         height: 44,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
           padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
           itemCount: categories.length + 1,
           separatorBuilder: (_, __) => const SizedBox(width: FNSpacing.sm),
@@ -293,15 +287,27 @@ class HomeScreen extends ConsumerWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.12) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: isSelected ? color : FNColors.border),
+          color: isSelected ? color : Colors.transparent,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: isSelected ? Colors.black : FNColors.border,
+            width: 2.0,
+          ),
+          boxShadow: isSelected
+              ? const [
+                  BoxShadow(
+                    color: Colors.black,
+                    offset: Offset(2, 2),
+                    blurRadius: 0,
+                  )
+                ]
+              : null,
         ),
         child: Text(
           label,
           style: FNTypography.bodySmall.copyWith(
-            color: isSelected ? color : FNColors.textMuted,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            color: isSelected ? Colors.black : FNColors.textMuted,
+            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w400,
           ),
         ),
       ),
@@ -337,7 +343,7 @@ class HomeScreen extends ConsumerWidget {
             crossAxisCount: crossAxisCount,
             crossAxisSpacing: FNSpacing.lg,
             mainAxisSpacing: FNSpacing.lg,
-            mainAxisExtent: 320,
+            mainAxisExtent: 310,
           ),
           delegate: SliverChildBuilderDelegate(
             (context, index) {
@@ -366,7 +372,7 @@ class HomeScreen extends ConsumerWidget {
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: FNSpacing.lg,
           mainAxisSpacing: FNSpacing.lg,
-          mainAxisExtent: 320,
+          mainAxisExtent: 310,
         ),
         delegate: SliverChildBuilderDelegate(
           (context, index) => const FNCard(

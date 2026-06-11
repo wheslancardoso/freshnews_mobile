@@ -57,7 +57,7 @@ class _SubscribeSectionState extends ConsumerState<SubscribeSection> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg, vertical: FNSpacing.xxl),
       child: GlassCard(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(4),
         padding: const EdgeInsets.all(FNSpacing.xl),
         child: subscribeState.isSuccess
             ? _buildSuccessState()
@@ -157,18 +157,28 @@ class _SubscribeSectionState extends ConsumerState<SubscribeSection> {
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? activeWorld.config.primaryColor.withValues(alpha: 0.15)
+                        ? activeWorld.config.primaryColor
                         : FNColors.surfaceVariant,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                      color: isSelected ? activeWorld.config.primaryColor : FNColors.border,
+                      color: isSelected ? Colors.black : FNColors.border,
+                      width: 2.0,
                     ),
+                    boxShadow: isSelected
+                        ? const [
+                            BoxShadow(
+                              color: Colors.black,
+                              offset: Offset(2, 2),
+                              blurRadius: 0,
+                            )
+                          ]
+                        : null,
                   ),
                   child: Text(
                     category,
                     style: FNTypography.bodySmall.copyWith(
-                      color: isSelected ? activeWorld.config.primaryColor : FNColors.textSecondary,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      color: isSelected ? Colors.black : FNColors.textSecondary,
+                      fontWeight: isSelected ? FontWeight.w900 : FontWeight.w400,
                     ),
                   ),
                 ),

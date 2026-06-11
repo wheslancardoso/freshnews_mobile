@@ -1,3 +1,4 @@
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +32,24 @@ class AuthNotifier extends StateNotifier<AuthState> {
     _prefs.remove(_sessionKey);
     _prefs.remove(_sessionExpiryKey);
     state = const AuthState(status: AuthStatus.unauthenticated);
+  }
+
+  Future<bool> sendMagicLink(String email) async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    try {
+      await Supabase.instance.client.auth.signInWithOtp(
+        email: email.trim(),
+        emailRedirectTo: 'freshnews://login-callback',
+      );
+      state = state.copyWith(status: AuthStatus.unauthenticated);
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: 'Erro ao enviar link de login: $e',
+      );
+      return false;
+    }
   }
 
   Future<bool> login(String password) async {

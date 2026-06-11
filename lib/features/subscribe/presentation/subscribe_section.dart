@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
 import 'package:fresh_news_mobile/core/constants/categories.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
@@ -188,6 +189,20 @@ class _SubscribeSectionState extends ConsumerState<SubscribeSection> {
             onPressed: subscribeState.isLoading ? null : _handleSubmit,
             isLoading: subscribeState.isLoading,
             fullWidth: true,
+          ),
+          const SizedBox(height: FNSpacing.md),
+          Center(
+            child: TextButton(
+              onPressed: () => context.push('/subscriber-login'),
+              child: Text(
+                'Já está inscrito? Acesse seu perfil de leitor →',
+                style: FNTypography.bodySmall.copyWith(
+                  color: activeWorld.config.primaryColor,
+                  decoration: TextDecoration.underline,
+                  decorationColor: activeWorld.config.primaryColor,
+                ),
+              ),
+            ),
           ),
         ],
       ),

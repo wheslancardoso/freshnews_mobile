@@ -11,6 +11,11 @@ import 'package:fresh_news_mobile/features/post_detail/presentation/post_detail_
 
 import 'package:fresh_news_mobile/features/unsubscribe/presentation/unsubscribe_screen.dart';
 import 'package:fresh_news_mobile/features/preferences/presentation/preferences_screen.dart';
+import 'package:fresh_news_mobile/features/auth/presentation/subscriber_auth_screen.dart';
+import 'package:fresh_news_mobile/features/admin/presentation/admin_shell.dart';
+import 'package:fresh_news_mobile/features/admin/presentation/admin_posts_screen.dart';
+import 'package:fresh_news_mobile/features/admin/presentation/admin_newsletters_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authNotifier = ref.watch(authProvider.notifier);
@@ -74,6 +79,23 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '/subscriber-login',
+        name: 'subscriber_login',
+        builder: (context, state) => const SubscriberAuthScreen(),
+      ),
+      GoRoute(
+        path: '/login-callback',
+        name: 'login_callback',
+        redirect: (context, state) {
+          final session = Supabase.instance.client.auth.currentSession;
+          if (session != null) {
+            return '/';
+          }
+          return '/';
+        },
+        builder: (context, state) => const SizedBox.shrink(),
+      ),
+      GoRoute(
         path: '/login',
         name: 'login',
         redirect: (context, state) {
@@ -83,7 +105,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoginScreen(),
       ),
       ShellRoute(
-        builder: (context, state, child) => _AdminShell(child: child),
+        builder: (context, state, child) => AdminShell(child: child),
         redirect: (context, state) {
           if (!authState.isAdmin) return '/login';
           return null;
@@ -97,12 +119,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/admin/posts',
             name: 'admin_posts',
-            builder: (context, state) => const _PlaceholderScreen(title: 'Admin Posts'),
+            builder: (context, state) => const AdminPostsScreen(),
           ),
           GoRoute(
             path: '/admin/newsletters',
             name: 'admin_newsletters',
-            builder: (context, state) => const _PlaceholderScreen(title: 'Admin Newsletters'),
+            builder: (context, state) => const AdminNewslettersScreen(),
           ),
         ],
       ),

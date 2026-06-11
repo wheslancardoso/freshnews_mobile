@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/shared/domain/subscriber.entity.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/subscriber_repository.dart';
+import 'package:fresh_news_mobile/core/services/notification_service.dart';
 
 class PreferencesState {
   final Subscriber? subscriber;
@@ -42,8 +43,9 @@ class PreferencesState {
 class PreferencesNotifier extends StateNotifier<PreferencesState> {
   final SubscriberRepository _repository;
   final String _subscriberId;
+  final NotificationService _notificationService;
 
-  PreferencesNotifier(this._repository, this._subscriberId) : super(const PreferencesState()) {
+  PreferencesNotifier(this._repository, this._subscriberId, this._notificationService) : super(const PreferencesState()) {
     _load();
   }
 
@@ -57,6 +59,7 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
         selectedWorlds: subscriber.worlds.toSet(),
         isLoading: false,
       );
+      await _notificationService.syncTopicSubscriptions(subscriber.worlds);
     } else {
       state = state.copyWith(isLoading: false);
     }
@@ -94,6 +97,8 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
         worlds: state.selectedWorlds.toList(),
         preferences: state.selectedPreferences.toList(),
       );
+
+      await _notificationService.syncTopicSubscriptions(state.selectedWorlds.toList());
 
       final updatedSubscriber = state.subscriber?.copyWith(
         worlds: state.selectedWorlds.toList(),
@@ -147,5 +152,6 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
 final preferencesProvider = StateNotifierProvider.autoDispose
     .family<PreferencesNotifier, PreferencesState, String>((ref, subscriberId) {
   final repository = ref.read(subscriberRepositoryProvider);
-  return PreferencesNotifier(repository, subscriberId);
+  final notificationService = ref.read(notificationServiceProvider);
+  return PreferencesNotifier(repository, subscriberId, notificationService);
 });

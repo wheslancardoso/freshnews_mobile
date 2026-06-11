@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/theme/fn_colors.dart';
 import '../../core/theme/fn_theme.dart';
 
@@ -57,7 +58,12 @@ class FNButton extends StatelessWidget {
     return SizedBox(
       width: fullWidth ? double.infinity : null,
       child: GestureDetector(
-        onTap: isLoading ? null : onPressed,
+        onTap: (isLoading || onPressed == null)
+            ? null
+            : () {
+                HapticFeedback.lightImpact();
+                onPressed!();
+              },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),

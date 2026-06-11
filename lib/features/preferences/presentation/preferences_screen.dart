@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
@@ -67,7 +68,10 @@ class PreferencesScreen extends ConsumerWidget {
                       final isSelected = state.selectedWorlds.contains(world);
 
                       return GestureDetector(
-                        onTap: () => notifier.toggleWorld(world),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          notifier.toggleWorld(world);
+                        },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -169,7 +173,10 @@ class PreferencesScreen extends ConsumerWidget {
         final isSelected = state.selectedPreferences.contains(category);
 
         return GestureDetector(
-          onTap: () => notifier.togglePreference(category),
+          onTap: () {
+            HapticFeedback.lightImpact();
+            notifier.togglePreference(category);
+          },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

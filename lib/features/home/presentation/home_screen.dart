@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fresh_news_mobile/shared/widgets/scanline_overlay.dart';
 import 'package:fresh_news_mobile/core/constants/categories.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
@@ -27,22 +29,27 @@ class HomeScreen extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width;
     final crossAxisCount = width < 600 ? 1 : width < 900 ? 2 : 3;
 
-    return Scaffold(
-      backgroundColor: FNColors.background,
-      body: CustomScrollView(
-        slivers: [
-          _buildAppBar(context, ref, activeWorld),
-          SliverToBoxAdapter(child: _buildHeroSection(context)),
-          SliverToBoxAdapter(child: _buildWorldChips(ref, activeWorld)),
-          SliverToBoxAdapter(child: _buildCategoryTabs(ref, activeWorld)),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
-            sliver: _buildNewsletterGrid(filteredNewsletters, crossAxisCount),
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: FNColors.background,
+          body: CustomScrollView(
+            slivers: [
+              _buildAppBar(context, ref, activeWorld),
+              SliverToBoxAdapter(child: _buildHeroSection(context)),
+              SliverToBoxAdapter(child: _buildWorldChips(ref, activeWorld)),
+              SliverToBoxAdapter(child: _buildCategoryTabs(ref, activeWorld)),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
+                sliver: _buildNewsletterGrid(filteredNewsletters, crossAxisCount),
+              ),
+              const SliverToBoxAdapter(child: SubscribeSection()),
+              const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
+            ],
           ),
-          const SliverToBoxAdapter(child: SubscribeSection()),
-          const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
-        ],
-      ),
+        ),
+        const ScanlineOverlay(),
+      ],
     );
   }
 
@@ -188,7 +195,10 @@ class HomeScreen extends ConsumerWidget {
           final isSelected = world == activeWorld;
 
           return GestureDetector(
-            onTap: () => ref.read(worldControllerProvider.notifier).setWorld(world),
+            onTap: () {
+              HapticFeedback.lightImpact();
+              ref.read(worldControllerProvider.notifier).setWorld(world);
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeOutCubic,
@@ -273,7 +283,10 @@ class HomeScreen extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

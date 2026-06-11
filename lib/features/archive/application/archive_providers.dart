@@ -8,11 +8,37 @@ import 'package:fresh_news_mobile/shared/infrastructure/newsletter_repository.da
 import 'package:fresh_news_mobile/shared/infrastructure/post_repository.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/subscriber_repository.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class SubscriberIdNotifier extends StateNotifier<String?> {
   final SharedPreferences _prefs;
+  final SubscriberRepository _repository;
 
-  SubscriberIdNotifier(this._prefs) : super(null) {
+  SubscriberIdNotifier(this._prefs, this._repository) : super(null) {
     state = _prefs.getString('subscriber_id');
+    _initSupabaseListener();
+  }
+
+  void _initSupabaseListener() {
+    try {
+      Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
+        final session = data.session;
+        final event = data.event;
+        if (session != null && (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.tokenRefreshed)) {
+          final email = session.user.email;
+          if (email != null) {
+            final subscriber = await _repository.getByEmail(email);
+            if (subscriber != null) {
+              await setSubscriberId(subscriber.id);
+            }
+          }
+        } else if (event == AuthChangeEvent.signedOut) {
+          await setSubscriberId(null);
+        }
+      });
+    } catch (_) {
+      // Supabase is not initialized (e.g. during widget tests)
+    }
   }
 
   Future<void> setSubscriberId(String? id) async {
@@ -28,7 +54,8 @@ class SubscriberIdNotifier extends StateNotifier<String?> {
 /// ID do assinante (pode vir de SharedPrefs ou deep link)
 final subscriberIdProvider = StateNotifierProvider<SubscriberIdNotifier, String?>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return SubscriberIdNotifier(prefs);
+  final repository = ref.watch(subscriberRepositoryProvider);
+  return SubscriberIdNotifier(prefs, repository);
 });
 
 /// Subscriber data (se logado)

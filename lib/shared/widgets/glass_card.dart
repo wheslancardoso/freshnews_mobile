@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/theme/fn_colors.dart';
 
 class GlassCard extends StatelessWidget {
@@ -52,7 +53,13 @@ class GlassCard extends StatelessWidget {
     );
 
     if (onTap != null) {
-      card = GestureDetector(onTap: onTap, child: card);
+      card = GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap!();
+        },
+        child: card,
+      );
     }
 
     return card;

@@ -5,6 +5,8 @@ class Subscriber {
   final String email;
   final List<World> worlds;
   final bool active;
+  final List<String> preferences;
+  final String status;
   final DateTime createdAt;
 
   const Subscriber({
@@ -12,6 +14,8 @@ class Subscriber {
     required this.email,
     required this.worlds,
     required this.active,
+    this.preferences = const [],
+    this.status = 'active',
     required this.createdAt,
   });
 
@@ -23,6 +27,10 @@ class Subscriber {
           .map((w) => WorldExtension.fromSlug(w as String))
           .toList(),
       active: json['active'] as bool? ?? true,
+      preferences: (json['preferences'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
+      status: json['status'] as String? ?? 'active',
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }
@@ -33,6 +41,8 @@ class Subscriber {
       'email': email,
       'worlds': worlds.map((w) => w.config.slug).toList(),
       'active': active,
+      'preferences': preferences,
+      'status': status,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -42,6 +52,8 @@ class Subscriber {
     String? email,
     List<World>? worlds,
     bool? active,
+    List<String>? preferences,
+    String? status,
     DateTime? createdAt,
   }) {
     return Subscriber(
@@ -49,7 +61,10 @@ class Subscriber {
       email: email ?? this.email,
       worlds: worlds ?? this.worlds,
       active: active ?? this.active,
+      preferences: preferences ?? this.preferences,
+      status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 }
+

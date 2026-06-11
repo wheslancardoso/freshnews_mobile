@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 enum World {
   tech,
@@ -78,21 +79,37 @@ class WorldConfigCompat {
   final String label;
   final String slug;
   final Color primaryColor;
+  final IconData icon;
 
   const WorldConfigCompat({
     required this.world,
     required this.label,
     required this.slug,
     required this.primaryColor,
+    required this.icon,
   });
 }
 
 extension WorldExtension on World {
+  IconData get icon {
+    switch (this) {
+      case World.tech:
+        return LucideIcons.laptop;
+      case World.music:
+        return LucideIcons.music;
+      case World.gear:
+        return LucideIcons.settings;
+      case World.game:
+        return LucideIcons.gamepad;
+    }
+  }
+
   WorldConfigCompat get config => WorldConfigCompat(
         world: this,
         label: WorldRegistry.get(this).label,
         slug: name,
         primaryColor: WorldRegistry.get(this).primaryColor,
+        icon: icon,
       );
 
   static World fromSlug(String slug) {

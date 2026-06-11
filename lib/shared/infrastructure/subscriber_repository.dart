@@ -7,6 +7,7 @@ import 'package:fresh_news_mobile/shared/domain/subscriber.entity.dart';
 abstract class SubscriberRepository {
   Future<Subscriber> create({required String email, required List<World> worlds});
   Future<Subscriber?> getByEmail(String email);
+  Future<Subscriber?> getById(String id);
   Future<void> updatePreferences(String id, {List<World>? worlds, bool? active});
 }
 
@@ -33,6 +34,13 @@ class SupabaseSubscriberRepository implements SubscriberRepository {
   @override
   Future<Subscriber?> getByEmail(String email) async {
     final response = await _client.from('subscribers').select().eq('email', email).maybeSingle();
+    if (response == null) return null;
+    return Subscriber.fromJson(response);
+  }
+
+  @override
+  Future<Subscriber?> getById(String id) async {
+    final response = await _client.from('subscribers').select().eq('id', id).maybeSingle();
     if (response == null) return null;
     return Subscriber.fromJson(response);
   }

@@ -1,0 +1,458 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fresh_news_mobile/core/constants/world.dart';
+import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
+import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
+import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
+import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
+import 'package:fresh_news_mobile/features/archive/presentation/widgets/post_card.dart';
+import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
+import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
+import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
+import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
+import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
+import 'package:fresh_news_mobile/shared/widgets/news_card.dart';
+
+class ArchiveScreen extends ConsumerWidget {
+  const ArchiveScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeWorld = ref.watch(activeWorldProvider);
+    final subscriberAsync = ref.watch(subscriberProvider);
+    final affinityPostsAsync = ref.watch(affinityPostsProvider);
+    final archivedNewslettersAsync = ref.watch(archivedNewslettersProvider);
+
+    final width = MediaQuery.of(context).size.width;
+    final crossAxisCount = width < 600 ? 1 : 2;
+
+    return Scaffold(
+      backgroundColor: FNColors.background,
+      body: CustomScrollView(
+        slivers: [
+          _buildAppBar(context, ref, activeWorld),
+          _buildHeroCardSection(archivedNewslettersAsync),
+          _buildAffinityAlertSection(context, ref, subscriberAsync),
+          _buildAffinityFeedSection(affinityPostsAsync, subscriberAsync),
+          _buildArchivedEditionsSection(archivedNewslettersAsync, crossAxisCount),
+          const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, WidgetRef ref, World activeWorld) {
+    return SliverAppBar(
+      pinned: true,
+      floating: true,
+      backgroundColor: FNColors.background.withValues(alpha: 0.85),
+      elevation: 0,
+      title: Text(
+        'ARQUIVO HISTÓRICO',
+        style: FNTypography.headingMedium.copyWith(
+          fontWeight: FontWeight.w800,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: FNSpacing.lg),
+          child: PopupMenuButton<World>(
+            icon: Icon(activeWorld.config.icon, color: activeWorld.config.primaryColor),
+            color: FNColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: FNColors.border),
+            ),
+            onSelected: (world) => ref.read(worldControllerProvider.notifier).setWorld(world),
+            itemBuilder: (context) => World.values.map((world) {
+              return PopupMenuItem(
+                value: world,
+                child: Row(
+                  children: [
+                    Icon(world.config.icon, color: world.config.primaryColor, size: 18),
+                    const SizedBox(width: FNSpacing.sm),
+                    Text(world.config.label, style: FNTypography.bodyMedium.copyWith(color: FNColors.textPrimary)),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeroCardSection(AsyncValue<List<dynamic>> newslettersAsync) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(FNSpacing.lg),
+        child: Container(
+          // Double border effect
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white.withOpacity(0.06), width: 2),
+          ),
+          padding: const EdgeInsets.all(2),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white.withOpacity(0.06), width: 2),
+              color: FNColors.surface,
+            ),
+            child: Stack(
+              children: [
+                // Scanlines Overlay (5%)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: const _ScanlinePainter(),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(FNSpacing.lg),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ).animate(onPlay: (c) => c.repeat(reverse: true))
+                                 .fadeIn(duration: 600.ms)
+                                 .then()
+                                 .fadeOut(duration: 600.ms),
+                                const SizedBox(width: FNSpacing.sm),
+                                Text(
+                                  'INTELLIGENCE_LOG',
+                                  style: FNTypography.techLabelSmall.copyWith(
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: FNSpacing.md),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'ARQUIVO ',
+                                    style: FNTypography.h1.copyWith(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w900,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'HISTÓRICO',
+                                    style: FNTypography.h1.copyWith(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w900,
+                                      fontStyle: FontStyle.italic,
+                                      color: FNColors.primaryViolet,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: FNSpacing.sm),
+                            Text(
+                              'Explorando o log de transmissões técnicas',
+                              style: FNTypography.bodySmall.copyWith(
+                                color: FNColors.mutedForeground,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: FNSpacing.md),
+                      newslettersAsync.when(
+                        data: (list) => _buildLogsCounter(list.length),
+                        loading: () => _buildLogsCounter(0),
+                        error: (_, __) => _buildLogsCounter(0),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogsCounter(int count) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: FNSpacing.md, vertical: FNSpacing.sm),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.02),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'TOTAL_LOGS',
+            style: FNTypography.techLabelSmall.copyWith(fontSize: 8, color: FNColors.mutedForeground),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            count.toString().padLeft(2, '0'),
+            style: FNTypography.h1.copyWith(fontSize: 24, fontWeight: FontWeight.w900),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAffinityAlertSection(BuildContext context, WidgetRef ref, AsyncValue<dynamic> subscriberAsync) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
+        child: subscriberAsync.when(
+          data: (subscriber) {
+            final isActive = subscriber != null;
+            final borderColor = isActive ? Colors.green.withOpacity(0.4) : Colors.white.withOpacity(0.1);
+            final bgColor = isActive ? Colors.green.withOpacity(0.05) : Colors.white.withOpacity(0.01);
+            final dotColor = isActive ? Colors.green : Colors.grey;
+
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: borderColor, width: 1),
+                color: bgColor,
+              ),
+              padding: const EdgeInsets.all(FNSpacing.base),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: dotColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ).animate(onPlay: (c) => c.repeat(reverse: true))
+                       .scaleXY(begin: 1.0, end: 1.3, duration: 1.seconds)
+                       .then()
+                       .scaleXY(begin: 1.3, end: 1.0, duration: 1.seconds),
+                      const SizedBox(width: FNSpacing.sm),
+                      Text(
+                        isActive ? 'MOTOR_DE_AFINIDADES_ATIVO' : 'MOTOR_DE_AFINIDADES_INATIVO',
+                        style: FNTypography.techLabelSmall.copyWith(color: dotColor, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: FNSpacing.md),
+                  if (isActive) ...[
+                    Text(
+                      'Zine Personalizado // Feed de Afinidades',
+                      style: FNTypography.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Logado como: ${subscriber.email}',
+                      style: FNTypography.bodySmall.copyWith(color: FNColors.mutedForeground),
+                    ),
+                    const SizedBox(height: FNSpacing.sm),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: subscriber.preferences.map<Widget>((pref) {
+                        return FNBadge(label: pref);
+                      }).toList(),
+                    ),
+                    const SizedBox(height: FNSpacing.md),
+                    FNButton(
+                      label: 'AJUSTAR_INTERESSES',
+                      onPressed: () => context.push('/preferences/${subscriber.id}'),
+                    ),
+                  ] else ...[
+                    Text(
+                      'Feed de Afinidades Indisponível',
+                      style: FNTypography.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Inscreva-se com suas preferências para reordenar posts por relevância baseada em IA.',
+                      style: FNTypography.bodySmall.copyWith(color: FNColors.mutedForeground),
+                    ),
+                    const SizedBox(height: FNSpacing.md),
+                    FNButton(
+                      label: 'ASSINAR_PORTAL',
+                      onPressed: () => context.push('/subscribe'),
+                    ),
+                  ],
+                ],
+              ),
+            ).animate().slideY(begin: -0.1, end: 0, duration: 300.ms, curve: Curves.easeOut);
+          },
+          loading: () => const LoadingSkeleton(height: 120),
+          error: (_, __) => Container(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAffinityFeedSection(AsyncValue<List<Post>> postsAsync, AsyncValue<dynamic> subscriberAsync) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(FNSpacing.lg),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          Row(
+            children: [
+              const Icon(LucideIcons.sparkles, size: 16, color: FNColors.primaryViolet),
+              const SizedBox(width: FNSpacing.sm),
+              Text(
+                'FEED DE AFINIDADES',
+                style: FNTypography.techLabel.copyWith(color: Colors.white, fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: FNSpacing.md),
+          postsAsync.when(
+            data: (posts) {
+              if (posts.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: FNSpacing.lg),
+                  child: Center(
+                    child: Text('Nenhum log disponível.', style: FNTypography.bodyMedium),
+                  ),
+                );
+              }
+
+              final subscriber = subscriberAsync.valueOrNull;
+
+              return Column(
+                children: posts.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final post = entry.value;
+                  final isPreferred = subscriber != null && subscriber.preferences.contains(post.category);
+
+                  return PostCard(
+                    post: post,
+                    isPreferred: isPreferred,
+                  ).animate().fadeIn(delay: (index * 100).ms, duration: 300.ms).slideX(begin: -0.05, end: 0);
+                }).toList(),
+              );
+            },
+            loading: () => const Column(
+              children: [
+                LoadingSkeleton(height: 140),
+                SizedBox(height: FNSpacing.base),
+                LoadingSkeleton(height: 140),
+              ],
+            ),
+            error: (error, stack) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(FNSpacing.lg),
+                child: Text('Erro ao carregar o feed: $error', style: FNTypography.bodyMedium.copyWith(color: Colors.red)),
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildArchivedEditionsSection(AsyncValue<List<Newsletter>> newslettersAsync, int crossAxisCount) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          const Divider(),
+          const SizedBox(height: FNSpacing.lg),
+          Row(
+            children: [
+              const Icon(LucideIcons.archive, size: 16, color: FNColors.primaryViolet),
+              const SizedBox(width: FNSpacing.sm),
+              Text(
+                'EDIÇÕES ARQUIVADAS',
+                style: FNTypography.techLabel.copyWith(color: Colors.white, fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: FNSpacing.md),
+          newslettersAsync.when(
+            data: (newsletters) {
+              if (newsletters.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: FNSpacing.lg),
+                  child: Center(
+                    child: Text('Nenhuma edição arquivada.', style: FNTypography.bodyMedium),
+                  ),
+                );
+              }
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: FNSpacing.lg,
+                  mainAxisSpacing: FNSpacing.lg,
+                  mainAxisExtent: 320,
+                ),
+                itemCount: newsletters.length,
+                itemBuilder: (context, index) {
+                  final newsletter = newsletters[index];
+                  final dateString = '${newsletter.createdAt.day.toString().padLeft(2, '0')}/${newsletter.createdAt.month.toString().padLeft(2, '0')}/${newsletter.createdAt.year}';
+
+                  return NewsCard(
+                    data: NewsCardData(
+                      id: newsletter.id,
+                      title: newsletter.title,
+                      intro: newsletter.summaryIntro ?? '',
+                      imageUrl: newsletter.imageUrl,
+                      edition: 'EDIÇÃO #${newsletter.editionNumber}',
+                      date: dateString,
+                      categories: newsletter.category != null ? [newsletter.category!] : [],
+                    ),
+                    onTap: () => context.push('/archive/${newsletter.id}'),
+                  ).animate().fadeIn(delay: (index * 100).ms, duration: 300.ms).slideY(begin: 0.05, end: 0);
+                },
+              );
+            },
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            error: (error, stack) => Center(
+              child: Text('Erro ao carregar edições: $error', style: FNTypography.bodyMedium.copyWith(color: Colors.red)),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+class _ScanlinePainter extends CustomPainter {
+  const _ScanlinePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.02)
+      ..strokeWidth = 1;
+
+    for (double y = 0; y < size.height; y += 4) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}

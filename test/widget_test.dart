@@ -1,30 +1,67 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fresh_news_mobile/app/app.dart';
+import 'package:fresh_news_mobile/core/constants/world.dart';
+import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
+import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
+import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
+import 'package:fresh_news_mobile/shared/domain/subscriber.entity.dart';
+import 'package:fresh_news_mobile/shared/infrastructure/newsletter_repository.dart';
+import 'package:fresh_news_mobile/shared/infrastructure/post_repository.dart';
+import 'package:fresh_news_mobile/shared/infrastructure/subscriber_repository.dart';
 
-import 'package:fresh_news_mobile/main.dart';
+class FakeNewsletterRepository implements NewsletterRepository {
+  @override
+  Future<List<Newsletter>> getPublished({required World world, int page = 0, int pageSize = 20}) async => [];
+  @override
+  Future<Newsletter> getById(String id) async => throw UnimplementedError();
+  @override
+  Future<void> updateStatus(String id, String status) async {}
+}
+
+class FakePostRepository implements PostRepository {
+  @override
+  Future<List<Post>> getPublished({required World world, String? category, int page = 0, int pageSize = 20}) async => [];
+  @override
+  Future<List<Post>> getApproved({required World world, int limit = 10}) async => [];
+  @override
+  Future<Post> getById(String id) async => throw UnimplementedError();
+}
+
+class FakeSubscriberRepository implements SubscriberRepository {
+  @override
+  Future<Subscriber> create({required String email, required List<World> worlds}) async => throw UnimplementedError();
+  @override
+  Future<Subscriber?> getByEmail(String email) async => null;
+  @override
+  Future<Subscriber?> getById(String id) async => null;
+  @override
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active}) async {}
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App smoke test', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          newsletterRepositoryProvider.overrideWithValue(FakeNewsletterRepository()),
+          postRepositoryProvider.overrideWithValue(FakePostRepository()),
+          subscriberRepositoryProvider.overrideWithValue(FakeSubscriberRepository()),
+        ],
+        child: const FreshNewsApp(),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.byType(FreshNewsApp), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Desmonta a árvore de widgets para cancelar timers e animações infinitas
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
   });
 }

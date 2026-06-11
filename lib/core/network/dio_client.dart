@@ -5,6 +5,7 @@ import 'package:fresh_news_mobile/core/constants/app_constants.dart';
 final dioClientProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
+      baseUrl: AppConstants.baseApiUrl,
       connectTimeout: AppConstants.defaultTimeout,
       receiveTimeout: AppConstants.defaultTimeout,
       headers: {

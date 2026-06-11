@@ -7,6 +7,7 @@ import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 abstract class NewsletterRepository {
   Future<List<Newsletter>> getPublished({required World world, int page = 0, int pageSize = 20});
   Future<Newsletter> getById(String id);
+  Future<void> updateStatus(String id, String status);
 }
 
 class SupabaseNewsletterRepository implements NewsletterRepository {
@@ -36,6 +37,17 @@ class SupabaseNewsletterRepository implements NewsletterRepository {
   Future<Newsletter> getById(String id) async {
     final response = await _client.from('newsletters').select().eq('id', id).single();
     return Newsletter.fromJson(response);
+  }
+
+  @override
+  Future<void> updateStatus(String id, String status) async {
+    final updates = <String, dynamic>{
+      'status': status,
+    };
+    if (status == 'published') {
+      updates['published_at'] = DateTime.now().toIso8601String();
+    }
+    await _client.from('newsletters').update(updates).eq('id', id);
   }
 }
 

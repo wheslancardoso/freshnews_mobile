@@ -12,39 +12,62 @@ class Post {
   final String status;
   final DateTime? publishedAt;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
+  final String url;
+  final String? source;
+  final int score;
+  final String subCategory;
+  final Map<String, dynamic>? themeConfig;
+  final String? whatsappSummary;
+  final Map<String, dynamic>? metadata;
 
   const Post({
     required this.id,
     required this.world,
     required this.title,
-    required this.slug,
-    required this.summary,
-    required this.content,
+    this.slug = '',
+    this.summary = '',
+    this.content = '',
     this.imageUrl,
     required this.category,
     required this.status,
     this.publishedAt,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
+    required this.url,
+    this.source,
+    this.score = 0,
+    this.subCategory = 'GERAL',
+    this.themeConfig,
+    this.whatsappSummary,
+    this.metadata,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json['id'] as String,
-      world: WorldExtension.fromSlug(json['world'] as String),
-      title: json['title'] as String,
-      slug: json['slug'] as String,
+      world: WorldExtension.fromSlug(json['world'] as String? ?? 'tech'),
+      title: json['title'] as String? ?? '',
+      slug: json['slug'] as String? ?? '',
       summary: json['summary'] as String? ?? '',
       content: json['content'] as String? ?? '',
       imageUrl: json['image_url'] as String?,
-      category: json['category'] as String? ?? '',
-      status: json['status'] as String? ?? 'draft',
+      category: json['category'] as String? ?? 'TECH_HACKER',
+      status: json['status'] as String? ?? 'pending',
       publishedAt: json['published_at'] != null
           ? DateTime.parse(json['published_at'] as String)
           : null,
       createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : null,
+      url: json['url'] as String? ?? '',
+      source: json['source'] as String?,
+      score: json['score'] as int? ?? 0,
+      subCategory: json['sub_category'] as String? ?? 'GERAL',
+      themeConfig: json['theme_config'] as Map<String, dynamic>?,
+      whatsappSummary: json['whatsapp_summary'] as String?,
+      metadata: json['metadata'] as Map<String, dynamic>?,
     );
   }
 
@@ -61,7 +84,14 @@ class Post {
       'status': status,
       'published_at': publishedAt?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+      'url': url,
+      'source': source,
+      'score': score,
+      'sub_category': subCategory,
+      'theme_config': themeConfig,
+      'whatsapp_summary': whatsappSummary,
+      'metadata': metadata,
     };
   }
 
@@ -78,6 +108,13 @@ class Post {
     DateTime? publishedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? url,
+    String? source,
+    int? score,
+    String? subCategory,
+    Map<String, dynamic>? themeConfig,
+    String? whatsappSummary,
+    Map<String, dynamic>? metadata,
   }) {
     return Post(
       id: id ?? this.id,
@@ -92,6 +129,14 @@ class Post {
       publishedAt: publishedAt ?? this.publishedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      url: url ?? this.url,
+      source: source ?? this.source,
+      score: score ?? this.score,
+      subCategory: subCategory ?? this.subCategory,
+      themeConfig: themeConfig ?? this.themeConfig,
+      whatsappSummary: whatsappSummary ?? this.whatsappSummary,
+      metadata: metadata ?? this.metadata,
     );
   }
 }
+

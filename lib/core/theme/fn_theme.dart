@@ -13,6 +13,11 @@ class FNTypography {
 
   // Compatibility getter for HackerModeTheme and other references
   static TextStyle get monospace => mono;
+  static TextStyle get headingLarge => h2;
+  static TextStyle get headingMedium => h2;
+  static TextStyle get headingSmall => h3;
+  static TextStyle get displayLarge => h1;
+  static TextStyle get label => techLabel;
 
   // Headlines
   static TextStyle h1 = GoogleFonts.outfit(

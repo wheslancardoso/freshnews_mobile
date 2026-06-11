@@ -7,6 +7,9 @@ import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+import 'package:fresh_news_mobile/core/theme/chameleon_theme_provider.dart';
+
 import 'package:fresh_news_mobile/features/auth/application/auth_notifier.dart';
 import 'package:fresh_news_mobile/features/newsletter_detail/application/newsletter_detail_provider.dart';
 import 'package:fresh_news_mobile/features/newsletter_detail/presentation/widgets/terminal_debate.dart';
@@ -52,8 +55,15 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
             );
         _tracked = true;
       }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
+              newsletter.category ?? 'MASTER',
+              world: newsletter.world.config.slug,
+            );
+      });
     });
   }
+
 
   Color _getCategoryColor(String name) {
     final upper = name.toUpperCase();
@@ -180,17 +190,33 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                       
                       // 7. Terminal Debate
                       if (newsletter.debateLog.isNotEmpty) ...[
-                        Text(
-                          '── TERMINAL DEBATE ──',
-                          style: FNTypography.techLabel.copyWith(
-                            color: FNColors.mutedForeground.withOpacity(0.5),
-                            fontSize: 11,
+                        VisibilityDetector(
+                          key: Key('detail-debate-${newsletter.id}'),
+                          onVisibilityChanged: (info) {
+                            if (info.visibleFraction > 0.4) {
+                              ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
+                                    newsletter.category ?? 'MASTER',
+                                    world: newsletter.world.config.slug,
+                                  );
+                            }
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                '── TERMINAL DEBATE ──',
+                                style: FNTypography.techLabel.copyWith(
+                                  color: FNColors.mutedForeground.withOpacity(0.5),
+                                  fontSize: 11,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: FNSpacing.lg),
+                              TerminalDebate(messages: newsletter.debateLog),
+                              const SizedBox(height: FNSpacing.xl),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: FNSpacing.lg),
-                        TerminalDebate(messages: newsletter.debateLog),
-                        const SizedBox(height: FNSpacing.xl),
                       ],
 
                       // 8. Admin Actions (Publish / Reject)
@@ -338,32 +364,40 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   Widget _buildCategorySection(NewsCategory category) {
     final catColor = _getCategoryColor(category.name);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Category Header
-        Container(
-          padding: const EdgeInsets.only(bottom: 6),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: catColor, width: 2),
+    return VisibilityDetector(
+      key: Key('detail-category-${category.name}'),
+      onVisibilityChanged: (info) {
+        if (info.visibleFraction > 0.4) {
+          ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(category.name);
+        }
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Category Header
+          Container(
+            padding: const EdgeInsets.only(bottom: 6),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: catColor, width: 2),
+              ),
+            ),
+            child: Text(
+              category.name.toUpperCase(),
+              style: FNTypography.headingSmall.copyWith(
+                color: catColor,
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+                letterSpacing: 1,
+              ),
             ),
           ),
-          child: Text(
-            category.name.toUpperCase(),
-            style: FNTypography.headingSmall.copyWith(
-              color: catColor,
-              fontWeight: FontWeight.w900,
-              fontSize: 16,
-              letterSpacing: 1,
-            ),
-          ),
-        ),
-        const SizedBox(height: FNSpacing.base),
-        // News Items List
-        ...category.items.map((item) => _buildNewsItemCard(item, catColor, category.name)),
-        const SizedBox(height: FNSpacing.lg),
-      ],
+          const SizedBox(height: FNSpacing.base),
+          // News Items List
+          ...category.items.map((item) => _buildNewsItemCard(item, catColor, category.name)),
+          const SizedBox(height: FNSpacing.lg),
+        ],
+      ),
     );
   }
 

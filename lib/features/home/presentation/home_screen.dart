@@ -18,6 +18,9 @@ import 'package:fresh_news_mobile/shared/widgets/fn_card.dart';
 import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
 import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
 import 'package:fresh_news_mobile/shared/widgets/news_card.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+import 'package:fresh_news_mobile/core/theme/chameleon_theme_provider.dart';
+
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -29,29 +32,25 @@ class HomeScreen extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width;
     final crossAxisCount = width < 600 ? 1 : width < 900 ? 2 : 3;
 
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: FNColors.background,
-          body: CustomScrollView(
-            slivers: [
-              _buildAppBar(context, ref, activeWorld),
-              SliverToBoxAdapter(child: _buildHeroSection(context, activeWorld)),
-              SliverToBoxAdapter(child: _buildWorldChips(ref, activeWorld)),
-              SliverToBoxAdapter(child: _buildCategoryTabs(ref, activeWorld)),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
-                sliver: _buildNewsletterGrid(filteredNewsletters, crossAxisCount),
-              ),
-              const SliverToBoxAdapter(child: SubscribeSection()),
-              const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
-            ],
+    return Scaffold(
+      backgroundColor: FNColors.background,
+      body: CustomScrollView(
+        slivers: [
+          _buildAppBar(context, ref, activeWorld),
+          SliverToBoxAdapter(child: _buildHeroSection(context, activeWorld)),
+          SliverToBoxAdapter(child: _buildWorldChips(ref, activeWorld)),
+          SliverToBoxAdapter(child: _buildCategoryTabs(ref, activeWorld)),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
+            sliver: _buildNewsletterGrid(filteredNewsletters, crossAxisCount),
           ),
-        ),
-        const ScanlineOverlay(),
-      ],
+          const SliverToBoxAdapter(child: SubscribeSection()),
+          const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
+        ],
+      ),
     );
   }
+
 
   Widget _buildAppBar(BuildContext context, WidgetRef ref, World activeWorld) {
     return SliverAppBar(
@@ -182,6 +181,7 @@ class HomeScreen extends ConsumerWidget {
               onTap: () {
                 HapticFeedback.lightImpact();
                 ref.read(worldControllerProvider.notifier).setWorld(world);
+                ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(world.config.slug);
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
@@ -252,7 +252,10 @@ class HomeScreen extends ConsumerWidget {
                 label: 'TODAS',
                 isSelected: isSelected,
                 color: activeWorld.config.primaryColor,
-                onTap: () => ref.read(selectedCategoryProvider.notifier).state = null,
+                onTap: () {
+                  ref.read(selectedCategoryProvider.notifier).state = null;
+                  ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
+                },
               );
             }
 
@@ -263,7 +266,13 @@ class HomeScreen extends ConsumerWidget {
               label: category.toUpperCase(),
               isSelected: isSelected,
               color: activeWorld.config.primaryColor,
-              onTap: () => ref.read(selectedCategoryProvider.notifier).state = category,
+              onTap: () {
+                ref.read(selectedCategoryProvider.notifier).state = category;
+                ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
+                      category,
+                      world: activeWorld.config.slug,
+                    );
+              },
             );
           },
         ),
@@ -350,17 +359,28 @@ class HomeScreen extends ConsumerWidget {
               final newsletter = newsletters[index];
               final dateString = '${newsletter.createdAt.day.toString().padLeft(2, '0')}/${newsletter.createdAt.month.toString().padLeft(2, '0')}/${newsletter.createdAt.year}';
               
-              return NewsCard(
-                data: NewsCardData(
-                  id: newsletter.id,
-                  title: newsletter.title,
-                  intro: newsletter.summaryIntro ?? '',
-                  imageUrl: newsletter.imageUrl,
-                  edition: 'EDIÇÃO #${newsletter.editionNumber}',
-                  date: dateString,
-                  categories: newsletter.category != null ? [newsletter.category!] : [],
+              return VisibilityDetector(
+                key: Key('home-newsletter-${newsletter.id}'),
+                onVisibilityChanged: (info) {
+                  if (info.visibleFraction > 0.5) {
+                    ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
+                          newsletter.category ?? 'MASTER',
+                          world: newsletter.world.config.slug,
+                        );
+                  }
+                },
+                child: NewsCard(
+                  data: NewsCardData(
+                    id: newsletter.id,
+                    title: newsletter.title,
+                    intro: newsletter.summaryIntro ?? '',
+                    imageUrl: newsletter.imageUrl,
+                    edition: 'EDIÇÃO #${newsletter.editionNumber}',
+                    date: dateString,
+                    categories: newsletter.category != null ? [newsletter.category!] : [],
+                  ),
+                  onTap: () => context.push('/archive/${newsletter.id}'),
                 ),
-                onTap: () => context.push('/archive/${newsletter.id}'),
               );
             },
             childCount: newsletters.length,

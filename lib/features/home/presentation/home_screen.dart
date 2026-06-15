@@ -42,7 +42,7 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(child: _buildCategoryTabs(ref, activeWorld)),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
-            sliver: _buildNewsletterGrid(filteredNewsletters, crossAxisCount),
+            sliver: _buildNewsletterGrid(ref, filteredNewsletters, crossAxisCount),
           ),
           const SliverToBoxAdapter(child: SubscribeSection()),
           const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
@@ -323,7 +323,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNewsletterGrid(AsyncValue<List<Newsletter>> filteredNewsletters, int crossAxisCount) {
+  Widget _buildNewsletterGrid(WidgetRef ref, AsyncValue<List<Newsletter>> filteredNewsletters, int crossAxisCount) {
     return filteredNewsletters.when(
       data: (newsletters) {
         if (newsletters.isEmpty) {

@@ -12,10 +12,12 @@ Este arquivo contém o prompt estruturado de **Deep Research** para você enviar
 ---
 
 ```markdown
-Você é um pesquisador técnico especialista em curadoria de conteúdo e raspagem de dados. Seu objetivo é realizar uma pesquisa aprofundada na web ("Deep Research") para mapear feeds RSS reais, ativos e funcionais que atendam a critérios estritos de nicho para um leitor de notícias de tecnologia, música e jogos com estética brutalista e nerd de baixo nível.
+Você é um pesquisador técnico especialista em curadoria de conteúdo e raspagem de dados. Seu objetivo é realizar uma pesquisa aprofundada na web ("Deep Research") para mapear fontes de conteúdo e feeds RSS reais, ativos e funcionais que atendam a critérios estritos de nicho para um leitor de notícias de tecnologia, música e jogos com estética brutalista e nerd de baixo nível.
 
-Para cada um dos mundos listados abaixo, pesquise e retorne uma lista de feeds RSS funcionais.
-IMPORTANTE: Eu preciso dos URLs diretos do arquivo RSS/XML (ex: `https://site.com/feed` ou `https://site.com/rss.xml`), não dos links comuns dos portais de notícias.
+Para cada um dos mundos listados abaixo, pesquise e retorne fontes de dados.
+IMPORTANTE: 
+1. Dê preferência a feeds RSS/XML nativos diretos (ex: `https://site.com/feed` ou `https://site.com/rss.xml`).
+2. Se uma excelente fonte de nicho (como subreddits específicos do Reddit, canais do YouTube de reviews técnicos avançados, ou perfis de especialistas no X/Twitter) não tiver RSS nativo, recomende-a indicando o link direto do canal/perfil e adicione a observação de que o usuário pode utilizar o **RSS.app** para gerar o feed RSS a partir desse link.
 
 ---
 
@@ -23,9 +25,9 @@ IMPORTANTE: Eu preciso dos URLs diretos do arquivo RSS/XML (ex: `https://site.co
 Este mundo cobre desde a produção de áudio digital (plugins, DAWs, hardware de sintetizadores) até lançamentos de artistas independentes de música eletrônica, indie rock, hip-hop underground e charts.
 As categorias do app são: [ARTISTAS, PRODUÇÃO, INDIE, CHARTS, LANÇAMENTOS].
 
-Recomende feeds RSS reais e específicos para:
-- Produção musical, sintetizadores, plugins e equipamentos de áudio (ex: blogs de produção, análises de plugins e DAWs).
-- Música eletrônica, underground, cultura DJ e clubs (ex: Resident Advisor, sites de nicho de techno/house).
+Recomende fontes (RSS nativo ou links para converter via RSS.app) específicas para:
+- Produção musical, sintetizadores, plugins e equipamentos de áudio (ex: blogs de produção, canais de review de sintetizadores modulares analógicos).
+- Música eletrônica, underground, cultura DJ e clubs (ex: Resident Advisor, subreddits de techno/house/produção).
 - Lançamentos e artistas de indie rock, alternativo e hip-hop experimental.
 - Paradas de sucesso e estatísticas da indústria (charts alternativos e populares).
 
@@ -35,10 +37,10 @@ Recomende feeds RSS reais e específicos para:
 Este mundo cobre hardware físico, DIY (Do It Yourself), eletrônica hacker, microcontroladores (Arduino, Raspberry Pi), gadgets vestíveis inovadores, e engenharia automotiva pesada/mecanização, longe do marketing de massa.
 As categorias do app são: [AUTOMOTIVO, GADGETS, WEARABLES, DIY, INOVAÇÃO].
 
-Recomende feeds RSS reais e específicos para:
-- Projetos maker, eletrônica, soldagem de circuitos, mods de hardware (ex: sites no estilo Hackaday ou fóruns maker).
+Recomende fontes (RSS nativo ou links para converter via RSS.app) específicas para:
+- Projetos maker, eletrônica, soldagem de circuitos, mods de hardware (ex: fóruns maker, subreddits de DIY de sintetizadores ou hardware, sites como Hackaday).
 - Cultura de modificação automotiva, novos motores, protótipos industriais e carros esportivos focados em engenharia (não em propagandas).
-- Lançamentos de gadgets de nicho, consoles portáteis alternativos, dispositivos e-ink, gadgets modulares.
+- Lançamentos de gadgets de nicho, consoles portáteis alternativos, dispositivos e-ink, gadgets modulares (ex: canais de YouTube de reviews minuciosos de hardware).
 - Tecnologias vestíveis focadas em biometria, utilidade tática e projetos abertos de hardware.
 
 ---
@@ -47,9 +49,9 @@ Recomende feeds RSS reais e específicos para:
 Este mundo cobre a cultura gamer raiz, com foco forte na preservação digital de jogos antigos (emulação), lançamentos indies inovadores, e-sports competitivos técnicos, modificações e ports de jogos para PC e consoles, e discussões de mecânica de jogo pura.
 As categorias do app são: [PC, CONSOLE, MOBILE, ESPORTS, INDIE].
 
-Recomende feeds RSS reais e específicos para:
-- Cobertura de jogos indies e estúdios independentes menores (ex: sites focados em PC gaming alternativo).
-- Emulação, ROM hacking, consoles de nicho (portáteis chineses retro) e preservação digital.
+Recomende fontes (RSS nativo ou links para converter via RSS.app) específicas para:
+- Cobertura de jogos indies e estúdios independentes menores (ex: sites focados em PC gaming alternativo, comunidades de desenvolvedores).
+- Emulação, ROM hacking, consoles de nicho (portáteis retro de hardware aberto) e preservação digital.
 - Análise de mecânicas de gameplay pura de console e PC (longe dos jargões corporativos de publicidade).
 - Notícias técnicas de e-sports (análise tática, mods competitivos e atualizações de meta).
 - Jogos mobile premium, ports e inovações no circuito móvel (não jogos caça-níqueis casuais/F2P predatórios).
@@ -60,11 +62,12 @@ Recomende feeds RSS reais e específicos para:
 Para cada um dos 3 mundos, retorne a lista de fontes usando o seguinte template:
 
 ### 🌐 MUNDO: [NOME DO MUNDO]
-*   **[Nome da Fonte]** (Categoria Sugerida: [Indique qual das categorias do mundo este feed melhor atende])
-    *   **URL do RSS**: `[URL real e testado do feed RSS/XML]`
+*   **[Nome da Fonte/Perfil/Subreddit]** (Categoria Sugerida: [Indique qual das categorias do mundo este feed melhor atende])
+    *   **URL do RSS (ou Link para RSS.app)**: `[URL do feed RSS nativo OU link direto do perfil/canal/subreddit]`
+    *   **Tipo**: [Nativo RSS OR Requer RSS.app para conversão]
     *   **Foco Editorial**: [1 frase explicando o foco técnico ou estético da fonte]
 
-Certifique-se de que os feeds estejam ativos em 2026.
+Certifique-se de que as fontes estejam ativas em 2026.
 ```
 
 ---

@@ -21,7 +21,7 @@ import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
 import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
 import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
-import 'package:fresh_news_mobile/shared/infrastructure/tracking_repository.dart';
+import 'package:fresh_news_mobile/shared/infrastructure/telemetry_repository.dart';
 
 class NewsletterDetailScreen extends ConsumerStatefulWidget {
   final String id;
@@ -37,11 +37,40 @@ class NewsletterDetailScreen extends ConsumerStatefulWidget {
 
 class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen> {
   bool _tracked = false;
+  
+  // Mapa para rastreamento de Dwell Time por categoria
+  final Map<String, DateTime> _categoryStartTimes = {};
+  final Map<String, Duration> _categoryDurations = {};
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _triggerTracking();
+  }
+
+  @override
+  void dispose() {
+    // Ao sair da tela, calcula o dwell time final e dispara a telemetria
+    _flushDwellTimes();
+    super.dispose();
+  }
+
+  void _flushDwellTimes() {
+    final now = DateTime.now();
+    final telemetry = ref.read(telemetryRepositoryProvider);
+    
+    for (final entry in _categoryStartTimes.entries) {
+      final category = entry.key;
+      final startTime = entry.value;
+      final currentDuration = _categoryDurations[category] ?? Duration.zero;
+      
+      final finalDuration = currentDuration + now.difference(startTime);
+      _categoryDurations[category] = finalDuration;
+      
+      // Envia a telemetria
+      telemetry.recordDwellTime(category: category, visibleDuration: finalDuration);
+    }
+    _categoryStartTimes.clear();
   }
 
   void _triggerTracking() {
@@ -51,10 +80,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
     newsletterAsyncValue.whenData((newsletter) {
       final subscriberId = ref.read(subscriberIdProvider);
       if (subscriberId != null) {
-        ref.read(trackingRepositoryProvider).trackClick(
-              subscriberId: subscriberId,
+        ref.read(telemetryRepositoryProvider).recordLinkClick(
               category: newsletter.category ?? 'MASTER',
-              newsletterId: newsletter.id,
             );
         _tracked = true;
       }
@@ -79,10 +106,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   Future<void> _launchUrl(String url, String category) async {
     final subscriberId = ref.read(subscriberIdProvider);
     if (subscriberId != null) {
-      ref.read(trackingRepositoryProvider).trackClick(
-            subscriberId: subscriberId,
+      ref.read(telemetryRepositoryProvider).recordLinkClick(
             category: category,
-            newsletterId: widget.id,
           );
     }
     final uri = Uri.parse(url);

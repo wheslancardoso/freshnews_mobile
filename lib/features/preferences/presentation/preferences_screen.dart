@@ -195,11 +195,17 @@ class PreferencesScreen extends ConsumerWidget {
       spacing: FNSpacing.sm,
       runSpacing: FNSpacing.sm,
       children: availableCategories.map((category) {
-        final isSelected = state.selectedPreferences.contains(category);
+        final isExplicitlySelected = state.selectedPreferences.contains(category);
+        
+        // IA Magic (Affinity > 0.5)
+        final affinityScore = state.subscriber?.affinityVector[category.toUpperCase()] ?? 0.0;
+        final isAiSuggested = !isExplicitlySelected && affinityScore >= 0.5;
+        final isSelected = isExplicitlySelected || isAiSuggested;
 
         return GestureDetector(
           onTap: () {
             HapticFeedback.lightImpact();
+            // Ao clicar numa sugestão da IA, o usuário a torna explícita ou a remove.
             notifier.togglePreference(category);
           },
           child: AnimatedContainer(
@@ -224,12 +230,25 @@ class PreferencesScreen extends ConsumerWidget {
                     ]
                   : null,
             ),
-            child: Text(
-              category,
-              style: FNTypography.bodySmall.copyWith(
-                color: isSelected ? Theme.of(context).colorScheme.primary : FNColors.textSecondary,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  category,
+                  style: FNTypography.bodySmall.copyWith(
+                    color: isSelected ? Theme.of(context).colorScheme.primary : FNColors.textSecondary,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
+                if (isAiSuggested) ...[
+                  const SizedBox(width: 6),
+                  Icon(
+                    LucideIcons.sparkles,
+                    size: 14,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ],
+              ],
             ),
           ),
         );

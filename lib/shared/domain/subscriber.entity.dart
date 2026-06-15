@@ -6,6 +6,7 @@ class Subscriber {
   final List<World> worlds;
   final bool active;
   final List<String> preferences;
+  final Map<String, double> affinityVector;
   final String? phone;
   final bool notifyEmail;
   final bool notifyWhatsapp;
@@ -18,6 +19,7 @@ class Subscriber {
     required this.worlds,
     required this.active,
     this.preferences = const [],
+    this.affinityVector = const {},
     this.phone,
     this.notifyEmail = true,
     this.notifyWhatsapp = false,
@@ -26,6 +28,13 @@ class Subscriber {
   });
 
   factory Subscriber.fromJson(Map<String, dynamic> json) {
+    // Parse affinity_vector safelly
+    Map<String, double> parsedAffinity = {};
+    if (json['affinity_vector'] != null) {
+      final map = json['affinity_vector'] as Map<String, dynamic>;
+      parsedAffinity = map.map((key, value) => MapEntry(key, (value as num).toDouble()));
+    }
+
     return Subscriber(
       id: json['id'] as String,
       email: json['email'] as String,
@@ -36,6 +45,7 @@ class Subscriber {
       preferences: (json['preferences'] as List<dynamic>? ?? [])
           .map((e) => e as String)
           .toList(),
+      affinityVector: parsedAffinity,
       phone: json['phone'] as String?,
       notifyEmail: json['notify_email'] as bool? ?? true,
       notifyWhatsapp: json['notify_whatsapp'] as bool? ?? false,
@@ -51,6 +61,7 @@ class Subscriber {
       'worlds': worlds.map((w) => w.config.slug).toList(),
       'active': active,
       'preferences': preferences,
+      'affinity_vector': affinityVector,
       if (phone != null) 'phone': phone,
       'notify_email': notifyEmail,
       'notify_whatsapp': notifyWhatsapp,
@@ -65,6 +76,7 @@ class Subscriber {
     List<World>? worlds,
     bool? active,
     List<String>? preferences,
+    Map<String, double>? affinityVector,
     String? phone,
     bool? notifyEmail,
     bool? notifyWhatsapp,
@@ -77,6 +89,7 @@ class Subscriber {
       worlds: worlds ?? this.worlds,
       active: active ?? this.active,
       preferences: preferences ?? this.preferences,
+      affinityVector: affinityVector ?? this.affinityVector,
       phone: phone ?? this.phone,
       notifyEmail: notifyEmail ?? this.notifyEmail,
       notifyWhatsapp: notifyWhatsapp ?? this.notifyWhatsapp,

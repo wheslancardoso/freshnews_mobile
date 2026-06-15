@@ -132,17 +132,25 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
                       fullWidth: true,
                     ),
                   ] else ...[
+                    const CircularProgressIndicator(
+                      color: FNColors.primaryViolet,
+                    ),
+                    const SizedBox(height: FNSpacing.xl),
                     Text(
-                      'Enviamos um Magic Link para o e-mail informado. Ao clicar no link, você será conectado automaticamente e redirecionado para a tela de configurações.',
+                      'AGUARDANDO CONFIRMAÇÃO...',
+                      textAlign: TextAlign.center,
+                      style: FNTypography.label.copyWith(
+                        color: FNColors.primaryViolet,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: FNSpacing.md),
+                    Text(
+                      'Enviamos um link seguro para o seu e-mail.\nMinimize este aplicativo, abra sua caixa de entrada e clique no link para ser conectado automaticamente.',
                       style: FNTypography.bodyMedium.copyWith(color: FNColors.textSecondary),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: FNSpacing.xl),
-                    FNButton(
-                      label: 'VOLTAR_A_HOME',
-                      onPressed: () => context.go('/'),
-                      fullWidth: true,
-                    ),
                   ],
                   const SizedBox(height: FNSpacing.lg),
                   FNButton(

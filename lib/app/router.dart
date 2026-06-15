@@ -93,7 +93,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         redirect: (context, state) {
           final session = Supabase.instance.client.auth.currentSession;
           if (session != null) {
-            return '/';
+            return '/profile';
           }
           return '/';
         },

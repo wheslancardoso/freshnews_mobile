@@ -1,61 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:fresh_news_mobile/shared/widgets/scanline_overlay.dart';
 import 'package:fresh_news_mobile/core/constants/categories.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
 import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
-import 'package:fresh_news_mobile/features/home/application/home_providers.dart';
-import 'package:fresh_news_mobile/features/subscribe/presentation/subscribe_section.dart';
-import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
-import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
-import 'package:fresh_news_mobile/shared/widgets/fn_card.dart';
-import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
+import 'package:fresh_news_mobile/features/feed/application/feed_providers.dart';
+import 'package:fresh_news_mobile/features/archive/presentation/widgets/post_card.dart';
 import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
-import 'package:fresh_news_mobile/shared/widgets/news_card.dart';
-import 'package:visibility_detector/visibility_detector.dart';
-import 'package:fresh_news_mobile/core/theme/chameleon_theme_provider.dart';
-
-
+import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
+import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
 import 'package:fresh_news_mobile/features/auth/application/auth_notifier.dart';
+import 'package:fresh_news_mobile/core/theme/chameleon_theme_provider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
-
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+class FeedScreen extends ConsumerWidget {
+  const FeedScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeWorld = ref.watch(activeWorldProvider);
-    final filteredNewsletters = ref.watch(filteredNewslettersProvider);
-    final width = MediaQuery.of(context).size.width;
-    final crossAxisCount = width < 600 ? 1 : width < 900 ? 2 : 3;
+    final filteredPosts = ref.watch(filteredFeedPostsProvider);
+    final subscriberId = ref.watch(subscriberIdProvider);
+    final subscriberAsync = ref.watch(subscriberProvider);
 
     return Scaffold(
       backgroundColor: FNColors.background,
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(context, ref, activeWorld),
-          SliverToBoxAdapter(child: _buildHeroSection(context, activeWorld)),
+          _buildAppBar(context, ref, activeWorld, subscriberId),
+          SliverToBoxAdapter(child: _buildHeroSection(activeWorld)),
           SliverToBoxAdapter(child: _buildWorldChips(ref, activeWorld)),
           SliverToBoxAdapter(child: _buildCategoryTabs(ref, activeWorld)),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
-            sliver: _buildNewsletterGrid(ref, filteredNewsletters, crossAxisCount),
+            sliver: _buildPostsList(ref, filteredPosts, subscriberAsync),
           ),
-          const SliverToBoxAdapter(child: SubscribeSection()),
           const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
         ],
       ),
     );
   }
 
-
-  Widget _buildAppBar(BuildContext context, WidgetRef ref, World activeWorld) {
+  Widget _buildAppBar(BuildContext context, WidgetRef ref, World activeWorld, String? subscriberId) {
     final authState = ref.watch(authProvider);
 
     return SliverAppBar(
@@ -67,32 +57,26 @@ class HomeScreen extends ConsumerWidget {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          GestureDetector(
-            onLongPress: () {
-              HapticFeedback.heavyImpact();
-              context.push('/login');
-            },
-            child: Container(
-              width: 36,
-              height: 36,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: activeWorld.config.primaryColor.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: activeWorld.config.primaryColor, width: 2.0),
-              ),
-              child: Text(
-                'FN',
-                style: FNTypography.headingSmall.copyWith(
-                  color: activeWorld.config.primaryColor,
-                  fontWeight: FontWeight.w800,
-                ),
+          Container(
+            width: 36,
+            height: 36,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: activeWorld.config.primaryColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: activeWorld.config.primaryColor, width: 2.0),
+            ),
+            child: Text(
+              'FN',
+              style: FNTypography.headingSmall.copyWith(
+                color: activeWorld.config.primaryColor,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),
           const SizedBox(width: FNSpacing.sm),
           Text(
-            'FRESH NEWS',
+            'SINAL DIRETO',
             style: FNTypography.headingMedium.copyWith(
               fontWeight: FontWeight.w800,
               fontStyle: FontStyle.italic,
@@ -108,71 +92,36 @@ class HomeScreen extends ConsumerWidget {
             tooltip: 'Console Admin',
             onPressed: () => context.push('/admin'),
           ),
-        if (ref.watch(subscriberIdProvider) != null)
+        if (subscriberId != null)
           Padding(
             padding: const EdgeInsets.only(right: FNSpacing.lg),
             child: IconButton(
               icon: const Icon(LucideIcons.settings, color: Colors.white),
-              onPressed: () => context.push('/preferences/${ref.read(subscriberIdProvider)}'),
+              onPressed: () => context.push('/preferences/$subscriberId'),
             ),
           ),
       ],
     );
   }
 
-  Widget _buildHeroSection(BuildContext context, World activeWorld) {
+  Widget _buildHeroSection(World activeWorld) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(FNSpacing.lg, FNSpacing.xl, FNSpacing.lg, FNSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(FNSpacing.lg, FNSpacing.lg, FNSpacing.lg, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: FNColors.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: FNColors.success, width: 1.5),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: FNColors.success,
-                    shape: BoxShape.circle,
-                  ),
-                ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 600.ms).then().fadeOut(duration: 600.ms),
-                const SizedBox(width: FNSpacing.sm),
-                Text(
-                  'STATUS // ONLINE // TRANSMITINDO',
-                  style: FNTypography.techLabelSmall.copyWith(color: FNColors.success),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: FNSpacing.md),
           Text(
-            'INFORMAÇÃO DESTILADA.\nSEM RUÍDO.',
+            'ARTIGOS E FONTES CURADAS',
             style: FNTypography.headingLarge.copyWith(
+              fontSize: 26,
               fontWeight: FontWeight.w800,
               fontStyle: FontStyle.italic,
-              height: 1.1,
             ),
           ),
-          const SizedBox(height: FNSpacing.md),
+          const SizedBox(height: FNSpacing.sm),
           Text(
-            'Curadoria editorial direta, sem distrações. As notícias mais relevantes do mundo selecionado, condensadas para você.',
-            style: FNTypography.bodyLarge.copyWith(color: FNColors.textSecondary),
-          ),
-          const SizedBox(height: FNSpacing.md),
-          FNButton(
-            label: 'VER_EDICOES_ANTERIORES',
-            variant: FNButtonVariant.outline,
-            primaryColor: activeWorld.config.primaryColor,
-            leading: Icon(LucideIcons.archive, size: 16, color: activeWorld.config.primaryColor),
-            onPressed: () => context.push('/archive'),
+            'Artigos recomendados do pipeline de inteligência artificial de ${activeWorld.config.label}. Reordenados em tempo real.',
+            style: FNTypography.bodyMedium.copyWith(color: FNColors.textSecondary),
           ),
         ],
       ),
@@ -249,7 +198,7 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildCategoryTabs(WidgetRef ref, World activeWorld) {
     final categories = worldCategories[activeWorld] ?? [];
-    final selectedCategory = ref.watch(selectedCategoryProvider);
+    final selectedCategory = ref.watch(selectedFeedCategoryProvider);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: FNSpacing.lg),
@@ -270,7 +219,7 @@ class HomeScreen extends ConsumerWidget {
                 isSelected: isSelected,
                 color: activeWorld.config.primaryColor,
                 onTap: () {
-                  ref.read(selectedCategoryProvider.notifier).state = null;
+                  ref.read(selectedFeedCategoryProvider.notifier).state = null;
                   ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
                 },
               );
@@ -284,7 +233,7 @@ class HomeScreen extends ConsumerWidget {
               isSelected: isSelected,
               color: activeWorld.config.primaryColor,
               onTap: () {
-                ref.read(selectedCategoryProvider.notifier).state = category;
+                ref.read(selectedFeedCategoryProvider.notifier).state = category;
                 ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
                       category,
                       world: activeWorld.config.slug,
@@ -340,10 +289,10 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNewsletterGrid(WidgetRef ref, AsyncValue<List<Newsletter>> filteredNewsletters, int crossAxisCount) {
-    return filteredNewsletters.when(
-      data: (newsletters) {
-        if (newsletters.isEmpty) {
+  Widget _buildPostsList(WidgetRef ref, AsyncValue<List<Post>> filteredPosts, AsyncValue<dynamic> subscriberAsync) {
+    return filteredPosts.when(
+      data: (posts) {
+        if (posts.isEmpty) {
           return SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: FNSpacing.xxxl),
@@ -353,7 +302,7 @@ class HomeScreen extends ConsumerWidget {
                     const Icon(LucideIcons.inbox, color: FNColors.textMuted, size: 40),
                     const SizedBox(height: FNSpacing.md),
                     Text(
-                      'Nenhuma edição encontrada para este filtro.',
+                      'Nenhum artigo encontrado para este filtro.',
                       style: FNTypography.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -364,82 +313,51 @@ class HomeScreen extends ConsumerWidget {
           );
         }
 
-        return SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: FNSpacing.lg,
-            mainAxisSpacing: FNSpacing.lg,
-            mainAxisExtent: 390,
-          ),
+        final subscriber = subscriberAsync.valueOrNull;
+
+        return SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              final newsletter = newsletters[index];
-              final dateString = '${newsletter.createdAt.day.toString().padLeft(2, '0')}/${newsletter.createdAt.month.toString().padLeft(2, '0')}/${newsletter.createdAt.year}';
-              
+              final post = posts[index];
+              final isPreferred = subscriber != null && subscriber.preferences.contains(post.category);
+
               return VisibilityDetector(
-                key: Key('home-newsletter-${newsletter.id}'),
+                key: Key('feed-post-${post.id}'),
                 onVisibilityChanged: (info) {
                   if (info.visibleFraction > 0.5) {
                     ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
-                          newsletter.category ?? 'MASTER',
-                          world: newsletter.world.config.slug,
+                          post.category,
+                          world: post.world.config.slug,
                         );
                   }
                 },
-                child: NewsCard(
-                  data: NewsCardData(
-                    id: newsletter.id,
-                    title: newsletter.title,
-                    intro: newsletter.summaryIntro ?? '',
-                    imageUrl: newsletter.imageUrl,
-                    edition: 'EDIÇÃO #${newsletter.editionNumber}',
-                    date: dateString,
-                    categories: newsletter.category != null ? [newsletter.category!] : [],
-                  ),
-                  onTap: () => context.push('/archive/${newsletter.id}'),
+                child: PostCard(
+                  post: post,
+                  isPreferred: isPreferred,
                 ),
               );
             },
-            childCount: newsletters.length,
+            childCount: posts.length,
           ),
         );
       },
-      loading: () => SliverGrid(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: FNSpacing.lg,
-          mainAxisSpacing: FNSpacing.lg,
-          mainAxisExtent: 390,
-        ),
+      loading: () => SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, index) => const FNCard(
-            child: SizedBox(
-              height: 280,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  LoadingSkeleton(height: 140),
-                  SizedBox(height: FNSpacing.md),
-                  LoadingSkeleton(height: 16, width: 100),
-                  SizedBox(height: FNSpacing.sm),
-                  LoadingSkeleton(height: 20),
-                  SizedBox(height: FNSpacing.sm),
-                  LoadingSkeleton(height: 14),
-                ],
-              ),
-            ),
+          (context, index) => const Padding(
+            padding: EdgeInsets.only(bottom: FNSpacing.base),
+            child: LoadingSkeleton(height: 140),
           ),
           childCount: 4,
         ),
       ),
       error: (error, stack) {
-        debugPrint('Erro na HomeScreen: $error\n$stack');
+        debugPrint('Erro na FeedScreen: $error\n$stack');
         return SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: FNSpacing.xxxl),
             child: Center(
               child: Text(
-                'Erro ao carregar edições. Tente novamente.',
+                'Erro ao carregar artigos. Tente novamente.',
                 style: FNTypography.bodyMedium.copyWith(color: FNColors.error),
               ),
             ),

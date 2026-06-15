@@ -17,6 +17,10 @@ import 'package:fresh_news_mobile/features/admin/presentation/admin_posts_screen
 import 'package:fresh_news_mobile/features/admin/presentation/admin_newsletters_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
+import 'package:fresh_news_mobile/app/main_shell.dart';
+import 'package:fresh_news_mobile/features/feed/presentation/feed_screen.dart';
+import 'package:fresh_news_mobile/features/profile/presentation/profile_screen.dart';
+
 final routerProvider = Provider<GoRouter>((ref) {
   final authNotifier = ref.watch(authProvider.notifier);
   final authState = ref.watch(authProvider);
@@ -26,15 +30,30 @@ final routerProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshNotifier(authNotifier.stream),
     routes: [
-      GoRoute(
-        path: '/',
-        name: 'home',
-        builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: '/archive',
-        name: 'archive',
-        builder: (context, state) => const ArchiveScreen(),
+      ShellRoute(
+        builder: (context, state, child) => MainShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/',
+            name: 'home',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/feed',
+            name: 'feed',
+            builder: (context, state) => const FeedScreen(),
+          ),
+          GoRoute(
+            path: '/archive',
+            name: 'archive',
+            builder: (context, state) => const ArchiveScreen(),
+          ),
+          GoRoute(
+            path: '/profile',
+            name: 'profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/archive/:id',
@@ -52,16 +71,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return PostDetailScreen(id: id);
         },
       ),
-      GoRoute(
-        path: '/about',
-        name: 'about',
-        builder: (context, state) => const _PlaceholderScreen(title: 'About'),
-      ),
-      GoRoute(
-        path: '/subscribe',
-        name: 'subscribe',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Subscribe'),
-      ),
+
       GoRoute(
         path: '/unsubscribe',
         name: 'unsubscribe',
@@ -147,35 +157,5 @@ class GoRouterRefreshNotifier extends ChangeNotifier {
   }
 }
 
-class _AdminShell extends StatelessWidget {
-  final Widget child;
 
-  const _AdminShell({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: child,
-    );
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-
-  const _PlaceholderScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Text(
-          title,
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-      ),
-    );
-  }
-}
 

@@ -38,6 +38,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Scaffold(
       backgroundColor: FNColors.background,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
+          onPressed: () => context.go('/'),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(FNSpacing.xl),

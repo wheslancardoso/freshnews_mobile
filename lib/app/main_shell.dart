@@ -1,68 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
-import 'package:fresh_news_mobile/features/auth/application/auth_notifier.dart';
 
-class AdminShell extends ConsumerWidget {
+class MainShell extends StatelessWidget {
   final Widget child;
 
-  const AdminShell({super.key, required this.child});
+  const MainShell({super.key, required this.child});
 
   int _getSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/admin/newsletters')) {
-      return 2;
-    }
-    if (location.startsWith('/admin/posts')) {
+    if (location.startsWith('/feed')) {
       return 1;
     }
-    return 0;
+    if (location.startsWith('/archive')) {
+      return 2;
+    }
+    if (location.startsWith('/profile')) {
+      return 3;
+    }
+    return 0; // Home
   }
 
   void _onItemTapped(int index, BuildContext context) {
+    HapticFeedback.lightImpact();
     switch (index) {
       case 0:
         context.go('/');
         break;
       case 1:
-        context.go('/admin/posts');
+        context.go('/feed');
         break;
       case 2:
-        context.go('/admin/newsletters');
+        context.go('/archive');
+        break;
+      case 3:
+        context.go('/profile');
         break;
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final selectedIndex = _getSelectedIndex(context);
 
     return Scaffold(
       backgroundColor: FNColors.background,
-      appBar: AppBar(
-        title: Text(
-          'ADMIN CONSOLE',
-          style: FNTypography.headingMedium.copyWith(
-            fontWeight: FontWeight.w800,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-        backgroundColor: FNColors.background.withValues(alpha: 0.85),
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.log_out, color: FNColors.error),
-            onPressed: () async {
-              await ref.read(authProvider.notifier).logout();
-              if (context.mounted) {
-                context.go('/');
-              }
-            },
-          ),
-        ],
-      ),
       body: child,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -76,20 +61,27 @@ class AdminShell extends ConsumerWidget {
           backgroundColor: FNColors.surface,
           selectedItemColor: FNColors.primaryViolet,
           unselectedItemColor: FNColors.textMuted,
-          selectedLabelStyle: FNTypography.techLabelSmall,
+          selectedLabelStyle: FNTypography.techLabelSmall.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
           unselectedLabelStyle: FNTypography.techLabelSmall,
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(LucideIcons.house),
               label: 'HOME',
             ),
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.inbox),
-              label: 'CURADORIA',
+              icon: Icon(LucideIcons.newspaper),
+              label: 'FEED',
             ),
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.mail),
-              label: 'EDIÇÕES',
+              icon: Icon(LucideIcons.archive),
+              label: 'ARQUIVO',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(LucideIcons.user),
+              label: 'PERFIL',
             ),
           ],
         ),

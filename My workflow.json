@@ -1,0 +1,1453 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8a3fc002-be8f-453f-8550-252e3eece3b7",
+              "leftValue": "={{ $json.ja_existe }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -544,
+        0
+      ],
+      "id": "c3b6ff6f-5b9a-4672-9504-61a939898f50",
+      "name": "É notícia nova?1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  '{{ $json.link }}' AS link,\n  EXISTS(SELECT 1 FROM posts WHERE url = '{{ $json.link }}') AS ja_existe;",
+        "options": {}
+      },
+      "id": "0fa029c3-2f57-4b92-9817-0a160fe268e5",
+      "name": "DB: Verifica URL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -720,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "texto_markdown",
+              "value": "={{ $json.data.markdown }}"
+            },
+            {
+              "name": "url_original",
+              "value": "={{ $('LOOP 2 (Notícias)').first().json.link }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2b76e948-0e92-4aed-b7d6-5bdf2c6859c0",
+      "name": "Formatar Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        64,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://firecrawl.wfixtech.com.br/v1/scrape",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json.link }}\",\n  \"formats\": [\"markdown\"]\n}",
+        "options": {}
+      },
+      "id": "c41e9301-ae70-4b8d-b0e5-074c4a5074dc",
+      "name": "API: Firecrawl",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -256,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "schema": "public",
+        "table": "posts",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "score": "={{ $json.score }}",
+            "title": "={{ $json.title }}",
+            "summary": "={{ $json.summary }}",
+            "url": "={{ $('LOOP 2 (Notícias)').item.json.link }}",
+            "content": "={{ $('Formatar Dados').item.json.texto_markdown }})",
+            "metadata": "={{ \nJSON.stringify({ \n  category: $json.category, \n  sub_category: $('Categoria e Sub_categoria').item.json.sub_categoria,\n  theme_config: $json.theme_config,\n  whatsapp_summary: $json.whatsapp_summary \n}) \n}}",
+            "category": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+            "sub_category": "={{ $json.sub_category }}",
+            "theme_config": "={{ $json.theme_config }}",
+            "status": "pending",
+            "source": "={{ $json.url }}",
+            "whatsapp_summary": "={{ $json.whatsapp_summary }}",
+            "world": "={{ .world }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "pending",
+                  "value": "pending"
+                },
+                {
+                  "name": "approved",
+                  "value": "approved"
+                },
+                {
+                  "name": "rejected",
+                  "value": "rejected"
+                },
+                {
+                  "name": "published",
+                  "value": "published"
+                }
+              ],
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "metadata",
+              "displayName": "metadata",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sub_category",
+              "displayName": "sub_category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "theme_config",
+              "displayName": "theme_config",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "whatsapp_summary",
+              "displayName": "whatsapp_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2944,
+        80
+      ],
+      "id": "80cd547e-261f-47ae-bc3a-10c361e5ca20",
+      "name": "DB: Salvar no Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2336,
+        32
+      ],
+      "id": "97bc4854-e9f9-4bb0-90d1-7131735e41d5",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Tu és o Diretor de Triagem da Fresh News. A tua única função é analisar o Markdown fornecido e classificar a notícia.\n\nDeves retornar apenas um objeto JSON estrito com esta estrutura:\n{\n\"category\": \"TECH_HACKER\",\n\"sub_category\": \"IA\" | \"DEV\" | \"SEC\" | \"CLOUD\"\n}\n\nRegras de Classificação:\n\nSEC: Se houver menção a vulnerabilidades, exploits, hacking, patches de segurança ou privacidade.\n\nIA: Se o foco for LLMs, modelos de linguagem, GPUs para IA ou automação inteligente.\n\nCLOUD: Se falar de AWS, Azure, Docker, Kubernetes ou infraestrutura.\n\nDEV: Se o assunto for linguagens de programação, frameworks, bibliotecas ou arquitetura de software.\""
+            },
+            {
+              "content": "={{ $('Formatar Dados').first().json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        -16
+      ],
+      "id": "3d90e593-0570-4f8e-990c-f13f72ef55cd",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Usamos 'any' para desativar as restrições chatas de tipo do TypeScript\nreturn $input.all().map((item) => {\n  const data = item.json;\n  \n  try {\n    // 1. Localiza o texto dentro da estrutura complexa da IA\n    // Usamos o ?. para evitar erro se o caminho não existir\n    const rawText = data.output?.[0]?.content?.[0]?.text || \"{}\";\n\n    // 2. Converte o texto para objeto JSON\n    const parsed = JSON.parse(rawText);\n\n    // 3. Retorna TUDO o que já existia + os novos campos limpos\n    return {\n      ...data,\n      category: parsed.category || \"SEM_CATEGORIA\",\n      sub_category: parsed.sub_category || \"SEM_SUBCATEGORIA\"\n    };\n    \n  } catch (err) {\n    // Se der erro no parse, ele não trava o fluxo\n    return {\n      ...data,\n      category: \"ERRO_JSON\",\n      sub_category: \"ERRO_JSON\",\n      error_details: String(err)\n    };\n  }\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        -16
+      ],
+      "id": "699a3153-92b2-400f-8218-c3781d1c1503",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Você é o Editor-Chefe de Triagem da Fresh News. \nSua única missão é analisar o texto bruto fornecido e classificar a notícia na subcategoria correta para direcioná-la aos nossos especialistas.\n\nSUBCATEGORIAS DISPONÍVEIS:\n- SEC: Vulnerabilidades, exploits, cibersegurança, vazamento de dados, privacidade.\n- IA: Inteligência Artificial, LLMs, Machine Learning, Pesos de Modelos.\n- DEV: Linguagens de programação, frameworks, frontend/backend.\n- CLOUD: Infraestrutura, AWS, Azure, DevOps, Docker.\n\nCONTRATO DE SAÍDA (Retorne APENAS um JSON válido):\n{\n  \"sub_category\": \"SIGLA_DA_CATEGORIA_AQUI\",\n  \"routing_reason\": \"Breve justificativa em 1 frase de por que escolheu essa categoria.\"\n}"
+            },
+            {
+              "content": "={{ $('Formatar Dados').first().json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1232,
+        -16
+      ],
+      "id": "8b0e3b45-fc26-484a-a5e9-2db9dd8c8b0d",
+      "name": "IA: Especialista Tech (Editor-Chefe)",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "TECH_HACKER",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1d89cdb6-d24a-493a-97bd-59f2e4fcbd70"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -16
+      ],
+      "id": "078052d6-a92a-4421-8453-b41253b9ee62",
+      "name": "Roteador"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dedc21f1-20db-4fce-95dc-0a521b642b8f",
+              "name": "categoria",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "5a51f822-ea2e-4cdf-82e8-b347931bb6b8",
+              "name": "sub_categoria",
+              "value": "={{ $json.sub_category }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        -16
+      ],
+      "id": "0600fac1-f525-4015-898d-bef1bac694ab",
+      "name": "Categoria e Sub_categoria"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "IA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d73fc066-78e5-4e44-8d63-55b4886229fe"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "97c18314-cac6-4fb6-8f7c-081ece64d8a5",
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "SEC",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5b84328f-7af9-476e-98b5-32a312f9ac8e",
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "DEV",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bf26b3a9-f0d0-4a71-8893-838f93bd92ed",
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "CLOUD",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1584,
+        -16
+      ],
+      "id": "6954ea38-e4b2-4804-9caa-a4856e1e4701",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Você é o Especialista em Cibersegurança (Red Team / Threat Intel) da Fresh News. Sua missão é analisar notícias técnicas sobre exploits, vulnerabilidades (CVEs) e vazamentos de dados.\n\nO texto original pode estar em inglês. O seu resumo final DEVE ser em Português Brasileiro (pt-BR).\n\nREGRAS EDITORIAIS DE DENSIDADE (ZERO-FLUFF POLICY):\n1. PROIBIDO usar alarmismo genérico de assessoria de imprensa (Ex: \"um perigo para a internet\", \"os hackers atacaram novamente\", \"atualize o quanto antes\").\n2. OBRIGATÓRIO focar em DADOS HARD (Threat Intel): Se o texto mencionar códigos CVE, pontuação CVSS, versões de software específicas afetadas, nomes de grupos APT, ou se há um PoC (Proof of Concept) público, VOCÊ DEVE INCLUÍ-LOS no resumo.\n3. Fale de Engenheiro de Segurança para Engenheiro. Estrutura obrigatória mental: Qual é o vetor de ataque? Qual o impacto? Qual é o patch/mitigação?\n\nESTÉTICA CAMALEÃO (MUTAÇÃO):\n- DNA Visual: TECH_HACKER\n- Accent Color: #FF0000 (Vermelho Alerta).\n- UI Effects: ['glitch_effect', 'scanlines', 'pulsing_borders'].\n\nCONTRATO DE SAÍDA (Retorne APENAS um JSON válido usando as chaves exatas abaixo em inglês):\n{\n  \"title\": \"Título técnico com o nome da falha ou CVE em pt-BR (Máx 60 chars)\",\n  \"summary\": \"Resumo denso focado no vetor do exploit, impacto (CVSS) e correção. Zero abstração. (Máx 280 chars)\",\n  \"whatsapp_summary\": \"Versão 'pager hacker' com emoji (ex: 🚨 RCE Crítico no vCenter (CVE-2026-X). CVSS 9.8. PoC público. Aplique o Patch v.8.0). Máx 160 chars.\",\n  \"relevance_score\": [Número de 0 a 100 baseado na severidade - Falhas de CVSS 9.0+ ou Zero-Days ativos valem 90+],\n  \"theme_config\": {\n    \"dna\": \"TECH_HACKER\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#FF0000\",\n    \"font_style\": \"Mono\",\n    \"ui_effects\": [\"glitch_effect\", \"scanlines\", \"pulsing_borders\"]\n  }\n}\n\n...\nOBRIGATÓRIO: Incluir IDs de CVE, pontuação CVSS (Ex: 9.8), o vetor de ataque (Ex: Buffer Overflow em biblioteca X) e se há PoC disponível.\n...\n"
+            },
+            {
+              "content": "={{ $('Formatar Dados').first().json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1792,
+        -16
+      ],
+      "id": "6ef1d203-a1f0-411f-8ab9-75911fa07b38",
+      "name": "Especialista em SEGURANÇA (SEC)",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Você é o Especialista em IA da Fresh News. Sua função é transformar artigos em boletins de inteligência técnica para engenheiros.\n\nZERO-FLUFF POLICY (RIGOROSA):\n- PROIBIDO: \"apostando estrategicamente\", \"potencial robusto\", \"cenário de avanços\", \"marcar o futuro\".\n- OBRIGATÓRIO: Citar valores ($), nomes de arquiteturas (TPUs, Llama 3, Groq), métricas (latência, tokens/sec) e nomes de fundos/empresas.\n\nESTRUTURA DO SUMMARY:\n[Entidade] + [Fato Técnico/Financeiro] + [Impacto na Pilha de Tecnologia].\n\nCONTRATO DE SAÍDA:\n{\n  \"title\": \"Nomes de empresas/tech + Ação principal (Ex: TDK: US$500M em Inferência e Groq)\",\n  \"summary\": \"Resumo denso (até 350 chars). Foque na tese técnica: US$500M geridos, aposta na Groq ( Jonathan Ross/TPU) focada em inferência. Tese: CPUs renascendo para orquestração de agentes físicos (Agility/ANYbotics).\",\n  \"whatsapp_summary\": \"🧠 [Empresa]: [Dado principal]. [Métrica]. [Impacto]. Zero marketing.\",\n  \"relevance_score\": [0-100],\n  \"theme_config\": { ... }\n}\n"
+            },
+            {
+              "content": "={{ $('Formatar Dados').first().json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1792,
+        -176
+      ],
+      "id": "76975b02-8456-424f-b71e-8f9bacaa2dcd",
+      "name": "Especialista em IA (IA)",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Você é o Arquiteto de Software Sênior (Tech Lead) da Fresh News. Sua missão é analisar notícias técnicas sobre engenharia de software, frameworks (React, Vue, Next.js, etc.), linguagens de programação, APIs e arquitetura de sistemas.\n\nO texto original pode estar em inglês. O seu resumo final DEVE ser em Português Brasileiro (pt-BR).\n\nREGRAS EDITORIAIS DE DENSIDADE (ZERO-FLUFF POLICY):\n1. PROIBIDO usar jargão de marketing ou abstrações (Ex: \"vai revolucionar a programação\", \"ajuda a criar sites melhores\", \"ferramenta poderosa\").\n2. OBRIGATÓRIO focar em DADOS HARD (Changelog Intel): Se o texto mencionar novas versões (ex: v15.2), reduções de bundle size, métricas de performance (ms, renders), breaking changes, novos hooks/APIs ou mudanças de paradigma arquitetural, VOCÊ DEVE INCLUÍ-LOS no resumo.\n3. Fale de Engenheiro para Engenheiro. Estrutura mental obrigatória: O que foi atualizado/lançado? Qual é o impacto real no código ou na arquitetura? Tem breaking change?\n\nESTÉTICA CAMALEÃO (MUTAÇÃO):\n- DNA Visual: TECH_HACKER\n- Accent Color: #00FF41 (Verde Matrix).\n- UI Effects: ['terminal_cursor', 'scanlines', 'grainy_texture'].\n\nCONTRATO DE SAÍDA (Retorne APENAS um JSON válido usando as chaves exatas abaixo em inglês):\n{\n  \"title\": \"Título pragmático focado no framework/linguagem e versão em pt-BR (Máx 60 chars)\",\n  \"summary\": \"Resumo denso focado em features da API, ganhos de performance e breaking changes. Zero abstração. (Máx 280 chars)\",\n  \"whatsapp_summary\": \"Versão 'Commit/Changelog' com emoji tech (ex: 💻 Next.js 15 RC liberado: Suporte ao React 19, novo compilador e cache otimizado. Atualize via npm.). Máx 160 chars.\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de mercado - Lançamentos majoritários de stacks globais valem 90+, bibliotecas pequenas < 50],\n  \"theme_config\": {\n    \"dna\": \"TECH_HACKER\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#00FF41\",\n    \"font_style\": \"Mono\",\n    \"ui_effects\": [\"terminal_cursor\", \"scanlines\", \"grainy_texture\"]\n  }\n}\n\nOBRIGATÓRIO: Versões exatas (Ex: v15.2), ganhos de performance medidos (Ex: 20% menos JS bundle), novos hooks ou APIs específicas e breaking changes."
+            },
+            {
+              "content": "={{ $('Formatar Dados').first().json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1808,
+        240
+      ],
+      "id": "17c73af9-cbb1-4f40-8292-eca20a318e9c",
+      "name": "Especialista em DEV (DEV)",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0f46cb48-70e7-444d-9cda-0e4ee7121b1f",
+              "leftValue": "={{ $json.is_active }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1952,
+        32
+      ],
+      "id": "c9bf0e79-e614-4e5d-a225-ce0a773f9533",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1760,
+        32
+      ],
+      "id": "afe7d629-092f-42eb-9a1d-1c058db5f579",
+      "name": "LOOP 1 (Sites)"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -912,
+        0
+      ],
+      "id": "1b6f7ecf-ea0f-4799-aecd-077d3da3f519",
+      "name": "LOOP 2 (Notícias)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Ler RSS (Trigger)').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        -32
+      ],
+      "id": "28017300-6285-4d17-a263-365b2320986a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Ler RSS (Trigger)').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        -192
+      ],
+      "id": "15ab8a8d-b9fc-4b73-ac5a-1d6c8838bad6",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Ler RSS (Trigger)').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        160
+      ],
+      "id": "2ae5d417-8063-4ebc-a1ae-1f866cf2b870",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $json.sub_category }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        32
+      ],
+      "id": "9ab1bd7c-c0ce-413c-bdeb-6056ee1c370c",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  // 1. Pega todos os dados que você unificou no Edit Fields anterior\n  const data = item.json;\n\n  // 2. Inicia a variável que vai guardar o JSON limpo\n  let parsedIA = {};\n\n  try {\n    // Pega o texto bruto que veio da IA (assumindo que está no campo 'content')\n    let aiText = data.content || \"{}\";\n\n    // MÁGICA: Limpa sujeiras que o GPT às vezes coloca (```json ... ```)\n    aiText = aiText.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\n    // Transforma o texto em um Objeto JSON real\n    parsedIA = JSON.parse(aiText);\n    \n  } catch (error) {\n    // Se a IA errar completamente a formatação, criamos um fallback seguro\n    parsedIA = {\n      title: \"Erro de Formatação da IA\",\n      summary: \"A resposta não pôde ser lida corretamente.\",\n      whatsapp_summary: \"\",\n      relevance_score: 0,\n      theme_config: {}\n    };\n  }\n\n  // 3. Monta o objeto final EXATAMENTE como o banco de dados precisa\n  return {\n    json: {\n      title: parsedIA.title || \"Sem título\",\n      summary: parsedIA.summary || \"\",\n      whatsapp_summary: parsedIA.whatsapp_summary || \"\",\n      score: parsedIA.relevance_score || 0,\n      theme_config: parsedIA.theme_config || {},\n      \n      // Trazendo as variáveis que você já tinha no Unificador:\n      url: data.url, \n      category: data.category, \n      sub_category: data.sub_category,\n      world: data.world || 'TECH',\n      \n      // Se você quiser salvar o Markdown bruto no banco também:\n      // content_markdown: data.texto_markdown (ajuste o nome se precisar)\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        32
+      ],
+      "id": "7872b7ab-2f37-4142-9075-ac5e43a272f2",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "sources",
+          "mode": "list",
+          "cachedResultName": "sources"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2128,
+        32
+      ],
+      "id": "2b9087f4-f773-48f8-bdad-7d677c1a32b2",
+      "name": "Buscar fontes supabase",
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Ler RSS (Trigger)').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        416
+      ],
+      "id": "1f36bb4a-8635-44b4-8421-0830ed300b2d",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Você é o Especialista em Cloud Computing e Infraestrutura (Site Reliability Engineer / Cloud Architect) da Fresh News. Sua missão é analisar notícias técnicas sobre AWS, Azure, GCP, Kubernetes, DevOps, Serverless, FinOps e escalabilidade.\n\nO texto original pode estar em inglês. O seu resumo final DEVE ser em Português Brasileiro (pt-BR).\n\nREGRAS EDITORIAIS DE DENSIDADE (ZERO-FLUFF POLICY):\n1. PROIBIDO usar linguagem de vendas, marketing de provedores ou nuvem abstrata (Ex: \"transformação digital\", \"revolucionando a nuvem\", \"ajuda as empresas a crescer\").\n2. OBRIGATÓRIO focar em DADOS HARD (Infra Intel): Se o texto mencionar nomes específicos de serviços (ex: S3 Express, EKS, Terraform), métricas de performance (IOPS, latência em ms), redução de custos ($ ou %), novos tipos de instâncias/chips (ex: Graviton4), ou mudanças arquiteturais, VOCÊ DEVE INCLUÍ-LOS no resumo.\n3. Fale de Arquiteto para Arquiteto. Estrutura mental obrigatória: O que foi lançado/alterado? Como isso afeta o pipeline de CI/CD, a topologia da rede ou o provisionamento? Qual é o impacto real no budget (FinOps) ou no SLA (Disponibilidade)?\n\nESTÉTICA CAMALEÃO (MUTAÇÃO):\n- DNA Visual: TECH_HACKER\n- Accent Color: #BD00FF (Púrpura Virtualização/Escala).\n- UI Effects: ['glassmorphism', 'cloud_compute_grid'].\n\nCONTRATO DE SAÍDA (Retorne APENAS um JSON válido usando as chaves exatas abaixo em inglês):\n{\n  \"title\": \"Título arquitetural focado no serviço/tecnologia em pt-BR (Máx 60 chars)\",\n  \"summary\": \"Resumo denso focado em topologia, IOPS, instâncias, custos ou escala. Zero abstração. (Máx 280 chars)\",\n  \"whatsapp_summary\": \"Versão 'FinOps/Infra' com emoji (ex: ☁️ AWS lança S3 Express One Zone: Latência de 1ms e 50% menos custo de computação. Ideal para workloads de ML.). Máx 160 chars.\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto na infraestrutura global - Quedas da AWS, novos clusters de IA ou quebras de retrocompatibilidade valem 90+],\n  \"theme_config\": {\n    \"dna\": \"TECH_HACKER\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#BD00FF\",\n    \"font_style\": \"Mono\",\n    \"ui_effects\": [\"glassmorphism\", \"cloud_compute_grid\"]\n  }\n}\n\nOBRIGATÓRIO: Nomes de instâncias (Ex: p5.48xlarge), custos ($/hr ou %), SLAs, regiões AWS/Azure afetadas e ferramentas de IaC (Terraform, K8s)."
+            },
+            {
+              "content": "={{ $('Formatar Dados').first().json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1808,
+        496
+      ],
+      "id": "b3f25ba5-cbce-46ea-8f7a-b811b0bd05c7",
+      "name": "Especialista em CLOUD",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.rss2json.com/v1/api.json?rss_url={{ $json.rss_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1472,
+        16
+      ],
+      "id": "7952bf71-35fe-4e60-81e6-34fb2aaafd2d",
+      "name": "Bypass de Sanitização HTTP"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        16
+      ],
+      "id": "13758443-3e4b-4f34-8295-f1453b24c49c",
+      "name": "Desempacotador JSON"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-04-24T00:00:55.076-04:00",
+          "Readable date": "April 24th 2026, 12:00:55 am",
+          "Readable time": "12:00:55 am",
+          "Day of week": "Friday",
+          "Year": "2026",
+          "Month": "April",
+          "Day of month": "24",
+          "Hour": "00",
+          "Minute": "00",
+          "Second": "55",
+          "Timezone": "America/New_York (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "É notícia nova?1": {
+      "main": [
+        [
+          {
+            "node": "API: Firecrawl",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Verifica URL": {
+      "main": [
+        [
+          {
+            "node": "É notícia nova?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Dados": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API: Firecrawl": {
+      "main": [
+        [
+          {
+            "node": "Formatar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Salvar no Postgres": {
+      "main": [
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Buscar fontes supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Categoria e Sub_categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA: Especialista Tech (Editor-Chefe)": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roteador": {
+      "main": [
+        [
+          {
+            "node": "IA: Especialista Tech (Editor-Chefe)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categoria e Sub_categoria": {
+      "main": [
+        [
+          {
+            "node": "Roteador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Especialista em IA (IA)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Especialista em SEGURANÇA (SEC)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Especialista em DEV (DEV)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Especialista em CLOUD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista em SEGURANÇA (SEC)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista em DEV (DEV)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista em IA (IA)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "LOOP 1 (Sites)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LOOP 1 (Sites)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Bypass de Sanitização HTTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LOOP 2 (Notícias)": {
+      "main": [
+        [
+          {
+            "node": "LOOP 1 (Sites)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DB: Verifica URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "DB: Salvar no Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar fontes supabase": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista em CLOUD": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bypass de Sanitização HTTP": {
+      "main": [
+        [
+          {
+            "node": "Desempacotador JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desempacotador JSON": {
+      "main": [
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2101937a-d834-4f92-98fb-d7c9ffc00d5b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "81d0635acec5467d6fba560d241108a93e1dbf19557fd3600a3d2fa845284989"
+  },
+  "id": "qW8JraJgjbd5avml",
+  "tags": []
+}

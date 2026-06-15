@@ -293,7 +293,7 @@ class ArchiveScreen extends ConsumerWidget {
                     const SizedBox(height: FNSpacing.md),
                     FNButton(
                       label: 'ASSINAR_PORTAL',
-                      onPressed: () => context.push('/subscribe'),
+                      onPressed: () => context.go('/profile'),
                     ),
                   ],
                 ],
@@ -404,7 +404,7 @@ class ArchiveScreen extends ConsumerWidget {
                   crossAxisCount: crossAxisCount,
                   crossAxisSpacing: FNSpacing.lg,
                   mainAxisSpacing: FNSpacing.lg,
-                  mainAxisExtent: 320,
+                  mainAxisExtent: 390,
                 ),
                 itemCount: newsletters.length,
                 itemBuilder: (context, index) {

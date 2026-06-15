@@ -17,15 +17,14 @@ class AdminNewslettersScreen extends ConsumerStatefulWidget {
 }
 
 class _AdminNewslettersScreenState extends ConsumerState<AdminNewslettersScreen> {
-  World _selectedWorld = World.tech;
   bool _isGenerating = false;
 
-  Future<void> _handleGenerate() async {
+  Future<void> _handleGenerate(World selectedWorld) async {
     setState(() => _isGenerating = true);
     try {
       await ref
           .read(adminNewsletterControllerProvider)
-          .generateDraft(_selectedWorld.name.toUpperCase());
+          .generateDraft(selectedWorld.name.toUpperCase());
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -47,6 +46,8 @@ class _AdminNewslettersScreenState extends ConsumerState<AdminNewslettersScreen>
   Widget build(BuildContext context) {
     final draftsAsync = ref.watch(adminDraftsProvider);
     final controller = ref.read(adminNewsletterControllerProvider);
+
+    final selectedWorld = ref.watch(adminSelectedWorldProvider);
 
     return Scaffold(
       backgroundColor: FNColors.background,
@@ -76,7 +77,7 @@ class _AdminNewslettersScreenState extends ConsumerState<AdminNewslettersScreen>
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<World>(
-                      value: _selectedWorld,
+                      value: selectedWorld,
                       dropdownColor: FNColors.surface,
                       decoration: const InputDecoration(
                         labelText: 'MUNDO',
@@ -91,7 +92,7 @@ class _AdminNewslettersScreenState extends ConsumerState<AdminNewslettersScreen>
                       }).toList(),
                       onChanged: (val) {
                         if (val != null) {
-                          setState(() => _selectedWorld = val);
+                          ref.read(adminSelectedWorldProvider.notifier).state = val;
                         }
                       },
                     ),
@@ -100,7 +101,7 @@ class _AdminNewslettersScreenState extends ConsumerState<AdminNewslettersScreen>
                   FNButton(
                     label: _isGenerating ? 'GERANDO...' : 'GERAR NOVA',
                     leading: const Icon(LucideIcons.zap, size: 16, color: Colors.white),
-                    onPressed: _isGenerating ? null : _handleGenerate,
+                    onPressed: _isGenerating ? null : () => _handleGenerate(selectedWorld),
                   ),
                 ],
               ),

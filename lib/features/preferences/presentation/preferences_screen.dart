@@ -25,10 +25,12 @@ class PreferencesScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: FNColors.background,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
+        leading: context.canPop()
+            ? IconButton(
+                icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
+                onPressed: () => context.pop(),
+              )
+            : null,
         title: Text(
           'PREFERÊNCIAS',
           style: FNTypography.headingMedium.copyWith(

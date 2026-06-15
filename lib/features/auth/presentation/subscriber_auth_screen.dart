@@ -53,10 +53,12 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
     return Scaffold(
       backgroundColor: FNColors.background,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
-          onPressed: () => context.go('/'),
-        ),
+        leading: context.canPop()
+            ? IconButton(
+                icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
+                onPressed: () => context.pop(),
+              )
+            : null,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -142,9 +144,16 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
                       fullWidth: true,
                     ),
                   ],
-                  const SizedBox(height: FNSpacing.xxl),
+                  const SizedBox(height: FNSpacing.lg),
+                  FNButton(
+                    label: 'LER_MANIFESTO_EDITORIAL',
+                    variant: FNButtonVariant.outline,
+                    onPressed: () => _showManifesto(context),
+                    fullWidth: true,
+                  ),
+                  const SizedBox(height: FNSpacing.xl),
                   TextButton(
-                    onPressed: () => context.go('/login'),
+                    onPressed: () => context.push('/login'),
                     child: Text(
                       'É um editor? Acessar área restrita →',
                       style: FNTypography.bodySmall.copyWith(
@@ -165,6 +174,58 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showManifesto(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: FNColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+        side: BorderSide(color: FNColors.border, width: 2),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(FNSpacing.xl),
+          color: FNColors.background,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'MANIFESTO EDITORIAL // FRESH NEWS',
+                style: FNTypography.headingMedium.copyWith(
+                  fontWeight: FontWeight.w900,
+                  fontStyle: FontStyle.italic,
+                  color: FNColors.primaryViolet,
+                ),
+              ),
+              const SizedBox(height: FNSpacing.md),
+              const Divider(color: FNColors.border, thickness: 1.5),
+              const SizedBox(height: FNSpacing.md),
+              Text(
+                'A informação no século XXI é abundante, mas ruidosa. O excesso de conteúdo obscurece o sinal real. O Fresh News é um portal de inteligência e curadoria direta.',
+                style: FNTypography.bodyMedium.copyWith(height: 1.5, color: FNColors.textPrimary),
+              ),
+              const SizedBox(height: FNSpacing.sm),
+              Text(
+                'Nossos algoritmos varrem diariamente dezenas de fontes selecionadas de alta fidelidade e relevância nos mundos de Tech, Games, Música e Gear. A inteligência artificial destila e organiza o fluxo, entregando apenas o que é essencial.',
+                style: FNTypography.bodyMedium.copyWith(height: 1.5, color: FNColors.textPrimary),
+              ),
+              const SizedBox(height: FNSpacing.xl),
+              FNButton(
+                label: 'FECHAR_MANIFESTO',
+                onPressed: () => Navigator.pop(context),
+                fullWidth: true,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

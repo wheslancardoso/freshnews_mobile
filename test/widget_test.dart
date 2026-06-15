@@ -33,7 +33,13 @@ class FakePostRepository implements PostRepository {
   @override
   Future<List<Post>> getApproved({required World world, int limit = 10}) async => [];
   @override
+  Future<List<Post>> getPending({required World world}) async => [];
+  @override
   Future<Post> getById(String id) async => throw UnimplementedError();
+  @override
+  Future<void> updateStatus(String id, String status) async {}
+  @override
+  Future<void> delete(String id) async {}
 }
 
 class FakeSubscriberRepository implements SubscriberRepository {

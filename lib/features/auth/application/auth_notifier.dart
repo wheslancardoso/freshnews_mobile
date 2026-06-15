@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fresh_news_mobile/core/network/dio_client.dart';
 import 'package:fresh_news_mobile/features/auth/domain/auth_state.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
+import 'package:fresh_news_mobile/core/constants/app_constants.dart';
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final SharedPreferences _prefs;
@@ -56,12 +57,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
 
     try {
-      final response = await _dio.post(
-        '/api/login',
-        data: {'password': password},
-      );
+      // Pequeno delay para simular validação e manter o loading de UX
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      if (response.data['success'] == true) {
+      if (password == AppConstants.adminPassword) {
         final expiry = DateTime.now().add(const Duration(days: 7));
         await _prefs.setBool(_sessionKey, true);
         await _prefs.setString(_sessionExpiryKey, expiry.toIso8601String());
@@ -78,7 +77,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.unauthenticated,
-        errorMessage: 'Erro de conexão. Tente novamente.',
+        errorMessage: 'Erro ao processar autenticação.',
       );
       return false;
     }

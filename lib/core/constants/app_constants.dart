@@ -11,4 +11,5 @@ class AppConstants {
   static const String prefsActiveWorldKey = 'active_world';
   static const String prefsThemeModeKey = 'theme_mode';
   static const String prefsAdminSessionKey = 'admin_session';
+  static const String adminPassword = String.fromEnvironment('ADMIN_PASSWORD', defaultValue: 'admin123');
 }

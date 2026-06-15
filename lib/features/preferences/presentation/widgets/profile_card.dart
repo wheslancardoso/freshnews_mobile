@@ -39,7 +39,10 @@ class ProfileCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     FNBadge(
                       label: subscriber.active ? 'ATIVO' : 'INATIVO',
@@ -47,7 +50,6 @@ class ProfileCard extends StatelessWidget {
                       backgroundColor: (subscriber.active ? FNColors.success : FNColors.error)
                           .withValues(alpha: 0.12),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       'Desde ${DateFormat('dd/MM/yyyy').format(subscriber.createdAt)}',
                       style: FNTypography.techLabel.copyWith(color: FNColors.textMuted),

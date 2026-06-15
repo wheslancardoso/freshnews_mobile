@@ -19,3 +19,13 @@ final filteredNewslettersProvider = Provider.autoDispose<AsyncValue<List<Newslet
     return list.where((n) => n.category == selectedCategory).toList();
   });
 });
+
+final latestNewsletterProvider = Provider.autoDispose<AsyncValue<Newsletter?>>((ref) {
+  final newsletters = ref.watch(publishedNewslettersProvider);
+  
+  return newsletters.whenData((list) {
+    if (list.isEmpty) return null;
+    // Assume que a lista já vem ordenada por data descrescente (mais recente primeiro)
+    return list.first;
+  });
+});

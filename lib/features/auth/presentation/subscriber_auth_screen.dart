@@ -20,6 +20,7 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
   final _emailController = TextEditingController();
   final _otpController = TextEditingController();
   bool _linkSent = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -37,13 +38,20 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
       return;
     }
 
+    setState(() => _isLoading = true);
     final success = await ref.read(authProvider.notifier).sendMagicLink(email);
     if (success && mounted) {
       setState(() {
+        _isLoading = false;
         _linkSent = true;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Link de login enviado! Verifique sua caixa de entrada.')),
+        const SnackBar(content: Text('Código de login enviado! Verifique seu e-mail.')),
+      );
+    } else if (mounted) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao enviar o código. Tente novamente.')),
       );
     }
   }
@@ -57,11 +65,18 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
       return;
     }
 
+    setState(() => _isLoading = true);
     final email = _emailController.text.trim();
     final success = await ref.read(authProvider.notifier).verifyOtpCode(email, code);
     if (success && mounted) {
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Autenticado com sucesso!')),
+      );
+    } else if (mounted) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Código inválido ou expirado.')),
       );
     }
   }
@@ -146,9 +161,9 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
                     ],
                     const SizedBox(height: FNSpacing.xl),
                     FNButton(
-                      label: 'RECEBER_LINK_DE_ACESSO',
-                      onPressed: authState.isLoading ? null : _handleSendLink,
-                      isLoading: authState.isLoading,
+                      label: 'RECEBER_CÓDIGO_DE_ACESSO',
+                      onPressed: _isLoading ? null : _handleSendLink,
+                      isLoading: _isLoading,
                       fullWidth: true,
                     ),
                   ] else ...[
@@ -169,8 +184,8 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
                     const SizedBox(height: FNSpacing.xl),
                     FNButton(
                       label: 'VERIFICAR_CÓDIGO',
-                      onPressed: authState.isLoading ? null : _handleVerifyCode,
-                      isLoading: authState.isLoading,
+                      onPressed: _isLoading ? null : _handleVerifyCode,
+                      isLoading: _isLoading,
                       fullWidth: true,
                     ),
                     const SizedBox(height: FNSpacing.md),

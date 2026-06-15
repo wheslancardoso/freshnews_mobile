@@ -122,57 +122,42 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildHeroSection(BuildContext context, World activeWorld) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(FNSpacing.lg, FNSpacing.xl, FNSpacing.lg, FNSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.fromLTRB(FNSpacing.lg, FNSpacing.base, FNSpacing.lg, FNSpacing.sm),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: FNColors.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: FNColors.success, width: 1.5),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: FNColors.success,
-                    shape: BoxShape.circle,
-                  ),
-                ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 600.ms).then().fadeOut(duration: 600.ms),
-                const SizedBox(width: FNSpacing.sm),
-                Text(
-                  'STATUS // ONLINE // TRANSMITINDO',
-                  style: FNTypography.techLabelSmall.copyWith(color: FNColors.success),
+          Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: FNColors.success,
+                  shape: BoxShape.circle,
                 ),
+              ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 600.ms).then().fadeOut(duration: 600.ms),
+              const SizedBox(width: FNSpacing.sm),
+              Text(
+                'TRANSMITINDO AGORA',
+                style: FNTypography.techLabelSmall.copyWith(color: FNColors.success, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: () => context.push('/archive'),
+            child: Row(
+              children: [
+                Text(
+                  'ACESSAR ARQUIVO',
+                  style: FNTypography.techLabelSmall.copyWith(
+                    color: activeWorld.config.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(LucideIcons.archive, size: 14, color: activeWorld.config.primaryColor),
               ],
             ),
-          ),
-          const SizedBox(height: FNSpacing.md),
-          Text(
-            'INFORMAÇÃO DESTILADA.\nSEM RUÍDO.',
-            style: FNTypography.headingLarge.copyWith(
-              fontWeight: FontWeight.w800,
-              fontStyle: FontStyle.italic,
-              height: 1.1,
-            ),
-          ),
-          const SizedBox(height: FNSpacing.md),
-          Text(
-            'Curadoria editorial direta, sem distrações. As notícias mais relevantes do mundo selecionado, condensadas para você.',
-            style: FNTypography.bodyLarge.copyWith(color: FNColors.textSecondary),
-          ),
-          const SizedBox(height: FNSpacing.md),
-          FNButton(
-            label: 'VER_EDICOES_ANTERIORES',
-            variant: FNButtonVariant.outline,
-            primaryColor: activeWorld.config.primaryColor,
-            leading: Icon(LucideIcons.archive, size: 16, color: activeWorld.config.primaryColor),
-            onPressed: () => context.push('/archive'),
           ),
         ],
       ),

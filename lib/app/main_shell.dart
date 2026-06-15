@@ -12,14 +12,11 @@ class MainShell extends StatelessWidget {
 
   int _getSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/feed')) {
+    if (location.startsWith('/archive')) {
       return 1;
     }
-    if (location.startsWith('/archive')) {
-      return 2;
-    }
     if (location.startsWith('/profile')) {
-      return 3;
+      return 2;
     }
     return 0; // Home
   }
@@ -31,12 +28,9 @@ class MainShell extends StatelessWidget {
         context.go('/');
         break;
       case 1:
-        context.go('/feed');
-        break;
-      case 2:
         context.go('/archive');
         break;
-      case 3:
+      case 2:
         context.go('/profile');
         break;
     }
@@ -70,10 +64,6 @@ class MainShell extends StatelessWidget {
             BottomNavigationBarItem(
               icon: Icon(LucideIcons.house),
               label: 'HOME',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(LucideIcons.newspaper),
-              label: 'FEED',
             ),
             BottomNavigationBarItem(
               icon: Icon(LucideIcons.archive),

@@ -8,8 +8,6 @@ import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
 import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
-import 'package:fresh_news_mobile/features/archive/presentation/widgets/post_card.dart';
-import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
@@ -22,8 +20,6 @@ class ArchiveScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeWorld = ref.watch(activeWorldProvider);
-    final subscriberAsync = ref.watch(subscriberProvider);
-    final affinityPostsAsync = ref.watch(affinityPostsProvider);
     final archivedNewslettersAsync = ref.watch(archivedNewslettersProvider);
 
     final width = MediaQuery.of(context).size.width;
@@ -35,8 +31,6 @@ class ArchiveScreen extends ConsumerWidget {
         slivers: [
           _buildAppBar(context, ref, activeWorld),
           _buildHeroCardSection(archivedNewslettersAsync),
-          _buildAffinityAlertSection(context, ref, subscriberAsync),
-          _buildAffinityFeedSection(affinityPostsAsync, subscriberAsync),
           _buildArchivedEditionsSection(archivedNewslettersAsync, crossAxisCount),
           const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
         ],
@@ -216,157 +210,7 @@ class ArchiveScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAffinityAlertSection(BuildContext context, WidgetRef ref, AsyncValue<dynamic> subscriberAsync) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
-        child: subscriberAsync.when(
-          data: (subscriber) {
-            final isActive = subscriber != null;
-            final borderColor = isActive ? Colors.green.withOpacity(0.4) : Colors.white.withOpacity(0.1);
-            final bgColor = isActive ? Colors.green.withOpacity(0.05) : Colors.white.withOpacity(0.01);
-            final dotColor = isActive ? Colors.green : Colors.grey;
 
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: borderColor, width: 1),
-                color: bgColor,
-              ),
-              padding: const EdgeInsets.all(FNSpacing.base),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: dotColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ).animate(onPlay: (c) => c.repeat(reverse: true))
-                       .scaleXY(begin: 1.0, end: 1.3, duration: 1.seconds)
-                       .then()
-                       .scaleXY(begin: 1.3, end: 1.0, duration: 1.seconds),
-                      const SizedBox(width: FNSpacing.sm),
-                      Text(
-                        isActive ? 'MOTOR_DE_AFINIDADES_ATIVO' : 'MOTOR_DE_AFINIDADES_INATIVO',
-                        style: FNTypography.techLabelSmall.copyWith(color: dotColor, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: FNSpacing.md),
-                  if (isActive) ...[
-                    Text(
-                      'Zine Personalizado // Feed de Afinidades',
-                      style: FNTypography.bodyMedium.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Logado como: ${subscriber.email}',
-                      style: FNTypography.bodySmall.copyWith(color: FNColors.mutedForeground),
-                    ),
-                    const SizedBox(height: FNSpacing.sm),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: subscriber.preferences.map<Widget>((pref) {
-                        return FNBadge(label: pref);
-                      }).toList(),
-                    ),
-                    const SizedBox(height: FNSpacing.md),
-                    FNButton(
-                      label: 'AJUSTAR_INTERESSES',
-                      onPressed: () => context.push('/preferences/${subscriber.id}'),
-                    ),
-                  ] else ...[
-                    Text(
-                      'Feed de Afinidades Indisponível',
-                      style: FNTypography.bodyMedium.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Inscreva-se com suas preferências para reordenar posts por relevância baseada em IA.',
-                      style: FNTypography.bodySmall.copyWith(color: FNColors.mutedForeground),
-                    ),
-                    const SizedBox(height: FNSpacing.md),
-                    FNButton(
-                      label: 'ASSINAR_PORTAL',
-                      onPressed: () => context.go('/profile'),
-                    ),
-                  ],
-                ],
-              ),
-            ).animate().slideY(begin: -0.1, end: 0, duration: 300.ms, curve: Curves.easeOut);
-          },
-          loading: () => const LoadingSkeleton(height: 120),
-          error: (_, __) => Container(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAffinityFeedSection(AsyncValue<List<Post>> postsAsync, AsyncValue<dynamic> subscriberAsync) {
-    return SliverPadding(
-      padding: const EdgeInsets.all(FNSpacing.lg),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate([
-          Row(
-            children: [
-              const Icon(LucideIcons.sparkles, size: 16, color: FNColors.primaryViolet),
-              const SizedBox(width: FNSpacing.sm),
-              Text(
-                'FEED DE AFINIDADES',
-                style: FNTypography.techLabel.copyWith(color: Colors.white, fontSize: 14),
-              ),
-            ],
-          ),
-          const SizedBox(height: FNSpacing.md),
-          postsAsync.when(
-            data: (posts) {
-              if (posts.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: FNSpacing.lg),
-                  child: Center(
-                    child: Text('Nenhum log disponível.', style: FNTypography.bodyMedium),
-                  ),
-                );
-              }
-
-              final subscriber = subscriberAsync.valueOrNull;
-
-              return Column(
-                children: posts.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final post = entry.value;
-                  final isPreferred = subscriber != null && subscriber.preferences.contains(post.category);
-
-                  return PostCard(
-                    post: post,
-                    isPreferred: isPreferred,
-                  ).animate().fadeIn(delay: (index * 100).ms, duration: 300.ms).slideX(begin: -0.05, end: 0);
-                }).toList(),
-              );
-            },
-            loading: () => const Column(
-              children: [
-                LoadingSkeleton(height: 140),
-                SizedBox(height: FNSpacing.base),
-                LoadingSkeleton(height: 140),
-              ],
-            ),
-            error: (error, stack) => Center(
-              child: Padding(
-                padding: const EdgeInsets.all(FNSpacing.lg),
-                child: Text('Erro ao carregar o feed: $error', style: FNTypography.bodyMedium.copyWith(color: Colors.red)),
-              ),
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
 
   Widget _buildArchivedEditionsSection(AsyncValue<List<Newsletter>> newslettersAsync, int crossAxisCount) {
     return SliverPadding(

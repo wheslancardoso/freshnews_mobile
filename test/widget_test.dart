@@ -40,6 +40,8 @@ class FakePostRepository implements PostRepository {
   Future<void> updateStatus(String id, String status) async {}
   @override
   Future<void> delete(String id) async {}
+  @override
+  Future<void> updatePost(String id, {String? headline, String? story, String? imageUrl}) async {}
 }
 
 class FakeSubscriberRepository implements SubscriberRepository {

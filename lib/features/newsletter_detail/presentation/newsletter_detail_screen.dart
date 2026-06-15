@@ -9,12 +9,14 @@ import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:fresh_news_mobile/core/theme/chameleon_theme_provider.dart';
+import 'package:fresh_news_mobile/core/theme/chameleon_theme_config.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 
 import 'package:fresh_news_mobile/features/auth/application/auth_notifier.dart';
 import 'package:fresh_news_mobile/features/newsletter_detail/application/newsletter_detail_provider.dart';
 import 'package:fresh_news_mobile/features/newsletter_detail/presentation/widgets/terminal_debate.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
+import 'package:fresh_news_mobile/shared/widgets/chameleon_effects_overlay.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
 import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
@@ -66,13 +68,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   }
 
 
-  Color _getCategoryColor(String name) {
-    final upper = name.toUpperCase();
-    if (upper.contains('IA') || upper.contains('INTELIGÊNCIA')) return const Color(0xFFA78BFA); // Lavender
-    if (upper.contains('DEV') || upper.contains('ENGENHARIA')) return const Color(0xFF10B981); // Emerald
-    if (upper.contains('SEC') || upper.contains('CIBER') || upper.contains('HACKER')) return const Color(0xFFF43F5E); // Rose
-    if (upper.contains('STARTUP') || upper.contains('BUSINESS') || upper.contains('MERCADO')) return const Color(0xFFF59E0B); // Amber
-    return const Color(0xFF8B5CF6); // Violet default
+  Color _getCategoryColor(String name, String? worldSlug) {
+    return ChameleonThemeConfig.fromCategory(name, world: worldSlug).primary;
   }
 
   String _formatDate(DateTime date) {
@@ -98,28 +95,37 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   Widget build(BuildContext context) {
     final newsletterAsync = ref.watch(newsletterDetailProvider(widget.id));
     final authState = ref.watch(authProvider);
+    final chameleonTheme = ref.watch(chameleonThemeProvider);
 
-    return Scaffold(
-      backgroundColor: FNColors.background,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          newsletterAsync.when(
-            data: (n) => 'EDIÇÃO #${n.editionNumber}',
-            loading: () => 'CARREGANDO...',
-            error: (_, __) => 'ERRO',
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      color: chameleonTheme.bg,
+      child: ChameleonEffectsOverlay(
+        effects: chameleonTheme.effects,
+        accentColor: chameleonTheme.primary,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
+            onPressed: () => context.pop(),
           ),
-          style: FNTypography.headingMedium.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+          title: Text(
+            newsletterAsync.when(
+              data: (n) => 'EDIÇÃO #${n.editionNumber}',
+              loading: () => 'CARREGANDO...',
+              error: (_, __) => 'ERRO',
+            ),
+            style: FNTypography.headingMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: chameleonTheme.primary,
+            ),
           ),
+          backgroundColor: chameleonTheme.bg.withOpacity(0.85),
+          elevation: 0,
         ),
-        backgroundColor: FNColors.background.withOpacity(0.85),
-      ),
-      body: newsletterAsync.when(
+        body: newsletterAsync.when(
         data: (newsletter) {
           final content = newsletter.contentJson;
 
@@ -185,7 +191,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
 
                       // 6. Categorias e Notícias
                       if (content != null && content.categories.isNotEmpty) ...[
-                        ...content.categories.map((cat) => _buildCategorySection(cat)),
+                        ...content.categories.map((cat) => _buildCategorySection(cat, newsletter.world.config.slug)),
                         const SizedBox(height: FNSpacing.md),
                       ],
                       
@@ -245,6 +251,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
           ),
         ),
       ),
+    ),
+    ),
     );
   }
 
@@ -264,13 +272,6 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
         ),
         child: Stack(
           children: [
-            Positioned.fill(
-              child: IgnorePointer(
-                child: CustomPaint(
-                  painter: const _ScanlinePainter(),
-                ),
-              ),
-            ),
             const Center(
               child: Icon(LucideIcons.newspaper, color: Colors.white30, size: 48),
             ),
@@ -362,8 +363,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
     );
   }
 
-  Widget _buildCategorySection(NewsCategory category) {
-    final catColor = _getCategoryColor(category.name);
+  Widget _buildCategorySection(NewsCategory category, String worldSlug) {
+    final catColor = _getCategoryColor(category.name, worldSlug);
 
     return VisibilityDetector(
       key: Key('detail-category-${category.name}'),
@@ -547,20 +548,3 @@ class _LoadingDetailView extends StatelessWidget {
   }
 }
 
-class _ScanlinePainter extends CustomPainter {
-  const _ScanlinePainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.015)
-      ..strokeWidth = 1;
-
-    for (double y = 0; y < size.height; y += 4) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}

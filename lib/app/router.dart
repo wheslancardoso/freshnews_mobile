@@ -18,7 +18,6 @@ import 'package:fresh_news_mobile/features/admin/presentation/admin_newsletters_
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
 import 'package:fresh_news_mobile/app/main_shell.dart';
-import 'package:fresh_news_mobile/features/feed/presentation/feed_screen.dart';
 import 'package:fresh_news_mobile/features/profile/presentation/profile_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -37,11 +36,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/',
             name: 'home',
             builder: (context, state) => const HomeScreen(),
-          ),
-          GoRoute(
-            path: '/feed',
-            name: 'feed',
-            builder: (context, state) => const FeedScreen(),
           ),
           GoRoute(
             path: '/archive',

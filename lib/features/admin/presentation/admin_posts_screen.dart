@@ -7,6 +7,7 @@ import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
 import 'package:fresh_news_mobile/features/admin/application/admin_providers.dart';
 import 'package:fresh_news_mobile/features/admin/presentation/widgets/newsletter_card_admin.dart';
+import 'package:fresh_news_mobile/features/admin/presentation/widgets/pending_post_card_admin.dart';
 import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
@@ -140,68 +141,11 @@ class AdminPostsScreen extends ConsumerWidget {
           itemBuilder: (context, index) {
             final post = posts[index];
 
-            return GlassCard(
-              padding: const EdgeInsets.all(FNSpacing.base),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      FNBadge(
-                        label: post.category,
-                        color: FNColors.primaryViolet,
-                        backgroundColor: FNColors.primaryViolet.withValues(alpha: 0.12),
-                      ),
-                      const SizedBox(width: 8),
-                      FNBadge(label: 'SCORE: ${post.score}'),
-                      const Spacer(),
-                      Text(
-                        post.source?.toUpperCase() ?? 'WEB',
-                        style: FNTypography.techLabelSmall.copyWith(color: FNColors.textMuted),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: FNSpacing.sm),
-                  Text(
-                    post.title,
-                    style: FNTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    post.summary.isNotEmpty ? post.summary : post.content,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: FNTypography.bodySmall.copyWith(color: FNColors.textSecondary),
-                  ),
-                  const SizedBox(height: FNSpacing.md),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FNButton(
-                          label: 'REJEITAR',
-                          variant: FNButtonVariant.outline,
-                          primaryColor: FNColors.error,
-                          onPressed: () async {
-                            HapticFeedback.mediumImpact();
-                            await controller.rejectPost(post.id);
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: FNSpacing.base),
-                      Expanded(
-                        child: FNButton(
-                          label: 'APROVAR',
-                          primaryColor: FNColors.success,
-                          onPressed: () async {
-                            HapticFeedback.mediumImpact();
-                            await controller.approvePost(post.id);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            return PendingPostCardAdmin(
+              post: post,
+              onApprove: controller.approvePost,
+              onReject: controller.rejectPost,
+              onUpdate: controller.updatePost,
             );
           },
         );

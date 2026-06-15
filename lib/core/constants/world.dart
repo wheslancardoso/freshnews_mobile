@@ -65,8 +65,9 @@ class WorldRegistry {
   static WorldMeta get(World world) => all[world]!;
 
   static World fromString(String value) {
+    final lowerValue = value.toLowerCase();
     return World.values.firstWhere(
-      (w) => w.name == value,
+      (w) => w.name == lowerValue,
       orElse: () => World.tech,
     );
   }

@@ -32,27 +32,30 @@ class FNButton extends StatelessWidget {
     final schemeColor =
         primaryColor ?? Theme.of(context).colorScheme.primary;
 
-    final Widget content = Row(
-      mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (leading != null) ...[leading!, const SizedBox(width: 8)],
-        if (isLoading)
-          SizedBox(
-            width: 14,
-            height: 14,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: _labelColor(schemeColor),
+    final Widget content = FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (leading != null) ...[leading!, const SizedBox(width: 8)],
+          if (isLoading)
+            SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: _labelColor(schemeColor),
+              ),
+            )
+          else
+            Text(
+              label.toUpperCase(),
+              style: FNTypography.techLabel.copyWith(color: _labelColor(schemeColor)),
             ),
-          )
-        else
-          Text(
-            label.toUpperCase(),
-            style: FNTypography.techLabel.copyWith(color: _labelColor(schemeColor)),
-          ),
-        if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-      ],
+          if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+        ],
+      ),
     );
 
     return SizedBox(

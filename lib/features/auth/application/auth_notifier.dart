@@ -47,7 +47,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.unauthenticated,
-        errorMessage: 'Erro ao enviar link de login: $e',
+        errorMessage: 'Erro ao enviar código de login: $e',
+      );
+      return false;
+    }
+  }
+
+  Future<bool> verifyOtpCode(String email, String code) async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    try {
+      await Supabase.instance.client.auth.verifyOTP(
+        email: email.trim(),
+        token: code.trim(),
+        type: OtpType.magiclink,
+      );
+      state = const AuthState(status: AuthStatus.authenticated);
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: 'Código inválido ou expirado.',
       );
       return false;
     }

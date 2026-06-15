@@ -18,11 +18,13 @@ class SubscriberAuthScreen extends ConsumerStatefulWidget {
 
 class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
   final _emailController = TextEditingController();
+  final _otpController = TextEditingController();
   bool _linkSent = false;
 
   @override
   void dispose() {
     _emailController.dispose();
+    _otpController.dispose();
     super.dispose();
   }
 
@@ -42,6 +44,24 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Link de login enviado! Verifique sua caixa de entrada.')),
+      );
+    }
+  }
+
+  Future<void> _handleVerifyCode() async {
+    final code = _otpController.text.trim();
+    if (code.isEmpty || code.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Informe o código de 6 dígitos.')),
+      );
+      return;
+    }
+
+    final email = _emailController.text.trim();
+    final success = await ref.read(authProvider.notifier).verifyOtpCode(email, code);
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Autenticado com sucesso!')),
       );
     }
   }
@@ -132,25 +152,33 @@ class _SubscriberAuthScreenState extends ConsumerState<SubscriberAuthScreen> {
                       fullWidth: true,
                     ),
                   ] else ...[
-                    const CircularProgressIndicator(
-                      color: FNColors.primaryViolet,
+                    FNInput(
+                      controller: _otpController,
+                      hint: 'Código Numérico (6 dígitos)',
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) {},
                     ),
-                    const SizedBox(height: FNSpacing.xl),
-                    Text(
-                      'AGUARDANDO CONFIRMAÇÃO...',
-                      textAlign: TextAlign.center,
-                      style: FNTypography.label.copyWith(
-                        color: FNColors.primaryViolet,
-                        fontWeight: FontWeight.bold,
+                    if (authState.errorMessage != null) ...[
+                      const SizedBox(height: FNSpacing.md),
+                      Text(
+                        authState.errorMessage!,
+                        style: FNTypography.bodySmall.copyWith(color: FNColors.error),
+                        textAlign: TextAlign.center,
                       ),
+                    ],
+                    const SizedBox(height: FNSpacing.xl),
+                    FNButton(
+                      label: 'VERIFICAR_CÓDIGO',
+                      onPressed: authState.isLoading ? null : _handleVerifyCode,
+                      isLoading: authState.isLoading,
+                      fullWidth: true,
                     ),
                     const SizedBox(height: FNSpacing.md),
                     Text(
-                      'Enviamos um link seguro para o seu e-mail.\nMinimize este aplicativo, abra sua caixa de entrada e clique no link para ser conectado automaticamente.',
+                      'Enviamos um código para o seu e-mail.\nVerifique sua caixa de entrada e digite os números acima.',
                       style: FNTypography.bodyMedium.copyWith(color: FNColors.textSecondary),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: FNSpacing.xl),
                   ],
                   const SizedBox(height: FNSpacing.lg),
                   FNButton(

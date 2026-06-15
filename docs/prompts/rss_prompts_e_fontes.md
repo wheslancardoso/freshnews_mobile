@@ -1,30 +1,85 @@
-# 🌐 Fontes RSS & Prompts de IA para os Mundos (Music, Gear e Game)
+# 🕵️ Guia de Deep Research & Prompts para Fontes RSS
 
-Este documento contém as fontes RSS recomendadas de alta qualidade e os prompts estruturados de contexto/sistema para alimentar o seu pipeline de automação (n8n ou outro integrador) para cada um dos mundos, excluindo o mundo `TECH`.
-
----
-
-## 🎵 1. MUNDO: MUSIC (BEATS & NOISE)
-
-**Categorias no App**: `ARTISTAS`, `PRODUÇÃO`, `INDIE`, `CHARTS`, `LANÇAMENTOS`
-
-### 📋 Feeds RSS Recomendados (Produção e Notícias Musicais)
-*   **Geral & Lançamentos**:
-    *   `https://pitchfork.com/feed/feed-news/rss` (Pitchfork - Notícias diárias e lançamentos do circuito independente e pop)
-    *   `https://www.nme.com/news/feed` (NME - Notícias sobre artistas, turnês e cultura musical)
-    *   `https://www.stereogum.com/feed/` (Stereogum - Excelente cobertura de lançamentos indie e notícias rápidas)
-*   **Indie & Alternativo**:
-    *   `https://ra.co/xml/news.xml` (Resident Advisor - Cena de música eletrônica, DJs, festivais e clubs)
-*   **Produção & Equipamentos**:
-    *   `https://www.musicradar.com/rss` (MusicRadar - Tutoriais de produção, reviews de DAWs, guitarras, sintetizadores e plugins)
-*   **Charts & Indústria**:
-    *   `https://www.billboard.com/c/music/news/feed/` (Billboard - Tabelas de sucesso, vendas, charts e notícias corporativas)
+Este arquivo contém o prompt estruturado de **Deep Research** para você enviar a uma IA de busca em tempo real (como Perplexity, Gemini Advanced, ou Claude com busca web). Ele foi desenhado para extrair feeds RSS reais, ativos e altamente alinhados à curadoria brutalista do Fresh News.
 
 ---
 
-### 🧠 Prompt de Sistema para Curadoria & Escrita (Mundo MUSIC)
+## 📋 Como usar:
+1. Copie o prompt abaixo (dentro da caixa de código).
+2. Cole na sua IA de busca de preferência.
+3. Use a lista refinada de RSS gerada na sua automação do n8n.
 
-Este prompt deve ser inserido no nó de LLM do n8n para receber os textos brutos das notícias do RSS e transformá-los no formato aceito pelo banco de dados do Fresh News:
+---
+
+```markdown
+Você é um pesquisador técnico especialista em curadoria de conteúdo e raspagem de dados. Seu objetivo é realizar uma pesquisa aprofundada na web ("Deep Research") para mapear feeds RSS reais, ativos e funcionais que atendam a critérios estritos de nicho para um leitor de notícias de tecnologia, música e jogos com estética brutalista e nerd de baixo nível.
+
+Para cada um dos mundos listados abaixo, pesquise e retorne uma lista de feeds RSS funcionais.
+IMPORTANTE: Eu preciso dos URLs diretos do arquivo RSS/XML (ex: `https://site.com/feed` ou `https://site.com/rss.xml`), não dos links comuns dos portais de notícias.
+
+---
+
+### MUNDO 1: MUSIC (BEATS & NOISE)
+Este mundo cobre desde a produção de áudio digital (plugins, DAWs, hardware de sintetizadores) até lançamentos de artistas independentes de música eletrônica, indie rock, hip-hop underground e charts.
+As categorias do app são: [ARTISTAS, PRODUÇÃO, INDIE, CHARTS, LANÇAMENTOS].
+
+Recomende feeds RSS reais e específicos para:
+- Produção musical, sintetizadores, plugins e equipamentos de áudio (ex: blogs de produção, análises de plugins e DAWs).
+- Música eletrônica, underground, cultura DJ e clubs (ex: Resident Advisor, sites de nicho de techno/house).
+- Lançamentos e artistas de indie rock, alternativo e hip-hop experimental.
+- Paradas de sucesso e estatísticas da indústria (charts alternativos e populares).
+
+---
+
+### MUNDO 2: GEAR (RPM & GADGETS)
+Este mundo cobre hardware físico, DIY (Do It Yourself), eletrônica hacker, microcontroladores (Arduino, Raspberry Pi), gadgets vestíveis inovadores, e engenharia automotiva pesada/mecanização, longe do marketing de massa.
+As categorias do app são: [AUTOMOTIVO, GADGETS, WEARABLES, DIY, INOVAÇÃO].
+
+Recomende feeds RSS reais e específicos para:
+- Projetos maker, eletrônica, soldagem de circuitos, mods de hardware (ex: sites no estilo Hackaday ou fóruns maker).
+- Cultura de modificação automotiva, novos motores, protótipos industriais e carros esportivos focados em engenharia (não em propagandas).
+- Lançamentos de gadgets de nicho, consoles portáteis alternativos, dispositivos e-ink, gadgets modulares.
+- Tecnologias vestíveis focadas em biometria, utilidade tática e projetos abertos de hardware.
+
+---
+
+### MUNDO 3: GAME (ARCADE & PIXEL)
+Este mundo cobre a cultura gamer raiz, com foco forte na preservação digital de jogos antigos (emulação), lançamentos indies inovadores, e-sports competitivos técnicos, modificações e ports de jogos para PC e consoles, e discussões de mecânica de jogo pura.
+As categorias do app são: [PC, CONSOLE, MOBILE, ESPORTS, INDIE].
+
+Recomende feeds RSS reais e específicos para:
+- Cobertura de jogos indies e estúdios independentes menores (ex: sites focados em PC gaming alternativo).
+- Emulação, ROM hacking, consoles de nicho (portáteis chineses retro) e preservação digital.
+- Análise de mecânicas de gameplay pura de console e PC (longe dos jargões corporativos de publicidade).
+- Notícias técnicas de e-sports (análise tática, mods competitivos e atualizações de meta).
+- Jogos mobile premium, ports e inovações no circuito móvel (não jogos caça-níqueis casuais/F2P predatórios).
+
+---
+
+### FORMATO QUE VOCÊ DEVE RETORNAR:
+Para cada um dos 3 mundos, retorne a lista de fontes usando o seguinte template:
+
+### 🌐 MUNDO: [NOME DO MUNDO]
+*   **[Nome da Fonte]** (Categoria Sugerida: [Indique qual das categorias do mundo este feed melhor atende])
+    *   **URL do RSS**: `[URL real e testado do feed RSS/XML]`
+    *   **Foco Editorial**: [1 frase explicando o foco técnico ou estético da fonte]
+
+Certifique-se de que os feeds estejam ativos em 2026.
+```
+
+---
+
+## 🛠️ O que fazer depois de conseguir as fontes?
+
+Uma vez que a IA de busca retornar as listas de feeds RSS/XML reais, você poderá alimentar seu fluxo do n8n.
+Para sua conveniência, os prompts de transformação de IA para cada mundo (que farão a curadoria e escrita brutalista) já estão salvos e estruturados no repositório.
+
+Você pode acessá-los e utilizá-los no nó de LLM do n8n copiando-os das seções abaixo:
+
+*   **Prompt de Curadoria para MUSIC**: Acesse o arquivo no repositório em [docs/prompts/rss_prompts_e_fontes.md#L41](file:///c:/Users/wheslan.quintanilha/Documents/freshnews_mobile/docs/prompts/rss_prompts_e_fontes.md#L41) (na versão anterior) ou copie os blocos de prompt que mantivemos abaixo:
+
+<details>
+<summary><b>Clique para expandir: Prompt de IA para Curadoria - MUSIC</b></summary>
 
 ```markdown
 Você é a IA especialista curadora do mundo MUSIC (Beats & Noise) no jornal brutalista Fresh News.
@@ -50,29 +105,10 @@ Sua tarefa é ler a notícia musical abaixo extraída de feeds de RSS, julgar su
   "score": 85
 }
 ```
+</details>
 
----
-
-## ⚙️ 2. MUNDO: GEAR (RPM & GADGETS)
-
-**Categorias no App**: `AUTOMOTIVO`, `GADGETS`, `WEARABLES`, `DIY`, `INOVAÇÃO`
-
-### 📋 Feeds RSS Recomendados (Hardware, Motores e Projetos Maker)
-*   **Gadgets, Wearables e Inovação**:
-    *   `https://www.engadget.com/rss.xml` (Engadget - Gadgets, eletrônicos de consumo e ciência aplicada)
-    *   `https://www.theverge.com/reviews/rss/index.xml` (The Verge Reviews - Análises estritas de hardware e wearables)
-    *   `https://gizmodo.com/rss` (Gizmodo - Tecnologia, ciência hacker, inovações conceituais)
-*   **Automotivo & Mecânica**:
-    *   `https://motor1.com/rss/news/all/` (Motor1 - Notícias globais do mundo automotivo, novos motores e esportivos)
-*   **DIY & Engenharia Hacker (Makers)**:
-    *   `https://hackaday.com/blog/feed/` (Hackaday - Modificações de hardware, DIY, reparos, eletrônica crua e microcontroladores)
-    *   `https://makezine.com/feed/` (Make Magazine - Cultura Maker, projetos de garagem, impressão 3D, engenharia caseira)
-
----
-
-### 🧠 Prompt de Sistema para Curadoria & Escrita (Mundo GEAR)
-
-Este prompt deve ser inserido no nó de LLM do n8n para converter notícias de hardware e motores no estilo Fresh News:
+<details>
+<summary><b>Clique para expandir: Prompt de IA para Curadoria - GEAR</b></summary>
 
 ```markdown
 Você é a IA especialista curadora do mundo GEAR (RPM & Gadgets) no jornal brutalista Fresh News.
@@ -98,29 +134,10 @@ Sua tarefa é analisar a notícia de hardware ou motores abaixo e reescrevê-la 
   "score": 90
 }
 ```
+</details>
 
----
-
-## 🎮 3. MUNDO: GAME (ARCADE & PIXEL)
-
-**Categorias no App**: `PC`, `CONSOLE`, `MOBILE`, `ESPORTS`, `INDIE`
-
-### 📋 Feeds RSS Recomendados (Cultura Gamer e Jogos Independentes)
-*   **Notícias Gerais & Consoles**:
-    *   `https://kotaku.com/rss` (Kotaku - Cultura gamer, indústria, curiosidades e discussões de mercado)
-    *   `https://www.polygon.com/rss/index.xml` (Polygon - Jornalismo de games profundo, reviews de consoles e cultura pop gamer)
-    *   `https://feeds.feedburner.com/ign/news` (IGN - Notícias rápidas da indústria mainstream de jogos)
-*   **Foco em PC & Indie**:
-    *   `https://www.rockpapershotgun.com/feed` (Rock Paper Shotgun - Foco absoluto em jogos de PC, joias indie e mods inovadores)
-    *   `https://www.destructoid.com/feed/` (Destructoid - Crítica forte sobre o desenvolvimento e comunidade gamer)
-*   **Foco em Mobile**:
-    *   `https://www.pocketgamer.com/rss.xml` (Pocket Gamer - Análises e novidades sobre jogos para smartphones e portáteis)
-
----
-
-### 🧠 Prompt de Sistema para Curadoria & Escrita (Mundo GAME)
-
-Este prompt deve ser inserido no nó de LLM do n8n para converter notícias do mundo dos games no formato do Fresh News:
+<details>
+<summary><b>Clique para expandir: Prompt de IA para Curadoria - GAME</b></summary>
 
 ```markdown
 Você é a IA especialista curadora do mundo GAME (Arcade & Pixel) no jornal brutalista Fresh News.
@@ -146,17 +163,4 @@ Sua tarefa é ler a notícia de jogos abaixo e condensá-la no estilo hacker ret
   "score": 88
 }
 ```
-
----
-
-## 🚀 Como estruturar no n8n
-
-Para cada mundo, o fluxo ideal no n8n deve seguir este pipeline:
-
-```
-[Cron Trigger] ➔ [RSS Read Node] ➔ [Filter Node (Novidades do dia)] ➔ [HTTP Request (Extrair HTML limpo se necessário)] ➔ [OpenAI/Anthropic Node (Com o Prompt de Contexto de cima)] ➔ [Supabase Insert Node (Tabela posts com status 'draft')]
-```
-
-> [!TIP]
-> 1. Use o **RSS Read Node** do n8n limitando para ler apenas as últimas notícias de cada feed para evitar estourar o limite de tokens da IA.
-> 2. No nó de IA, configure a temperatura para `0.4` a `0.6` para obter consistência nas classificações de categoria de acordo com as listas aceitas pelo app.
+</details>

@@ -8,12 +8,12 @@ Este documento especifica a estratégia de frequências de execução (crones) e
 
 Como os mundos possuem dinâmicas e velocidades de notícias diferentes, rodar tudo na mesma frequência causaria desperdício de processamento e tokens de IA. Aqui está a calibração recomendada:
 
-| Mundo | Frequência (Cron) | Horário Recomendado | Justificativa |
+| Mundo | Frequência (Cron) | Cron Expression | Justificativa |
 | :--- | :--- | :--- | :--- |
-| **💻 TECH** | A cada 3 horas | `0 */3 * * *` | Vulnerabilidades de segurança (Zero-days) e lançamentos de IA esfriam rápido. Exige quase tempo real. |
-| **🎮 GAME** | 1 vez ao dia | Todos os dias às `06:00` | Lançamentos de emuladores, updates e jogos indies acumulam ao longo do dia. O leitor consome no café da manhã. |
-| **🎵 MUSIC** | A cada 2 dias | Seg, Qua e Sex às `12:00` | Ciclo de vida de lançamentos musicais e reviews de DAWs é mais lento e atemporal. |
-| **⚙️ GEAR** | A cada 3 dias | Ter e Sex às `18:00` | Projetos makers (DIY) e telemetria automotiva são densos e de leitura lenta. Frequência reduzida preserva orçamento de tokens. |
+| **💻 TECH** | Diariamente (Fixo) | `0 5 * * *` (Todos os dias às 05:00) | Ingestão diária para compilar o feed de cibersegurança, DEV e IA das últimas 24h. |
+| **🎮 GAME** | A cada 2 dias | `0 6 */2 * *` (A cada 2 dias às 06:00) | Acumula updates de emuladores e lançamentos indie, gerando material para edições em dias alternados. |
+| **🎵 MUSIC** | A cada 3 dias | `0 7 */3 * *` (A cada 3 dias às 07:00) | Ciclo de vida longo para novos álbuns e reviews de equipamentos de produção. |
+| **⚙️ GEAR** | A cada 4 dias | `0 8 */4 * *` (A cada 4 dias às 08:00) | Projetos makers (DIY) e telemetria automotiva são atemporais; ingestão espaçada economiza tokens. |
 
 ---
 

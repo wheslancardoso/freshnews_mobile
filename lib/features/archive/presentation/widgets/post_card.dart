@@ -63,17 +63,26 @@ class PostCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FNBadge(
-                        label: post.category,
-                        color: categoryColor,
-                        backgroundColor: categoryColor.withOpacity(0.12),
+                      Expanded(
+                        child: Wrap(
+                          spacing: FNSpacing.sm,
+                          runSpacing: FNSpacing.sm,
+                          children: [
+                            FNBadge(
+                              label: post.category,
+                              color: categoryColor,
+                              backgroundColor: categoryColor.withOpacity(0.12),
+                            ),
+                            FNBadge(label: 'SCORE: ${post.score}'),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: FNSpacing.sm),
-                      FNBadge(label: 'SCORE: ${post.score}'),
-                      const Spacer(),
-                      if (isPreferred)
+                      if (isPreferred) ...[
+                        const SizedBox(width: FNSpacing.sm),
                         _buildHighAffinityBadge(),
+                      ]
                     ],
                   ),
                   const SizedBox(height: FNSpacing.md),
@@ -99,12 +108,17 @@ class PostCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'FONTE: ${post.source ?? 'WEB'}'.toUpperCase(),
-                        style: FNTypography.techLabelSmall.copyWith(
-                          color: FNColors.mutedForeground.withOpacity(0.6),
+                      Flexible(
+                        child: Text(
+                          'FONTE: ${post.source ?? 'WEB'}'.toUpperCase(),
+                          style: FNTypography.techLabelSmall.copyWith(
+                            color: FNColors.mutedForeground.withOpacity(0.6),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Row(
                         children: [
                           Text(

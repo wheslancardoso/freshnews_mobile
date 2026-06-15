@@ -191,24 +191,33 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
         children: [
           // Header
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'EDIÇÃO #${widget.draft.editionNumber}',
-                style: FNTypography.headingMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      'EDIÇÃO #${widget.draft.editionNumber}',
+                      style: FNTypography.headingMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      color: worldMeta.primaryColor.withValues(alpha: 0.15),
+                      child: Text(
+                        widget.draft.world.name.toUpperCase(),
+                        style: FNTypography.techLabel.copyWith(color: worldMeta.primaryColor),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                color: worldMeta.primaryColor.withValues(alpha: 0.15),
-                child: Text(
-                  widget.draft.world.name.toUpperCase(),
-                  style: FNTypography.techLabel.copyWith(color: worldMeta.primaryColor),
-                ),
-              ),
-              const Spacer(),
               FNButton(
                 label: 'SALVAR',
                 isLoading: _isSaving,

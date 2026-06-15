@@ -6,6 +6,9 @@ class Subscriber {
   final List<World> worlds;
   final bool active;
   final List<String> preferences;
+  final String? phone;
+  final bool notifyEmail;
+  final bool notifyWhatsapp;
   final String status;
   final DateTime createdAt;
 
@@ -15,6 +18,9 @@ class Subscriber {
     required this.worlds,
     required this.active,
     this.preferences = const [],
+    this.phone,
+    this.notifyEmail = true,
+    this.notifyWhatsapp = false,
     this.status = 'active',
     required this.createdAt,
   });
@@ -30,6 +36,9 @@ class Subscriber {
       preferences: (json['preferences'] as List<dynamic>? ?? [])
           .map((e) => e as String)
           .toList(),
+      phone: json['phone'] as String?,
+      notifyEmail: json['notify_email'] as bool? ?? true,
+      notifyWhatsapp: json['notify_whatsapp'] as bool? ?? false,
       status: json['status'] as String? ?? 'active',
       createdAt: DateTime.parse(json['created_at'] as String),
     );
@@ -42,6 +51,9 @@ class Subscriber {
       'worlds': worlds.map((w) => w.config.slug).toList(),
       'active': active,
       'preferences': preferences,
+      if (phone != null) 'phone': phone,
+      'notify_email': notifyEmail,
+      'notify_whatsapp': notifyWhatsapp,
       'status': status,
       'created_at': createdAt.toIso8601String(),
     };
@@ -53,6 +65,9 @@ class Subscriber {
     List<World>? worlds,
     bool? active,
     List<String>? preferences,
+    String? phone,
+    bool? notifyEmail,
+    bool? notifyWhatsapp,
     String? status,
     DateTime? createdAt,
   }) {
@@ -62,6 +77,9 @@ class Subscriber {
       worlds: worlds ?? this.worlds,
       active: active ?? this.active,
       preferences: preferences ?? this.preferences,
+      phone: phone ?? this.phone,
+      notifyEmail: notifyEmail ?? this.notifyEmail,
+      notifyWhatsapp: notifyWhatsapp ?? this.notifyWhatsapp,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
     );

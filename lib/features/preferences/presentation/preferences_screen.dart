@@ -132,6 +132,20 @@ class PreferencesScreen extends ConsumerWidget {
                   _buildCategoriesSelector(context, state, notifier),
                   const SizedBox(height: FNSpacing.xl),
 
+                  // Section: Canais de Notificação
+                  Text(
+                    'CANAIS DE NOTIFICAÇÃO',
+                    style: FNTypography.label.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: FNSpacing.sm),
+                  Text(
+                    'Escolha por onde deseja receber os resumos da semana.',
+                    style: FNTypography.bodySmall.copyWith(color: FNColors.textSecondary),
+                  ),
+                  const SizedBox(height: FNSpacing.md),
+                  _buildNotificationChannels(context, state, notifier),
+                  const SizedBox(height: FNSpacing.xl),
+
                   // Mensagem de feedback
                   if (state.message != null) ...[
                     Text(
@@ -220,6 +234,67 @@ class PreferencesScreen extends ConsumerWidget {
           ),
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildNotificationChannels(BuildContext context, PreferencesState state, PreferencesNotifier notifier) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SwitchListTile(
+          title: Text('📧 Receber Edição no E-mail', style: FNTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+          value: state.notifyEmail,
+          onChanged: (val) {
+            HapticFeedback.lightImpact();
+            notifier.toggleNotifyEmail();
+          },
+          activeColor: Theme.of(context).colorScheme.primary,
+          contentPadding: EdgeInsets.zero,
+        ),
+        const SizedBox(height: FNSpacing.md),
+        Text('Telefone (WhatsApp)', style: FNTypography.label.copyWith(color: FNColors.textSecondary)),
+        const SizedBox(height: FNSpacing.xs),
+        TextFormField(
+          initialValue: state.phone,
+          keyboardType: TextInputType.phone,
+          style: FNTypography.bodyMedium,
+          decoration: InputDecoration(
+            hintText: '+55 11 99999-9999',
+            hintStyle: FNTypography.bodyMedium.copyWith(color: FNColors.textMuted),
+            filled: true,
+            fillColor: FNColors.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: const BorderSide(color: Colors.black, width: 2),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: const BorderSide(color: FNColors.border, width: 2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+            ),
+          ),
+          onChanged: notifier.updatePhone,
+        ),
+        const SizedBox(height: FNSpacing.sm),
+        SwitchListTile(
+          title: Text('💬 Receber Edição no WhatsApp', style: FNTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+          value: state.notifyWhatsapp,
+          onChanged: state.phone.isEmpty
+              ? null
+              : (val) {
+                  HapticFeedback.lightImpact();
+                  notifier.toggleNotifyWhatsapp();
+                },
+          activeColor: Theme.of(context).colorScheme.primary,
+          contentPadding: EdgeInsets.zero,
+          subtitle: state.phone.isEmpty
+              ? Text('Preencha o telefone acima para habilitar.', style: FNTypography.bodySmall.copyWith(color: FNColors.error))
+              : null,
+        ),
+      ],
     );
   }
 }

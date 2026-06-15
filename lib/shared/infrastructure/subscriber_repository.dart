@@ -14,7 +14,7 @@ abstract class SubscriberRepository {
   Future<Subscriber> create({required String email, required List<World> worlds});
   Future<Subscriber?> getByEmail(String email);
   Future<Subscriber?> getById(String id);
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences});
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences, String? phone, bool? notifyEmail, bool? notifyWhatsapp});
   Future<UnsubscribeResult> unsubscribe(String token);
 }
 
@@ -53,11 +53,14 @@ class SupabaseSubscriberRepository implements SubscriberRepository {
   }
 
   @override
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences}) async {
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences, String? phone, bool? notifyEmail, bool? notifyWhatsapp}) async {
     final updates = <String, dynamic>{};
     if (worlds != null) updates['worlds'] = worlds.map((w) => w.config.slug).toList();
     if (active != null) updates['active'] = active;
     if (preferences != null) updates['preferences'] = preferences;
+    if (phone != null) updates['phone'] = phone;
+    if (notifyEmail != null) updates['notify_email'] = notifyEmail;
+    if (notifyWhatsapp != null) updates['notify_whatsapp'] = notifyWhatsapp;
 
     if (updates.isEmpty) return;
 

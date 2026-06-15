@@ -41,7 +41,8 @@ class FakePostRepository implements PostRepository {
   @override
   Future<void> delete(String id) async {}
   @override
-  Future<void> updatePost(String id, {String? headline, String? story, String? imageUrl}) async {}
+  Future<void> updatePost(String id,
+      {String? title, String? content, String? category, String? summary}) async {}
 }
 
 class FakeSubscriberRepository implements SubscriberRepository {
@@ -52,7 +53,13 @@ class FakeSubscriberRepository implements SubscriberRepository {
   @override
   Future<Subscriber?> getById(String id) async => null;
   @override
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences}) async {}
+  Future<void> updatePreferences(String id,
+      {List<World>? worlds,
+      bool? active,
+      List<String>? preferences,
+      String? phone,
+      bool? notifyEmail,
+      bool? notifyWhatsapp}) async {}
   @override
   Future<UnsubscribeResult> unsubscribe(String token) async => const UnsubscribeResult(success: true, message: 'Sucesso');
 }

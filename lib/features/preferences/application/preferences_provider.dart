@@ -8,6 +8,9 @@ class PreferencesState {
   final Subscriber? subscriber;
   final Set<String> selectedPreferences;
   final Set<World> selectedWorlds;
+  final String phone;
+  final bool notifyEmail;
+  final bool notifyWhatsapp;
   final bool isLoading;
   final bool isSaving;
   final String? message;
@@ -16,6 +19,9 @@ class PreferencesState {
     this.subscriber,
     this.selectedPreferences = const {},
     this.selectedWorlds = const {},
+    this.phone = '',
+    this.notifyEmail = true,
+    this.notifyWhatsapp = false,
     this.isLoading = true,
     this.isSaving = false,
     this.message,
@@ -25,6 +31,9 @@ class PreferencesState {
     Subscriber? subscriber,
     Set<String>? selectedPreferences,
     Set<World>? selectedWorlds,
+    String? phone,
+    bool? notifyEmail,
+    bool? notifyWhatsapp,
     bool? isLoading,
     bool? isSaving,
     String? message,
@@ -33,6 +42,9 @@ class PreferencesState {
       subscriber: subscriber ?? this.subscriber,
       selectedPreferences: selectedPreferences ?? this.selectedPreferences,
       selectedWorlds: selectedWorlds ?? this.selectedWorlds,
+      phone: phone ?? this.phone,
+      notifyEmail: notifyEmail ?? this.notifyEmail,
+      notifyWhatsapp: notifyWhatsapp ?? this.notifyWhatsapp,
       isLoading: isLoading ?? this.isLoading,
       isSaving: isSaving ?? this.isSaving,
       message: message,
@@ -57,6 +69,9 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
         subscriber: subscriber,
         selectedPreferences: subscriber.preferences.toSet(),
         selectedWorlds: subscriber.worlds.toSet(),
+        phone: subscriber.phone ?? '',
+        notifyEmail: subscriber.notifyEmail,
+        notifyWhatsapp: subscriber.notifyWhatsapp,
         isLoading: false,
       );
       await _notificationService.syncTopicSubscriptions(subscriber.worlds);
@@ -73,6 +88,18 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
       current.add(category);
     }
     state = state.copyWith(selectedPreferences: current);
+  }
+
+  void updatePhone(String value) {
+    state = state.copyWith(phone: value);
+  }
+
+  void toggleNotifyEmail() {
+    state = state.copyWith(notifyEmail: !state.notifyEmail);
+  }
+
+  void toggleNotifyWhatsapp() {
+    state = state.copyWith(notifyWhatsapp: !state.notifyWhatsapp);
   }
 
   void toggleWorld(World world) {
@@ -96,6 +123,9 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
         _subscriberId,
         worlds: state.selectedWorlds.toList(),
         preferences: state.selectedPreferences.toList(),
+        phone: state.phone.isEmpty ? null : state.phone,
+        notifyEmail: state.notifyEmail,
+        notifyWhatsapp: state.notifyWhatsapp,
       );
 
       await _notificationService.syncTopicSubscriptions(state.selectedWorlds.toList());
@@ -103,6 +133,9 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
       final updatedSubscriber = state.subscriber?.copyWith(
         worlds: state.selectedWorlds.toList(),
         preferences: state.selectedPreferences.toList(),
+        phone: state.phone.isEmpty ? null : state.phone,
+        notifyEmail: state.notifyEmail,
+        notifyWhatsapp: state.notifyWhatsapp,
       );
 
       state = state.copyWith(

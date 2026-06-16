@@ -19,6 +19,14 @@ class TelemetryRepository {
     required this.subscriberId,
   });
 
+  /// Remove emojis e espaços extras para normalizar a categoria.
+  /// Ex: "🤖 IA" → "IA", "🛡️ SEGURANÇA" → "SEGURANÇA"
+  String _normalizeCategory(String raw) {
+    // Remove tudo que não é letra, número ou espaço ASCII
+    final cleaned = raw.replaceAll(RegExp(r'[^\w\sÀ-ÿ]', unicode: true), '').trim();
+    return cleaned.toUpperCase();
+  }
+
   /// Envia um sinal de leitura para o banco de dados.
   /// Se o usuário não estiver logado, o sinal é descartado silenciosamente.
   Future<void> sendSignal({
@@ -26,20 +34,29 @@ class TelemetryRepository {
     required String signalType,
     required double weight,
   }) async {
-    if (subscriberId == null) return;
+    final normalizedCategory = _normalizeCategory(category);
+    
+    if (subscriberId == null) {
+      print('[TELEMETRY] ⚠️ subscriberId é null — sinal descartado (cat: $normalizedCategory)');
+      return;
+    }
+
+    if (normalizedCategory.isEmpty) {
+      print('[TELEMETRY] ⚠️ categoria vazia após normalização — sinal descartado');
+      return;
+    }
 
     try {
+      print('[TELEMETRY] 📡 Enviando: user=$subscriberId, cat=$normalizedCategory, tipo=$signalType, peso=$weight');
       await supabase.from('user_reading_signals').insert({
         'user_id': subscriberId,
-        'category': category.toUpperCase(),
+        'category': normalizedCategory,
         'signal_type': signalType,
         'weight': weight,
       });
-      // O banco recalculará o affinity_vector via trigger
+      print('[TELEMETRY] ✅ Sinal enviado com sucesso!');
     } catch (e) {
-      // Falhas em telemetria não devem quebrar o aplicativo
-      // Em produção real usaríamos Sentry/Crashlytics aqui
-      print('Falha ao enviar telemetria: $e');
+      print('[TELEMETRY] ❌ Falha ao enviar: $e');
     }
   }
 
@@ -49,11 +66,12 @@ class TelemetryRepository {
     required Duration visibleDuration,
   }) async {
     final seconds = visibleDuration.inSeconds;
+    print('[TELEMETRY] ⏱️ Dwell time para "$category": ${seconds}s');
 
-    // Menos de 5 segundos é só scroll rápido, ignora
-    if (seconds < 5) return;
+    // Menos de 3 segundos é só scroll rápido, ignora
+    if (seconds < 3) return;
 
-    double weight = 0.5; // leitura superficial (5s a 15s)
+    double weight = 0.5; // leitura superficial (3s a 15s)
     if (seconds >= 40) {
       weight = 1.5; // interesse alto (mais de 40s)
     } else if (seconds >= 15) {
@@ -72,7 +90,7 @@ class TelemetryRepository {
     await sendSignal(
       category: category,
       signalType: 'link_click',
-      weight: 3.0, // cliques são sinais explícitos muito fortes
+      weight: 3.0,
     );
   }
 }

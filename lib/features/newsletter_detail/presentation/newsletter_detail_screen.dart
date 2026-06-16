@@ -38,49 +38,61 @@ class NewsletterDetailScreen extends ConsumerStatefulWidget {
 class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen> {
   bool _tracked = false;
   
-  // Mapa para rastreamento de Dwell Time por categoria
+  // Rastreamento de Dwell Time: momento em que a categoria ficou visível
   final Map<String, DateTime> _categoryStartTimes = {};
-  final Map<String, Duration> _categoryDurations = {};
   
-  // Captura a referência do repository para usar no dispose sem problemas
+  // Referência segura do repository (capturada antes do dispose)
   TelemetryRepository? _telemetryRepo;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Captura a referência aqui, onde ref ainda é seguro
     _telemetryRepo = ref.read(telemetryRepositoryProvider);
     _triggerTracking();
   }
 
   @override
   void dispose() {
-    // Ao sair da tela, calcula o dwell time final e dispara a telemetria
-    _flushDwellTimes();
+    _flushAllDwellTimes();
     super.dispose();
   }
 
-  void _flushDwellTimes() {
+  /// Envia IMEDIATAMENTE o dwell time de UMA categoria quando ela sai do viewport
+  void _sendCategoryDwellTime(String category, Duration duration) {
+    if (_telemetryRepo == null) return;
+    print('[TELEMETRY] 🚀 Enviando dwell time INLINE para "$category": ${duration.inSeconds}s');
+    _telemetryRepo!.recordDwellTime(category: category, visibleDuration: duration);
+  }
+
+  /// Flush final: envia o tempo de todas as categorias que AINDA estavam visíveis quando o user saiu da tela
+  void _flushAllDwellTimes() {
     if (_telemetryRepo == null) return;
     final now = DateTime.now();
     
-    // Finaliza categorias que ainda estavam ativas (visíveis quando o user saiu)
-    for (final entry in _categoryStartTimes.entries) {
-      final category = entry.key;
-      final startTime = entry.value;
-      final currentDuration = _categoryDurations[category] ?? Duration.zero;
-      
-      final finalDuration = currentDuration + now.difference(startTime);
-      _categoryDurations[category] = finalDuration;
+    for (final entry in Map.of(_categoryStartTimes).entries) {
+      final duration = now.difference(entry.value);
+      print('[TELEMETRY] 🔚 Flush no dispose para "${entry.key}": ${duration.inSeconds}s');
+      _telemetryRepo!.recordDwellTime(category: entry.key, visibleDuration: duration);
     }
     _categoryStartTimes.clear();
-    
-    // Envia toda a telemetria acumulada
-    for (final entry in _categoryDurations.entries) {
-      _telemetryRepo!.recordDwellTime(
-        category: entry.key,
-        visibleDuration: entry.value,
-      );
+  }
+
+  /// Chamado pelo VisibilityDetector quando uma categoria entra/sai do viewport
+  void _onCategoryVisibilityChanged(String categoryName, double visibleFraction) {
+    if (visibleFraction > 0.3) {
+      // Categoria está visível — começar a contar se ainda não começou
+      if (!_categoryStartTimes.containsKey(categoryName)) {
+        _categoryStartTimes[categoryName] = DateTime.now();
+        print('[TELEMETRY] 👁️ Começou a ler: "$categoryName"');
+      }
+    } else {
+      // Categoria saiu do viewport — calcular e ENVIAR imediatamente
+      if (_categoryStartTimes.containsKey(categoryName)) {
+        final start = _categoryStartTimes.remove(categoryName)!;
+        final duration = DateTime.now().difference(start);
+        print('[TELEMETRY] 📤 Saiu de "$categoryName" após ${duration.inSeconds}s');
+        _sendCategoryDwellTime(categoryName, duration);
+      }
     }
   }
 
@@ -399,21 +411,12 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
     return VisibilityDetector(
       key: Key('detail-category-${category.name}'),
       onVisibilityChanged: (info) {
+        // Chameleon theme
         if (info.visibleFraction > 0.4) {
           ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(category.name);
-          
-          // Iniciou a leitura da categoria
-          if (!_categoryStartTimes.containsKey(category.name)) {
-            _categoryStartTimes[category.name] = DateTime.now();
-          }
-        } else {
-          // Parou a leitura (scrollou para fora)
-          if (_categoryStartTimes.containsKey(category.name)) {
-            final start = _categoryStartTimes.remove(category.name)!;
-            final duration = DateTime.now().difference(start);
-            _categoryDurations[category.name] = (_categoryDurations[category.name] ?? Duration.zero) + duration;
-          }
         }
+        // Telemetria de Dwell Time
+        _onCategoryVisibilityChanged(category.name, info.visibleFraction);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

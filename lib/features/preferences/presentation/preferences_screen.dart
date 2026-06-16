@@ -197,8 +197,12 @@ class PreferencesScreen extends ConsumerWidget {
       children: availableCategories.map((category) {
         final isExplicitlySelected = state.selectedPreferences.contains(category);
         
-        // IA Magic (Affinity > 0.3 para ficar fácil de demonstrar no vídeo com 1 único Dwell Time)
-        final affinityScore = state.subscriber?.affinityVector[category.toUpperCase()] ?? 0.0;
+        String normalizeCat(String raw) {
+          return raw.replaceAll(RegExp(r'[^\w\sÀ-ÿ]', unicode: true), '').trim().toUpperCase();
+        }
+
+        // IA Magic
+        final affinityScore = state.subscriber?.affinityVector[normalizeCat(category)] ?? 0.0;
         final isAiSuggested = !isExplicitlySelected && affinityScore >= 0.3;
         final isSelected = isExplicitlySelected || isAiSuggested;
 

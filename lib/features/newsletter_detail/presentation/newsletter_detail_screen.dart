@@ -79,7 +79,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
 
   /// Chamado pelo VisibilityDetector quando uma categoria entra/sai do viewport
   void _onCategoryVisibilityChanged(String categoryName, double visibleFraction) {
-    if (visibleFraction > 0.02) {
+    if (visibleFraction > 0.1) {
       // Categoria está visível — começar a contar se ainda não começou
       if (!_categoryStartTimes.containsKey(categoryName)) {
         _categoryStartTimes[categoryName] = DateTime.now();
@@ -449,7 +449,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
         if (info.visibleFraction > 0.1) {
           ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(category.name);
         }
-        // Telemetria de Dwell Time: Se pelo menos 2% da categoria estiver visível, está sendo lida
+        // Telemetria de Dwell Time: Exige 10% para evitar contabilizar bordas vizinhas
         _onCategoryVisibilityChanged(category.name, info.visibleFraction);
       },
       child: Column(

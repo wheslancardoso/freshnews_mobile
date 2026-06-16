@@ -4,6 +4,8 @@ import 'package:fresh_news_mobile/shared/domain/subscriber.entity.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/subscriber_repository.dart';
 import 'package:fresh_news_mobile/core/services/notification_service.dart';
 
+import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
+
 class PreferencesState {
   final Subscriber? subscriber;
   final Set<String> selectedPreferences;
@@ -56,8 +58,9 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
   final SubscriberRepository _repository;
   final String _subscriberId;
   final NotificationService _notificationService;
+  final Ref _ref;
 
-  PreferencesNotifier(this._repository, this._subscriberId, this._notificationService) : super(const PreferencesState()) {
+  PreferencesNotifier(this._repository, this._subscriberId, this._notificationService, this._ref) : super(const PreferencesState()) {
     _load();
   }
 
@@ -146,6 +149,7 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
       );
 
       await _notificationService.syncTopicSubscriptions(state.selectedWorlds.toList());
+      _ref.invalidate(subscriberProvider);
 
       final updatedSubscriber = state.subscriber?.copyWith(
         worlds: state.selectedWorlds.toList(),
@@ -203,5 +207,5 @@ final preferencesProvider = StateNotifierProvider.autoDispose
     .family<PreferencesNotifier, PreferencesState, String>((ref, subscriberId) {
   final repository = ref.read(subscriberRepositoryProvider);
   final notificationService = ref.read(notificationServiceProvider);
-  return PreferencesNotifier(repository, subscriberId, notificationService);
+  return PreferencesNotifier(repository, subscriberId, notificationService, ref);
 });

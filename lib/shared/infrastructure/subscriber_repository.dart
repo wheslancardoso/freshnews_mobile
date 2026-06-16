@@ -53,12 +53,13 @@ class SupabaseSubscriberRepository implements SubscriberRepository {
   }
 
   @override
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences, String? phone, bool? notifyEmail, bool? notifyWhatsapp}) async {
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences, String? phone, bool? notifyEmail, bool? notifyWhatsapp, Map<String, double>? affinityVector}) async {
     final updates = <String, dynamic>{};
     if (worlds != null) updates['active_worlds'] = worlds.map((w) => w.config.slug).toList();
     if (active != null) updates['status'] = active ? 'active' : 'unsubscribed';
     if (preferences != null) updates['preferences'] = preferences;
     if (phone != null) updates['phone'] = phone;
+    if (affinityVector != null) updates['affinity_vector'] = affinityVector;
     // notify_email e notify_whatsapp não existem no banco ainda, ignorar por ora
 
     if (updates.isEmpty) return;

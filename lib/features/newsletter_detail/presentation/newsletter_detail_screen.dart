@@ -233,7 +233,35 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
 
                       // 6. Categorias e Notícias
                       if (content != null && content.categories.isNotEmpty) ...[
-                        ...content.categories.map((cat) => _buildCategorySection(cat, newsletter.world.config.slug)),
+                        Builder(
+                          builder: (context) {
+                            final subscriber = ref.watch(subscriberProvider).valueOrNull;
+                            final affinity = subscriber?.affinityVector ?? {};
+                            
+                            // Remove emojis e espaços para comparar com as chaves do banco
+                            String normalizeCat(String raw) {
+                              return raw.replaceAll(RegExp(r'[^\w\sÀ-ÿ]', unicode: true), '').trim().toUpperCase();
+                            }
+                            
+                            final sortedCategories = List<NewsCategory>.from(content.categories);
+                            
+                            if (affinity.isNotEmpty) {
+                              sortedCategories.sort((a, b) {
+                                final scoreA = affinity[normalizeCat(a.name)] ?? 0.0;
+                                final scoreB = affinity[normalizeCat(b.name)] ?? 0.0;
+                                return scoreB.compareTo(scoreA);
+                              });
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: sortedCategories.map((cat) {
+                                final score = affinity[normalizeCat(cat.name)] ?? 0.0;
+                                return _buildCategorySection(cat, newsletter.world.config.slug, isAiRecommended: score >= 0.3);
+                              }).toList(),
+                            );
+                          },
+                        ),
                         const SizedBox(height: FNSpacing.md),
                       ],
                       
@@ -405,7 +433,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
     );
   }
 
-  Widget _buildCategorySection(NewsCategory category, String worldSlug) {
+  Widget _buildCategorySection(NewsCategory category, String worldSlug, {bool isAiRecommended = false}) {
     final catColor = _getCategoryColor(category.name, worldSlug);
 
     return VisibilityDetector(
@@ -429,14 +457,34 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                 bottom: BorderSide(color: catColor, width: 2),
               ),
             ),
-            child: Text(
-              category.name.toUpperCase(),
-              style: FNTypography.headingSmall.copyWith(
-                color: catColor,
-                fontWeight: FontWeight.w900,
-                fontSize: 16,
-                letterSpacing: 1,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  category.name.toUpperCase(),
+                  style: FNTypography.headingSmall.copyWith(
+                    color: catColor,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                    letterSpacing: 1,
+                  ),
+                ),
+                if (isAiRecommended)
+                  Row(
+                    children: [
+                      Icon(LucideIcons.sparkles, size: 14, color: catColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Baseado no seu perfil',
+                        style: FNTypography.bodySmall.copyWith(
+                          color: catColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
           ),
           const SizedBox(height: FNSpacing.base),

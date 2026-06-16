@@ -82,12 +82,28 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
 
   void togglePreference(String category) {
     final current = Set<String>.from(state.selectedPreferences);
+    Map<String, double> updatedAffinity = Map.from(state.subscriber?.affinityVector ?? {});
+    final isAiSuggested = !current.contains(category) && (updatedAffinity[category.toUpperCase()] ?? 0.0) >= 0.3;
+
     if (current.contains(category)) {
+      // Já estava explicitamente selecionado. O usuário desmarcou.
       current.remove(category);
+      updatedAffinity[category.toUpperCase()] = 0.0;
+    } else if (isAiSuggested) {
+      // Estava selecionado apenas pela IA (tinha cor de fundo mas com estrelinha).
+      // Se o usuário clicou, é porque ele quer DESMARCAR essa sugestão.
+      updatedAffinity[category.toUpperCase()] = 0.0;
     } else {
+      // Estava totalmente desmarcado. O usuário quer marcar explicitamente.
       current.add(category);
     }
-    state = state.copyWith(selectedPreferences: current);
+
+    final updatedSubscriber = state.subscriber?.copyWith(affinityVector: updatedAffinity);
+
+    state = state.copyWith(
+      selectedPreferences: current,
+      subscriber: updatedSubscriber,
+    );
   }
 
   void updatePhone(String value) {
@@ -126,6 +142,7 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
         phone: state.phone.isEmpty ? null : state.phone,
         notifyEmail: state.notifyEmail,
         notifyWhatsapp: state.notifyWhatsapp,
+        affinityVector: state.subscriber?.affinityVector,
       );
 
       await _notificationService.syncTopicSubscriptions(state.selectedWorlds.toList());

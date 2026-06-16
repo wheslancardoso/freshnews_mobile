@@ -30,7 +30,7 @@ class AdminNewsletterController {
   Future<void> generateDraft(String world) async {
     final dio = _ref.read(dioClientProvider);
     // Dispara geração da edição pela API no backend
-    await dio.post('/api/generate', queryParameters: {'world': world});
+    await dio.post('/api/generate', data: {'world': world});
     _ref.invalidate(adminDraftsProvider);
   }
 

@@ -59,7 +59,8 @@ class FakeSubscriberRepository implements SubscriberRepository {
       List<String>? preferences,
       String? phone,
       bool? notifyEmail,
-      bool? notifyWhatsapp}) async {}
+      bool? notifyWhatsapp,
+      Map<String, double>? affinityVector}) async {}
   @override
   Future<UnsubscribeResult> unsubscribe(String token) async => const UnsubscribeResult(success: true, message: 'Sucesso');
 }

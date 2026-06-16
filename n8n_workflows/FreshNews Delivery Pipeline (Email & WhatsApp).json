@@ -1,0 +1,266 @@
+{
+  "name": "FreshNews Delivery Pipeline (Email & WhatsApp)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "newsletters",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "4c25c64b-29af-45d1-904d-aa9df9a2a302",
+      "name": "Webhook do App",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        480
+      ],
+      "webhookId": "freshnews-delivery-trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://vgsjpuxymtkkiaissrky.supabase.co/rest/v1/newsletters?id=eq.{{$json.body.newsletter_id}}&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8079178c-0f3b-469f-af72-bf16ab18387b",
+      "name": "Buscar Newsletter (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        256,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://vgsjpuxymtkkiaissrky.supabase.co/rest/v1/subscribers?select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "52e580d5-42a8-4314-b4f1-ab21602e3046",
+      "name": "Buscar Assinantes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        480,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const newsletter = $(\"Buscar Newsletter (Supabase)\").first().json[0];\nconst content = newsletter.content_json || {};\nconst world = newsletter.world || \"tech\";\n\n// === ENGINE CAMALEÃO (THEMES) ===\nconst THEMES = {\n  \"tech\": {\n    primaryColor: \"#00FF41\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Protocolo de Inteligência Técnica\",\n    quickTakesTitle: \"⚡ GIRO TECH\",\n    footerSignOff: \"Deslogando do Terminal...\",\n    bgColor: \"#050505\",\n    containerBg: \"#0d0d0d\",\n    borderColor: \"rgba(0, 255, 65, 0.2)\",\n    mutedColor: \"#b9cacb\",\n    badgeBg: \"rgba(0, 255, 65, 0.1)\",\n    waIcon: \"🟢\"\n  },\n  \"game\": {\n    primaryColor: \"#FF0055\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Player One Ready\",\n    quickTakesTitle: \"🕹️ PRESS START\",\n    footerSignOff: \"Salvando o progresso... Game Over.\",\n    bgColor: \"#080003\",\n    containerBg: \"#120005\",\n    borderColor: \"rgba(255, 0, 85, 0.2)\",\n    mutedColor: \"#e0c8d8\",\n    badgeBg: \"rgba(255, 0, 85, 0.1)\",\n    waIcon: \"🔴\"\n  },\n  \"music\": {\n    primaryColor: \"#9D00FF\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Sintonizado na Frequência\",\n    quickTakesTitle: \"🎵 SETLIST RÁPIDO\",\n    footerSignOff: \"Desligando os amplificadores... Fim da faixa.\",\n    bgColor: \"#040008\",\n    containerBg: \"#0a0012\",\n    borderColor: \"rgba(157, 0, 255, 0.2)\",\n    mutedColor: \"#d8c8e0\",\n    badgeBg: \"rgba(157, 0, 255, 0.1)\",\n    waIcon: \"🟣\"\n  },\n  \"gear\": {\n    primaryColor: \"#FF9900\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Engenharia e Maquinário\",\n    quickTakesTitle: \"⚙️ DIAGNÓSTICO\",\n    footerSignOff: \"Desligando as máquinas... Sistema em repouso.\",\n    bgColor: \"#080400\",\n    containerBg: \"#120900\",\n    borderColor: \"rgba(255, 153, 0, 0.2)\",\n    mutedColor: \"#e0d5c8\",\n    badgeBg: \"rgba(255, 153, 0, 0.1)\",\n    waIcon: \"🟠\"\n  }\n};\n\nconst theme = THEMES[world] || THEMES[\"tech\"];\nconst editionPadded = (newsletter.edition_number || 1).toString().padStart(3, '0');\nconst year = new Date().getFullYear();\n\n// === GERAÇÃO DO HTML ESTILIZADO (E-MAIL) ===\nlet html = `\n<div style=\"background-color: ${theme.bgColor}; padding: 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif;\">\n  <div style=\"background-color: ${theme.containerBg}; margin: 0 auto; padding: 0; max-width: 640px; border: 1px solid ${theme.borderColor}; border-radius: 16px; overflow: hidden;\">\n    \n    <!-- Header -->\n    <div style=\"padding: 40px 20px; text-align: center; position: relative;\">\n      <span style=\"display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 16px; color: ${theme.primaryColor}; background-color: ${theme.badgeBg};\">\n        ED. ${editionPadded}\n      </span>\n      <h1 style=\"font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -1px; text-transform: uppercase; color: ${theme.primaryColor}; font-family: 'Outfit', -apple-system, sans-serif;\">\n        ${theme.headerTitle}\n      </h1>\n      <p style=\"font-size: 11px; margin: 12px 0 0; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; color: ${theme.primaryColor};\">\n        ${theme.headerSub}\n      </p>\n    </div>\n\n    <!-- Content Intro -->\n    <div style=\"padding: 0 40px 40px;\">\n      <h2 style=\"color: #ffffff; font-size: 28px; font-weight: 800; line-height: 1.3; margin: 0 0 20px; letter-spacing: -0.5px;\">\n        ${newsletter.title || \"\"}\n      </h2>\n      \n      <!-- Box Summary Intro -->\n      <div style=\"padding: 20px; border-left: 4px solid ${theme.primaryColor}; background-color: ${theme.badgeBg}; margin-bottom: 35px; border-radius: 0 8px 8px 0;\">\n        <p style=\"font-size: 17px; line-height: 26px; margin: 0; font-style: italic; color: ${theme.mutedColor};\">\n          ${newsletter.summary_intro || \"\"}\n        </p>\n      </div>\n`;\n\n// === QUICK TAKES ===\nif (content.quickTakes && content.quickTakes.length > 0) {\n  html += `\n      <div style=\"border: 2px solid ${theme.borderColor}; padding: 24px; margin-bottom: 30px; border-radius: 8px; background-color: ${theme.bgColor};\">\n        <h3 style=\"font-size: 16px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; color: ${theme.primaryColor};\">\n          ${theme.quickTakesTitle}\n        </h3>\n        <ul style=\"margin: 0; padding: 0; list-style-type: none;\">\n  `;\n  content.quickTakes.forEach(take => {\n    html += `\n          <li style=\"font-size: 15px; line-height: 24px; margin-bottom: 12px; font-weight: 500; color: ${theme.mutedColor};\">\n            <span style=\"color: ${theme.primaryColor}; margin-right: 8px;\">■</span>${take}\n          </li>\n    `;\n  });\n  html += `\n        </ul>\n      </div>\n  `;\n}\n\nhtml += `\n      <hr style=\"margin: 40px 0; border: 0; border-top: 1px dashed ${theme.borderColor};\" />\n`;\n\n// === CATEGORIES / ITENS ===\nif (content.categories && content.categories.length > 0) {\n  content.categories.forEach(cat => {\n    html += `\n      <div style=\"margin-bottom: 50px;\">\n        <div style=\"border-bottom: 2px solid ${theme.primaryColor}; margin-bottom: 25px; padding-bottom: 8px;\">\n          <h3 style=\"font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: ${theme.primaryColor};\">\n            ${cat.name}\n          </h3>\n        </div>\n    `;\n    \n    cat.items.forEach((item, index) => {\n      html += `\n        <div style=\"margin-bottom: 35px; padding-left: 16px; border-left: 2px solid ${theme.primaryColor};\">\n      `;\n      \n      // Imagem opcional\n      if (item.imageUrl) {\n        html += `\n          <a href=\"${item.link || '#'}\" style=\"text-decoration: none;\">\n            <img src=\"${item.imageUrl}\" alt=\"${item.headline}\" style=\"border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 560px; object-fit: cover;\" />\n          </a>\n        `;\n      }\n\n      html += `\n          <a href=\"${item.link || '#'}\" style=\"text-decoration: none; color: inherit;\">\n            <h4 style=\"color: #ffffff; font-size: 22px; font-weight: bold; line-height: 1.4; margin-top: 0; margin-bottom: 12px;\">\n              ${item.headline}\n            </h4>\n          </a>\n          <p style=\"font-size: 16px; line-height: 1.6; margin: 0 0 16px; color: ${theme.mutedColor};\">\n            ${item.story}\n          </p>\n          <a href=\"${item.link || '#'}\" style=\"font-size: 14px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: ${theme.primaryColor};\">\n            Ler fonte original &rarr;\n          </a>\n      `;\n      \n      // Separador entre itens (exceto no último)\n      if (index < cat.items.length - 1) {\n        html += `\n          <div style=\"height: 1px; margin: 25px 0; background-color: ${theme.borderColor};\"></div>\n        `;\n      }\n      \n      html += `\n        </div>\n      `;\n    });\n    \n    html += `\n      </div>\n    `;\n  });\n}\n\n// === FOOTER ===\nhtml += `\n      <!-- Footer -->\n      <div style=\"padding: 40px; text-align: center; margin-top: 50px; border-top: 2px solid ${theme.borderColor}; background-color: ${theme.bgColor}; margin-left: -40px; margin-right: -40px; margin-bottom: -40px;\">\n        <p style=\"font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; color: ${theme.primaryColor};\">\n          ${theme.footerSignOff}\n        </p>\n        <p style=\"color: #919191; font-size: 12px; line-height: 20px; text-transform: uppercase; letter-spacing: 1px; margin: 0;\">\n          © ${year} Fresh News. Multiverse Edition.<br/>\n          <a href=\"{{ unsubscribe_url }}\" style=\"text-decoration: underline; font-weight: normal; margin-top: 10px; display: inline-block; color: ${theme.mutedColor};\">Unsubscribe</a>\n        </p>\n      </div>\n\n    </div> <!-- Fecha Content Intro -->\n  </div> <!-- Fecha ContainerBg -->\n</div> <!-- Fecha BgColor -->\n`;\n\n// === GERAÇÃO DO MARKDOWN (WHATSAPP) ===\nlet whatsapp = `*=== ED. #${editionPadded} | ${world.toUpperCase()} ===*\\n\\n`;\nwhatsapp += `*${newsletter.title}*\\n_${newsletter.summary_intro}_\\n\\n`;\n\nif (content.quickTakes && content.quickTakes.length > 0) {\n  whatsapp += `\\`\\`\\`> ${theme.quickTakesTitle}\\`\\`\\`\\n`;\n  content.quickTakes.forEach(take => {\n    whatsapp += `${theme.waIcon} ${take}\\n`; // Ícone muda conforme o mundo\n  });\n  whatsapp += `\\n`;\n}\n\nif (content.categories && content.categories.length > 0) {\n  content.categories.forEach(cat => {\n    whatsapp += `\\`\\`\\`[ ${cat.name} ]\\`\\`\\`\\n\\n`;\n    cat.items.forEach(item => {\n      whatsapp += `*${item.headline}*\\n${item.story}\\n\\n`;\n    });\n  });\n}\n\n// Fechamento WhatsApp Dinâmico\nwhatsapp += `\\`\\`\\`${theme.footerSignOff}\\`\\`\\``;\n\n// === RETORNO N8N ===\nreturn {\n  html_email: html,\n  whatsapp_message: whatsapp\n};\n"
+      },
+      "id": "99df8f2b-c73c-4bc6-adb7-a27c6a358752",
+      "name": "Formatar Templates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "5c383edf-c1ff-41db-89ef-ca962bcb6efe",
+      "name": "Loop Assinantes",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        912,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_RESEND_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "FreshNews <newsletter@news.technewsapi.com.br>"
+            },
+            {
+              "name": "to",
+              "value": "={{$json[\"email\"]}}"
+            },
+            {
+              "name": "subject",
+              "value": "=[Edition #{{$(\"Buscar Newsletter (Supabase)\").first().json[0].edition_number}}] {{$(\"Buscar Newsletter (Supabase)\").first().json[0].title}}"
+            },
+            {
+              "name": "html",
+              "value": "={{$(\"Formatar Templates\").first().json.html_email}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3196398f-54c7-4a21-bdfc-aef24af67ff7",
+      "name": "Enviar E-mail (Resend)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1168,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "atendimento",
+        "remoteJid": "{{ $json[\"phone_number\"] }}",
+        "messageText": "={{ $(\"Formatar Templates\").first().json.whatsapp_message }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        592
+      ],
+      "id": "404ed551-80ea-468b-93d4-e5cdd4c3966c",
+      "name": "Enviar WhatsApp (Evolution API)",
+      "credentials": {
+        "evolutionApi": {
+          "id": "uCZqp7FFc0eNIUvs",
+          "name": "Evolution account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook do App": {
+      "main": [
+        [
+          {
+            "node": "Buscar Newsletter (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Newsletter (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Buscar Assinantes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Formatar Templates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Assinantes": {
+      "main": [
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Assinantes": {
+      "main": [
+        [
+          {
+            "node": "Enviar E-mail (Resend)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Enviar WhatsApp (Evolution API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar E-mail (Resend)": {
+      "main": [
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp (Evolution API)": {
+      "main": [
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4d34ee1f-d715-41e0-bcf9-ede22e44f4d4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "81d0635acec5467d6fba560d241108a93e1dbf19557fd3600a3d2fa845284989"
+  },
+  "id": "w5BlU7eDh1o6HYFb",
+  "tags": []
+}

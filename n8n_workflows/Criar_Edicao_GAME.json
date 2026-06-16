@@ -1,0 +1,338 @@
+{
+  "name": "Criar_Edicao_GAME",
+  "nodes": [
+    {
+      "id": "d40a7d15-946a-44e5-a087-2d131bc46731",
+      "name": "Cron: Fechamento",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "credentials": {}
+    },
+    {
+      "id": "59f3678b-7dff-4a02-9862-a0f923638d20",
+      "name": "DB: Buscar Top Posts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        200,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM posts WHERE world = 'GAME' AND status = 'pending' ORDER BY score DESC LIMIT 20;"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        },
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "id": "cd88b091-79f1-4a0c-90d9-cbfc446df8d3",
+      "name": "Agrupar Array",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        0
+      ],
+      "parameters": {
+        "jsCode": "\nconst posts = $input.all().map(item => item.json);\nreturn {\n  json: { posts: posts }\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "6ae5a35a-5933-4477-9ee0-53084e7ae40a",
+      "name": "Posts Encontrados?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        600,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "630da9ae-8a5b-4780-9ce6-f9fcaddb4729",
+              "leftValue": "={{ $json.posts.length }}",
+              "operator": {
+                "type": "number",
+                "operation": "larger"
+              },
+              "rightValue": 0
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "credentials": {}
+    },
+    {
+      "id": "54864bcd-9a0d-4795-b7c9-6d89fd2dd393",
+      "name": "Formatar Posts p/ IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -100
+      ],
+      "parameters": {
+        "jsCode": "\nconst posts = $json.posts;\nconst titles = posts.map(p => p.title).join('\\n- ');\nconst contentStr = posts.map(p => `TÍTULO: ${p.title}\\nRESUMO: ${p.summary}`).join('\\n\\n');\n\nreturn {\n  world: 'GAME',\n  posts: posts,\n  titles_list: titles,\n  content_to_read: contentStr\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "25929633-26e1-4ca7-a1ce-c8c4bac4f7d7",
+      "name": "IA: Editor de Fechamento",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        -100
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é o Editor-Chefe da Edição Diária da Fresh News.\nEscreva os metadados da capa da newsletter para o mundo GAME.\n\nPOSTS SELECIONADOS PARA HOJE:\n{{ $json.content_to_read }}\n\nSua missão é escrever um objeto JSON com a Capa da Edição.\nA `intro` deve ser um parágrafo envolvente em pt-BR que faz um 'tease' das matérias do dia.\nO `title` DEVE SER uma manchete incrível baseada na melhor notícia do dia. PROIBIDO escrever \"Edição de hoje\" ou colocar data.\n\nCONTRATO DE SAÍDA (Apenas JSON):\n{\n  \"title\": \"Manchete forte e criativa baseada no post mais impactante (Máx 60 chars). NUNCA use 'Edição' ou data.\",\n  \"intro\": \"Parágrafo editorial denso e envolvente. (300 a 400 chars)\",\n  \"quickTakes\": [\n    \"🔥 [Manchete 1 ultra curta]\",\n    \"⚡ [Manchete 2 ultra curta]\"\n  ],\n  \"whatsapp_greeting\": \"*Saudação em negrito*\\n_Frase de impacto em itálico_\",\n  \"whatsapp_farewell\": \"Despedida temática no estilo GAME...\"\n}"
+            },
+            {
+              "content": "Gere os metadados da edição."
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        },
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "id": "1bb55c86-e1ef-42cc-8b95-0cb2dffd3bde",
+      "name": "Montar content_json",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -100
+      ],
+      "parameters": {
+        "jsCode": "\nconst aiText = $json.content || \"{}\";\nlet parsed = {};\ntry {\n  parsed = JSON.parse(aiText.replace(/```json/g, \"\").replace(/```/g, \"\").trim());\n} catch(e) {}\n\nconst posts = $('Formatar Posts p/ IA').item.json.posts;\n\n// Agrupar posts por categoria (sub_category ou category)\nconst categoriesMap = {};\n\nposts.forEach(post => {\n  const catName = (post.sub_category || post.category || \"GERAL\").toUpperCase();\n  if (!categoriesMap[catName]) {\n    categoriesMap[catName] = [];\n  }\n  \n  let themeObj = {};\n  try {\n     themeObj = typeof post.theme_config === 'string' ? JSON.parse(post.theme_config) : post.theme_config;\n  } catch(e){}\n\n  categoriesMap[catName].push({\n    headline: post.title,\n    story: post.summary,\n    link: post.url,\n    theme: themeObj || {}\n  });\n});\n\nconst categoriesList = Object.keys(categoriesMap).map(key => {\n  return {\n    name: key,\n    items: categoriesMap[key]\n  };\n});\n\nconst contentJson = {\n  title: parsed.title || \"Fresh News Edição\",\n  intro: parsed.intro || \"\",\n  quickTakes: parsed.quickTakes || [],\n  categories: categoriesList,\n  image_prompt: \"\"\n};\n\nreturn {\n  title: parsed.title || \"Fresh News Edição\",\n  intro: parsed.intro || \"\",\n  whatsapp_greeting: parsed.whatsapp_greeting || \"\",\n  whatsapp_farewell: parsed.whatsapp_farewell || \"\",\n  world: $('Formatar Posts p/ IA').item.json.world,\n  content_json: contentJson,\n  post_ids: posts.map(p => p.id)\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "f7a64250-45db-4f2f-a6cb-662d2700cd23",
+      "name": "DB: Pegar Ultima Edicao",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1400,
+        -100
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COALESCE(MAX(edition_number), 0) + 1 AS next_ed FROM newsletters WHERE world = 'GAME';"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        },
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "id": "c4f6a81e-8119-4688-b4d2-576690878790",
+      "name": "DB: Insert Newsletter",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1600,
+        -100
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO newsletters (edition_number, world, title, summary_intro, content_json, whatsapp_greeting, whatsapp_farewell, status) VALUES ({{ $json.next_ed }}, '{{ $('Montar content_json').item.json.world }}', '{{ $('Montar content_json').item.json.title.replace(/'/g, \"''\") }}', '{{ $('Montar content_json').item.json.intro.replace(/'/g, \"''\") }}', '{{ JSON.stringify($('Montar content_json').item.json.content_json).replace(/'/g, \"''\") }}', '{{ $('Montar content_json').item.json.whatsapp_greeting.replace(/'/g, \"''\") }}', '{{ $('Montar content_json').item.json.whatsapp_farewell.replace(/'/g, \"''\") }}', 'draft') RETURNING id;"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        },
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "id": "c31875db-e36c-409a-b840-3613fd0ca116",
+      "name": "DB: Update Posts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1800,
+        -100
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE posts SET status = 'published', newsletter_id = '{{ $json.id }}' WHERE id = ANY(ARRAY[{{ $('Montar content_json').item.json.post_ids.map(id => `'${id}'`).join(',') }}]::uuid[]);"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        },
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Cron: Fechamento": {
+      "main": [
+        [
+          {
+            "node": "DB: Buscar Top Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Buscar Top Posts": {
+      "main": [
+        [
+          {
+            "node": "Agrupar Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agrupar Array": {
+      "main": [
+        [
+          {
+            "node": "Posts Encontrados?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Posts Encontrados?": {
+      "main": [
+        [
+          {
+            "node": "Formatar Posts p/ IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Posts p/ IA": {
+      "main": [
+        [
+          {
+            "node": "IA: Editor de Fechamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA: Editor de Fechamento": {
+      "main": [
+        [
+          {
+            "node": "Montar content_json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar content_json": {
+      "main": [
+        [
+          {
+            "node": "DB: Pegar Ultima Edicao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Pegar Ultima Edicao": {
+      "main": [
+        [
+          {
+            "node": "DB: Insert Newsletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Insert Newsletter": {
+      "main": [
+        [
+          {
+            "node": "DB: Update Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

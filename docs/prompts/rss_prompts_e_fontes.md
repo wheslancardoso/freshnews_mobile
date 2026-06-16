@@ -22,14 +22,14 @@ IMPORTANTE:
 ---
 
 ### MUNDO 1: MUSIC (BEATS & NOISE)
-Este mundo cobre desde a produção de áudio digital (plugins, DAWs, hardware de sintetizadores) até lançamentos de artistas independentes de música eletrônica, indie rock, hip-hop underground e charts.
+Este mundo cobre desde a produção de áudio digital (plugins, DAWs, hardware de sintetizadores) até lançamentos de artistas independentes de música eletrônica, RAP, hip-hop underground, trap e charts urbanos.
 As categorias do app são: [ARTISTAS, PRODUÇÃO, INDIE, CHARTS, LANÇAMENTOS].
 
 Recomende fontes (RSS nativo ou links para converter via RSS.app) específicas para:
-- Produção musical, sintetizadores, plugins e equipamentos de áudio (ex: blogs de produção, canais de review de sintetizadores modulares analógicos).
-- Música eletrônica, underground, cultura DJ e clubs (ex: Resident Advisor, subreddits de techno/house/produção).
-- Lançamentos e artistas de indie rock, alternativo e hip-hop experimental.
-- Paradas de sucesso e estatísticas da indústria (charts alternativos e populares).
+- Cultura Rap e Hip-Hop (ex: sites focados em rap nacional e internacional, trap, lançamentos underground, blogs de cultura urbana de alto nível).
+- Beatmaking e Produção musical focado em Hip-Hop/Eletrônica (ex: canais de reviews de samplers tipo MPC/SP-404, tutoriais de FL Studio/Ableton).
+- Música eletrônica, underground, cultura DJ e clubs (ex: Resident Advisor, subreddits de beatmakers/techno).
+- Lançamentos e artistas de rap independente, selos urbanos e charts alternativos.
 
 ---
 

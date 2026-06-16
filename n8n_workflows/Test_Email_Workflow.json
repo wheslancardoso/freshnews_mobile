@@ -1,0 +1,146 @@
+{
+  "name": "TESTE - FreshNews Delivery Pipeline (Somente Email)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "newsletters-test",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook de Teste",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://vgsjpuxymtkkiaissrky.supabase.co/rest/v1/newsletters?id=eq.{{$json.body.newsletter_id}}&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Buscar Newsletter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const newsletter = $(\"Buscar Newsletter\").first().json[0];\nconst content = newsletter.content_json || {};\nconst world = newsletter.world || \"tech\";\n\n// Engine Camaleão\nconst THEMES = {\n  \"tech\": { primaryColor: \"#00FF41\", bgColor: \"#050505\", containerBg: \"#0d0d0d\" }\n};\nconst theme = THEMES[world] || THEMES[\"tech\"];\n\nlet html = `\n<div style=\"background-color: ${theme.bgColor}; padding: 30px; font-family: sans-serif;\">\n  <h1 style=\"color: ${theme.primaryColor}\">[TESTE] ${newsletter.title}</h1>\n  <p style=\"color: white\">${newsletter.summary_intro}</p>\n</div>\n`;\n\nreturn {\n  html_email: html\n};\n"
+      },
+      "id": "3",
+      "name": "Formatar HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_RESEND_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "FreshNews <newsletter@news.technewsapi.com.br>"
+            },
+            {
+              "name": "to",
+              "value": "SEU_EMAIL_AQUI@gmail.com"
+            },
+            {
+              "name": "subject",
+              "value": "=[TESTE] {{$(\"Buscar Newsletter\").first().json[0].title}}"
+            },
+            {
+              "name": "html",
+              "value": "={{$(\"Formatar HTML\").first().json.html_email}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4",
+      "name": "Enviar E-mail de Teste",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        860,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook de Teste": {
+      "main": [
+        [
+          {
+            "node": "Buscar Newsletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Newsletter": {
+      "main": [
+        [
+          {
+            "node": "Formatar HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar HTML": {
+      "main": [
+        [
+          {
+            "node": "Enviar E-mail de Teste",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

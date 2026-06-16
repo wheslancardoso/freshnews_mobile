@@ -1,0 +1,289 @@
+{
+  "name": "FreshNews Delivery Pipeline (Email & WhatsApp)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "newsletters",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook do App",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "freshnews-delivery-trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://vgsjpuxymtkkiaissrky.supabase.co/rest/v1/newsletters?id=eq.{{$json.body.newsletter_id}}&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Buscar Newsletter (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://vgsjpuxymtkkiaissrky.supabase.co/rest/v1/subscribers?select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sb_publishable_6D8ptLACddu7D5r2SN0LTQ_RQMtS15q"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3",
+      "name": "Buscar Assinantes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Puxa a capa da Newsletter\nconst newsletterData = $(\"Buscar Newsletter (Supabase)\").first().json;\nconst newsletter = Array.isArray(newsletterData) ? newsletterData[0] : newsletterData;\n\n// Puxa o array de Posts reais que acabamos de buscar\nconst postsData = $(\"Buscar Posts da Edição\").first().json;\nconst posts = (Array.isArray(postsData) ? postsData[0].posts_array : postsData.posts_array) || [];\n\nconst world = (newsletter.world || \"tech\").toLowerCase();\n\n// === CONFIGURAÇÃO DE TEMAS ===\nconst themes = {\n  tech: {\n    color: \"#00FF41\",\n    bg: \"#040804\",\n    cardBg: \"#0a120a\",\n    emoji: \"⚡\",\n    headerLabel: \"TECH_HACKER\",\n    greeting: \"Sintonizado na Frequência\",\n    footerSignOff: \"Finalizando a compilação...\"\n  },\n  game: {\n    color: \"#EAB308\",\n    bg: \"#080600\",\n    cardBg: \"#120e00\",\n    emoji: \"🎮\",\n    headerLabel: \"GAME_BUILDER\",\n    greeting: \"Start Pressionado\",\n    footerSignOff: \"Salvando progresso...\"\n  },\n  music: {\n    color: \"#9D00FF\",\n    bg: \"#040008\",\n    cardBg: \"#0a0012\",\n    emoji: \"🎵\",\n    headerLabel: \"MUSIC_MAKER\",\n    greeting: \"Sintonizado na Frequência\",\n    footerSignOff: \"Desligando os amplificadores...\"\n  },\n  gear: {\n    color: \"#EF4444\",\n    bg: \"#080000\",\n    cardBg: \"#120000\",\n    emoji: \"⚙️\",\n    headerLabel: \"GEAR_SETUP\",\n    greeting: \"Motor Ligado\",\n    footerSignOff: \"Cortando a ignição...\"\n  }\n};\n\nconst theme = themes[world] || themes.tech;\n\n// === MONTAGEM DINÂMICA DO SETLIST ===\nlet htmlPosts = \"\";\nlet whatsappPosts = \"\";\n\nposts.forEach(post => {\n  let wppSum = post.whatsapp_summary || post.title;\n  whatsappPosts += `🟣 ${wppSum}\\n`;\n\n  htmlPosts += `\n    <div style=\"margin-bottom: 24px;\">\n      <h3 style=\"color: ${theme.color}; font-size: 14px; font-weight: 800; letter-spacing: 1px; margin: 0 0 8px;\">\n        ${(post.sub_category || \"\").toUpperCase()}\n      </h3>\n      <h2 style=\"color: #ffffff; font-size: 20px; font-weight: bold; margin: 0 0 12px; line-height: 1.3;\">\n        ${post.title}\n      </h2>\n      <p style=\"color: #a0a0a0; font-size: 15px; line-height: 1.6; margin: 0 0 16px;\">\n        ${post.summary}\n      </p>\n      <a href=\"${post.url}\" style=\"color: ${theme.color}; text-decoration: none; font-size: 14px; font-weight: bold;\">\n        Ler fonte original →\n      </a>\n    </div>\n  `;\n});\n\n// === MONTAGEM DO WHATSAPP ===\nlet whatsapp = `*${theme.greeting}*\\n_${newsletter.intro || \"As melhores notícias para você.\"}_\\n\\n`;\nwhatsapp += `*${theme.emoji} SETLIST RÁPIDO*\\n`;\nwhatsapp += whatsappPosts + \"\\n\";\nwhatsapp += `🔥 *Tem muito mais rolando agora!*\\n`;\nwhatsapp += `Leia as matérias completas, análises e bastidores direto no FreshNews.\\n\\n`;\nwhatsapp += `📱 *Abra o App:*\\n`;\nwhatsapp += `👉 https://app.freshnews.com.br/archive/${newsletter.id}\\n\\n`;\nwhatsapp += `\\`\\`\\`${theme.footerSignOff}\\`\\`\\``;\n\n// === MONTAGEM DO E-MAIL ===\nlet html = `\n<div style=\"background-color: ${theme.bg}; padding: 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif;\">\n  <div style=\"background-color: ${theme.cardBg}; margin: 0 auto; padding: 0; max-width: 640px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; overflow: hidden;\">\n    \n    <!-- Header -->\n    <div style=\"padding: 40px 20px; text-align: center; position: relative;\">\n      <span style=\"display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 16px; color: ${theme.color}; background-color: ${theme.color}20;\">\n        ED. 0${newsletter.edition_number || \"X\"}\n      </span>\n      <h1 style=\"font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -1px; text-transform: uppercase; color: ${theme.color};\">\n        FRESH NEWS\n      </h1>\n      <p style=\"font-size: 11px; margin: 12px 0 0; color: #a0a0a0; letter-spacing: 4px; text-transform: uppercase;\">\n        ${theme.headerLabel}\n      </p>\n    </div>\n\n    <!-- Editorial Intro -->\n    <div style=\"padding: 0 40px 30px;\">\n      <p style=\"color: ${theme.color}; font-weight: bold; font-size: 16px; margin-bottom: 8px;\">\n        ${theme.greeting}\n      </p>\n      <p style=\"color: #ffffff; font-size: 16px; line-height: 1.6; margin: 0;\">\n        ${newsletter.intro || \"Confira os destaques\"}\n      </p>\n    </div>\n\n    <!-- Divider -->\n    <div style=\"height: 1px; background: linear-gradient(90deg, transparent, ${theme.color}40, transparent); margin: 0 40px 30px;\"></div>\n\n    <!-- Posts Dinâmicos -->\n    <div style=\"padding: 0 40px 40px;\">\n      ${htmlPosts}\n    </div>\n\n    <!-- Footer -->\n    <div style=\"background-color: rgba(0,0,0,0.4); padding: 40px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05);\">\n      <p style=\"color: #666666; font-size: 12px; margin: 0 0 16px;\">\n        ${theme.footerSignOff}<br>\n        © 2026 Fresh News. Multiverse Edition.\n      </p>\n      <a href=\"{{unsubscribe_url}}\" style=\"color: #444444; font-size: 11px; text-decoration: underline;\">\n        Unsubscribe\n      </a>\n    </div>\n  </div>\n</div>\n`;\n\nreturn {\n  html_email: html,\n  whatsapp_message: whatsapp\n};\n"
+      },
+      "id": "4",
+      "name": "Formatar Templates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "5",
+      "name": "Loop Assinantes",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_RESEND_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "FreshNews <newsletter@news.technewsapi.com.br>"
+            },
+            {
+              "name": "to",
+              "value": "={{$json[\"email\"]}}"
+            },
+            {
+              "name": "subject",
+              "value": "=[Edition #{{$(\"Buscar Newsletter (Supabase)\").first().json[0].edition_number}}] {{$(\"Buscar Newsletter (Supabase)\").first().json[0].title}}"
+            },
+            {
+              "name": "html",
+              "value": "={{$(\"Formatar Templates\").first().json.html_email}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6",
+      "name": "Enviar E-mail (Resend)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1340,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "sendText",
+        "number": "={{$json[\"phone_number\"]}}",
+        "text": "={{$(\"Formatar Templates\").first().json.whatsapp_message}}",
+        "options_message": {
+          "delay": 1200
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        420
+      ],
+      "id": "7",
+      "name": "Enviar WhatsApp (Evolution API)",
+      "credentials": {
+        "evolutionApi": {
+          "id": "uCZqp7FFc0eNIUvs",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT json_agg(t) AS posts_array FROM (SELECT * FROM posts WHERE newsletter_id = '{{ $(\"Buscar Newsletter (Supabase)\").first().json[0].id }}') t;",
+        "options": {}
+      },
+      "id": "8",
+      "name": "Buscar Posts da Edição",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        640,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook do App": {
+      "main": [
+        [
+          {
+            "node": "Buscar Newsletter (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Newsletter (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Buscar Assinantes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar Posts da Edição",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Assinantes": {
+      "main": [
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Assinantes": {
+      "main": [
+        [
+          {
+            "node": "Enviar E-mail (Resend)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Enviar WhatsApp (Evolution API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar E-mail (Resend)": {
+      "main": [
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp (Evolution API)": {
+      "main": [
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Posts da Edição": {
+      "main": [
+        [
+          {
+            "node": "Formatar Templates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

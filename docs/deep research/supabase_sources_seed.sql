@@ -34,27 +34,29 @@ INSERT INTO public.sources (name, rss_url, category_hint, world, is_active) VALU
   ('Stereogum (Music)', 'https://www.stereogum.com/category/music/feed', 'LANÇAMENTOS', 'MUSIC', true),
   ('The Quietus', 'https://thequietus.com/feed', 'INDIE', 'MUSIC', true),
   ('Boomkat (New Releases)', 'https://boomkat.com/new-releases.rss', 'LANÇAMENTOS', 'MUSIC', true),
-  ('Hype Machine (Popular)', 'http://hypem.com/feed/time/today/1/feed.xml', 'CHARTS', 'MUSIC', true)
+  ('Hype Machine (Popular)', 'http://hypem.com/feed/time/today/1/feed.xml', 'CHARTS', 'MUSIC', true),
+  ('XXL Mag (Hip-Hop)', 'https://www.xxlmag.com/feed/', 'ARTISTAS', 'MUSIC', true),
+  ('HotNewHipHop', 'https://www.hotnewhiphop.com/feed/', 'LANÇAMENTOS', 'MUSIC', true),
+  ('Rap Mais (BR Trap/Rap)', 'https://rapmais.com/feed/', 'ARTISTAS', 'MUSIC', true),
+  ('HipHopDX', 'https://hiphopdx.com/rss/news', 'LANÇAMENTOS', 'MUSIC', true)
 ON CONFLICT (rss_url) DO UPDATE 
 SET category_hint = EXCLUDED.category_hint,
     world = EXCLUDED.world;
 
 -- ⚙️ MUNDO: GEAR (RPM & GADGETS)
 INSERT INTO public.sources (name, rss_url, category_hint, world, is_active) VALUES
-  ('Hackaday', 'https://hackaday.com/blog/feed/', 'DIY', 'GEAR', true),
-  ('Adafruit Blog', 'https://blog.adafruit.com/feed/', 'DIY', 'GEAR', true),
-  ('Hackster.io News', 'https://www.hackster.io/news.rss', 'DIY', 'GEAR', true),
-  ('Arduino Official Blog', 'http://blog.arduino.cc/feed/', 'DIY', 'GEAR', true),
-  ('IEEE Spectrum (Robotics)', 'https://spectrum.ieee.org/feeds/topic/robotics', 'INOVAÇÃO', 'GEAR', true),
-  ('MotoIQ (Projects Hub)', 'https://motoiq.com/category/projects/feed/', 'AUTOMOTIVO', 'GEAR', true),
-  ('Racecar Engineering', 'https://www.racecar-engineering.com/feed/', 'AUTOMOTIVO', 'GEAR', true),
-  ('Automotive IQ', 'https://www.automotive-iq.com/rss', 'AUTOMOTIVO', 'GEAR', true),
+  ('Autosport (F1 News)', 'https://www.autosport.com/rss/f1/news/', 'AUTOMOTIVO', 'GEAR', true),
+  ('Motorsport.com (F1)', 'https://www.motorsport.com/rss/f1/news/', 'AUTOMOTIVO', 'GEAR', true),
+  ('The Drive', 'https://www.thedrive.com/feed/', 'AUTOMOTIVO', 'GEAR', true),
+  ('Jalopnik', 'https://jalopnik.com/rss', 'AUTOMOTIVO', 'GEAR', true),
+  ('Car and Driver', 'https://www.caranddriver.com/rss/all.xml/', 'AUTOMOTIVO', 'GEAR', true),
   ('Motor1 BR', 'https://motor1.uol.com.br/rss/', 'AUTOMOTIVO', 'GEAR', true),
+  ('Grande Prêmio (F1/BR)', 'https://www.grandepremio.com.br/feed/', 'AUTOMOTIVO', 'GEAR', true),
+  ('Racecar Engineering', 'https://www.racecar-engineering.com/feed/', 'AUTOMOTIVO', 'GEAR', true),
+  ('Hackaday', 'https://hackaday.com/blog/feed/', 'DIY', 'GEAR', true),
+  ('IEEE Spectrum (Robotics)', 'https://spectrum.ieee.org/feeds/topic/robotics', 'INOVAÇÃO', 'GEAR', true),
   ('Pine64 Community Blog', 'https://pine64.org/blog/index.xml', 'GADGETS', 'GEAR', true),
-  ('Liliputing', 'https://liliputing.com/feed/', 'GADGETS', 'GEAR', true),
-  ('Open Wearables (GitHub Commits)', 'https://github.com/the-momentum/open-wearables/commits/main.atom', 'WEARABLES', 'GEAR', true),
-  ('OpenBCI Forum Discussions', 'http://openbci.com/forum/index.php?p=/discussions/feed.rss', 'WEARABLES', 'GEAR', true),
-  ('Adafruit (Wearables Category)', 'https://blog.adafruit.com/category/wearables/feed/', 'WEARABLES', 'GEAR', true)
+  ('Liliputing', 'https://liliputing.com/feed/', 'GADGETS', 'GEAR', true)
 ON CONFLICT (rss_url) DO UPDATE 
 SET category_hint = EXCLUDED.category_hint,
     world = EXCLUDED.world;

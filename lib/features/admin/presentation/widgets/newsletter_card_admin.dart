@@ -5,11 +5,13 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/services.dart';
 import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/features/admin/application/admin_providers.dart';
+import 'package:fresh_news_mobile/features/admin/application/image_prompt_generator.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_input.dart';
 import 'package:fresh_news_mobile/shared/widgets/glass_card.dart';
@@ -169,28 +171,18 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
     }
   }
 
-  Future<void> _handleGeneratePrompt() async {
-    setState(() => _isGeneratingImage = true);
-    try {
-      // Dispara geração do prompt ou imagem chamando API no backend
-      // Para simular/demonstrar de forma rica, simulamos a requisição
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() {
-        _imagePromptController.text = 'A brutalist retro terminal displaying news feeds, neon colors, scanlines';
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Prompt de imagem gerado pela IA!')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao gerar: $e'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isGeneratingImage = false);
+  void _handleGeneratePrompt() {
+    final generatedPrompt = ImagePromptGenerator.generate(
+      widget.draft.world,
+      _titleController.text.isEmpty ? 'Fresh News Edition' : _titleController.text,
+    );
+    setState(() {
+      _imagePromptController.text = generatedPrompt;
+    });
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Prompt de imagem gerado!')),
+      );
     }
   }
 
@@ -321,6 +313,19 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
                   leading: const Icon(LucideIcons.sparkles, size: 16, color: Colors.white),
                   onPressed: _isGeneratingImage ? null : _handleGeneratePrompt,
                 ),
+              ),
+              const SizedBox(width: FNSpacing.base),
+              IconButton(
+                icon: const Icon(LucideIcons.copy, color: Colors.white70),
+                onPressed: () {
+                  if (_imagePromptController.text.isNotEmpty) {
+                    Clipboard.setData(ClipboardData(text: _imagePromptController.text));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Prompt copiado! Cole no Midjourney/DALL-E.')),
+                    );
+                  }
+                },
+                tooltip: 'Copiar Prompt',
               ),
             ],
           ),

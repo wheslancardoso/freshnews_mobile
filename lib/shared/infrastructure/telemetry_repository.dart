@@ -68,10 +68,10 @@ class TelemetryRepository {
     final seconds = visibleDuration.inSeconds;
     print('[TELEMETRY] ⏱️ Dwell time para "$category": ${seconds}s');
 
-    // Menos de 3 segundos é só scroll rápido, ignora
-    if (seconds < 3) return;
+    // Menos de 5 segundos é só scroll rápido, ignora
+    if (seconds < 5) return;
 
-    double weight = 0.5; // leitura superficial (3s a 15s)
+    double weight = 0.5; // leitura superficial (5s a 15s)
     if (seconds >= 40) {
       weight = 1.5; // interesse alto (mais de 40s)
     } else if (seconds >= 15) {

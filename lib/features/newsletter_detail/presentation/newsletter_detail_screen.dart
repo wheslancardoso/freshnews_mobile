@@ -244,12 +244,18 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                             }
                             
                             final sortedCategories = List<NewsCategory>.from(content.categories);
+                            final originalOrder = { for (var i = 0; i < content.categories.length; i++) content.categories[i].name: i };
                             
                             if (affinity.isNotEmpty) {
                               sortedCategories.sort((a, b) {
                                 final scoreA = affinity[normalizeCat(a.name)] ?? 0.0;
                                 final scoreB = affinity[normalizeCat(b.name)] ?? 0.0;
-                                return scoreB.compareTo(scoreA);
+                                
+                                if (scoreB != scoreA) {
+                                  return scoreB.compareTo(scoreA);
+                                }
+                                // Fallback para a ordem original
+                                return originalOrder[a.name]!.compareTo(originalOrder[b.name]!);
                               });
                             }
 

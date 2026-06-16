@@ -41,10 +41,15 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   // Mapa para rastreamento de Dwell Time por categoria
   final Map<String, DateTime> _categoryStartTimes = {};
   final Map<String, Duration> _categoryDurations = {};
+  
+  // Captura a referência do repository para usar no dispose sem problemas
+  TelemetryRepository? _telemetryRepo;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Captura a referência aqui, onde ref ainda é seguro
+    _telemetryRepo = ref.read(telemetryRepositoryProvider);
     _triggerTracking();
   }
 
@@ -56,9 +61,10 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   }
 
   void _flushDwellTimes() {
+    if (_telemetryRepo == null) return;
     final now = DateTime.now();
-    final telemetry = ref.read(telemetryRepositoryProvider);
     
+    // Finaliza categorias que ainda estavam ativas (visíveis quando o user saiu)
     for (final entry in _categoryStartTimes.entries) {
       final category = entry.key;
       final startTime = entry.value;
@@ -66,11 +72,16 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       
       final finalDuration = currentDuration + now.difference(startTime);
       _categoryDurations[category] = finalDuration;
-      
-      // Envia a telemetria
-      telemetry.recordDwellTime(category: category, visibleDuration: finalDuration);
     }
     _categoryStartTimes.clear();
+    
+    // Envia toda a telemetria acumulada
+    for (final entry in _categoryDurations.entries) {
+      _telemetryRepo!.recordDwellTime(
+        category: entry.key,
+        visibleDuration: entry.value,
+      );
+    }
   }
 
   void _triggerTracking() {
@@ -78,13 +89,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
 
     final newsletterAsyncValue = ref.watch(newsletterDetailProvider(widget.id));
     newsletterAsyncValue.whenData((newsletter) {
-      final subscriberId = ref.read(subscriberIdProvider);
-      if (subscriberId != null) {
-        ref.read(telemetryRepositoryProvider).recordLinkClick(
-              category: newsletter.category ?? 'MASTER',
-            );
-        _tracked = true;
-      }
+      _tracked = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
               newsletter.category ?? 'MASTER',
@@ -396,6 +401,18 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       onVisibilityChanged: (info) {
         if (info.visibleFraction > 0.4) {
           ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(category.name);
+          
+          // Iniciou a leitura da categoria
+          if (!_categoryStartTimes.containsKey(category.name)) {
+            _categoryStartTimes[category.name] = DateTime.now();
+          }
+        } else {
+          // Parou a leitura (scrollou para fora)
+          if (_categoryStartTimes.containsKey(category.name)) {
+            final start = _categoryStartTimes.remove(category.name)!;
+            final duration = DateTime.now().difference(start);
+            _categoryDurations[category.name] = (_categoryDurations[category.name] ?? Duration.zero) + duration;
+          }
         }
       },
       child: Column(

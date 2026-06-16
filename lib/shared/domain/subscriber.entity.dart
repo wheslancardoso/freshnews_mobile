@@ -38,10 +38,10 @@ class Subscriber {
     return Subscriber(
       id: json['id'] as String,
       email: json['email'] as String,
-      worlds: (json['worlds'] as List<dynamic>? ?? [])
+      worlds: (json['active_worlds'] as List<dynamic>? ?? [])
           .map((w) => WorldExtension.fromSlug(w as String))
           .toList(),
-      active: json['active'] as bool? ?? true,
+      active: (json['status'] as String? ?? 'active') == 'active',
       preferences: (json['preferences'] as List<dynamic>? ?? [])
           .map((e) => e as String)
           .toList(),
@@ -58,13 +58,10 @@ class Subscriber {
     return {
       'id': id,
       'email': email,
-      'worlds': worlds.map((w) => w.config.slug).toList(),
-      'active': active,
+      'active_worlds': worlds.map((w) => w.config.slug).toList(),
       'preferences': preferences,
       'affinity_vector': affinityVector,
       if (phone != null) 'phone': phone,
-      'notify_email': notifyEmail,
-      'notify_whatsapp': notifyWhatsapp,
       'status': status,
       'created_at': createdAt.toIso8601String(),
     };

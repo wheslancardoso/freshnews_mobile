@@ -29,8 +29,8 @@ class SupabaseSubscriberRepository implements SubscriberRepository {
         .from('subscribers')
         .insert({
           'email': email,
-          'worlds': worlds.map((w) => w.config.slug).toList(),
-          'active': true,
+          'active_worlds': worlds.map((w) => w.config.slug).toList(),
+          'status': 'active',
         })
         .select()
         .single();
@@ -55,12 +55,11 @@ class SupabaseSubscriberRepository implements SubscriberRepository {
   @override
   Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences, String? phone, bool? notifyEmail, bool? notifyWhatsapp}) async {
     final updates = <String, dynamic>{};
-    if (worlds != null) updates['worlds'] = worlds.map((w) => w.config.slug).toList();
-    if (active != null) updates['active'] = active;
+    if (worlds != null) updates['active_worlds'] = worlds.map((w) => w.config.slug).toList();
+    if (active != null) updates['status'] = active ? 'active' : 'unsubscribed';
     if (preferences != null) updates['preferences'] = preferences;
     if (phone != null) updates['phone'] = phone;
-    if (notifyEmail != null) updates['notify_email'] = notifyEmail;
-    if (notifyWhatsapp != null) updates['notify_whatsapp'] = notifyWhatsapp;
+    // notify_email e notify_whatsapp não existem no banco ainda, ignorar por ora
 
     if (updates.isEmpty) return;
 

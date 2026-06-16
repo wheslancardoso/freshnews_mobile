@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:fresh_news_mobile/features/auth/application/auth_notifier.dart';
+import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
 
 final telemetryRepositoryProvider = Provider<TelemetryRepository>((ref) {
   final subscriberId = ref.watch(subscriberIdProvider);

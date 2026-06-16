@@ -24,7 +24,7 @@ class _AdminNewslettersScreenState extends ConsumerState<AdminNewslettersScreen>
     try {
       await ref
           .read(adminNewsletterControllerProvider)
-          .generateDraft(selectedWorld.name.toUpperCase());
+          .generateDraft(selectedWorld);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

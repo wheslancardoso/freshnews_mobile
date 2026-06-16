@@ -5,6 +5,7 @@ import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/newsletter_repository.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/post_repository.dart';
+import 'package:fresh_news_mobile/features/admin/application/generate_newsletter_service.dart';
 
 /// Mundo selecionado ativamente no painel admin
 final adminSelectedWorldProvider = StateProvider<World>((ref) => World.tech);
@@ -27,10 +28,9 @@ class AdminNewsletterController {
 
   AdminNewsletterController(this._repository, this._ref);
 
-  Future<void> generateDraft(String world) async {
-    final dio = _ref.read(dioClientProvider);
-    // Dispara geração da edição pela API no backend
-    await dio.post('/api/generate', data: {'world': world});
+  Future<void> generateDraft(World world) async {
+    final generateService = _ref.read(generateNewsletterServiceProvider);
+    await generateService.generate(world);
     _ref.invalidate(adminDraftsProvider);
   }
 
@@ -64,7 +64,7 @@ class AdminNewsletterController {
   }
 }
 
-final adminNewsletterControllerProvider = Provider.autoDispose((ref) {
+final adminNewsletterControllerProvider = Provider((ref) {
   final repository = ref.read(newsletterRepositoryProvider);
   return AdminNewsletterController(repository, ref);
 });
@@ -103,7 +103,7 @@ class AdminPostController {
   }
 }
 
-final adminPostControllerProvider = Provider.autoDispose((ref) {
+final adminPostControllerProvider = Provider((ref) {
   final repository = ref.read(postRepositoryProvider);
   return AdminPostController(repository, ref);
 });

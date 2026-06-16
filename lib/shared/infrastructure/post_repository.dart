@@ -10,6 +10,7 @@ abstract class PostRepository {
   Future<List<Post>> getPending({required World world});
   Future<Post> getById(String id);
   Future<void> updateStatus(String id, String status);
+  Future<void> updateStatuses(List<String> ids, String status);
   Future<void> updatePost(String id, {String? title, String? summary, String? content, String? category});
   Future<void> delete(String id);
 }
@@ -85,6 +86,18 @@ class SupabasePostRepository implements PostRepository {
       updates['published_at'] = DateTime.now().toIso8601String();
     }
     await _client.from('posts').update(updates).eq('id', id);
+  }
+
+  @override
+  Future<void> updateStatuses(List<String> ids, String status) async {
+    if (ids.isEmpty) return;
+    final updates = <String, dynamic>{
+      'status': status,
+    };
+    if (status == 'approved') {
+      updates['published_at'] = DateTime.now().toIso8601String();
+    }
+    await _client.from('posts').update(updates).inFilter('id', ids);
   }
 
   @override

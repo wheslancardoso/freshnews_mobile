@@ -41,6 +41,7 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
   bool _isUploading = false;
   bool _isGeneratingImage = false;
   late NewsletterContent _content;
+  final List<TextEditingController> _quickTakesControllers = [];
 
   @override
   void initState() {
@@ -50,6 +51,9 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
     _imagePromptController = TextEditingController(text: widget.draft.imagePrompt ?? '');
     _imageUrlController = TextEditingController(text: widget.draft.imageUrl ?? '');
     _content = widget.draft.contentJson ?? const NewsletterContent(title: '', intro: '');
+    for (final take in _content.quickTakes) {
+      _quickTakesControllers.add(TextEditingController(text: take));
+    }
   }
 
   @override
@@ -58,11 +62,22 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
     _summaryController.dispose();
     _imagePromptController.dispose();
     _imageUrlController.dispose();
+    for (final controller in _quickTakesControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   Future<void> _handleSave() async {
     setState(() => _isSaving = true);
+    // Atualiza quickTakes antes de salvar
+    _content = NewsletterContent(
+      title: _content.title,
+      intro: _content.intro,
+      quickTakes: _quickTakesControllers.map((c) => c.text).toList(),
+      categories: _content.categories,
+      imagePrompt: _content.imagePrompt,
+    );
     try {
       await ref.read(adminNewsletterControllerProvider).saveDraft(
         widget.draft.id,
@@ -176,6 +191,31 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
       }
     } finally {
       if (mounted) setState(() => _isGeneratingImage = false);
+    }
+  }
+
+  Future<void> _confirmAction(String title, String content, VoidCallback onConfirm) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: FNColors.surface,
+        title: Text(title, style: FNTypography.headingMedium.copyWith(color: Colors.white)),
+        content: Text(content, style: FNTypography.bodyMedium.copyWith(color: FNColors.textSecondary)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('CANCELAR', style: FNTypography.techLabel.copyWith(color: FNColors.textMuted)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('CONFIRMAR', style: FNTypography.techLabel.copyWith(color: FNColors.primaryViolet)),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      onConfirm();
     }
   }
 
@@ -297,9 +337,11 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'CURAR NOTÍCIAS INDIVIDUAIS',
-                    style: FNTypography.techLabel.copyWith(fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Text(
+                      'EDITAR CONTEÚDO (NOTÍCIAS E QUICK TAKES)',
+                      style: FNTypography.techLabel.copyWith(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Icon(
                     _showItems ? LucideIcons.chevron_up : LucideIcons.chevron_down,
@@ -312,7 +354,7 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
 
           if (_showItems) ...[
             const SizedBox(height: FNSpacing.lg),
-            _buildCategoriesEditor(),
+            _buildContentEditor(),
           ],
           const SizedBox(height: FNSpacing.lg),
 
@@ -323,7 +365,12 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
                 child: FNButton(
                   label: 'APROVAR E PUBLICAR',
                   leading: const Icon(LucideIcons.check, size: 16, color: Colors.white),
-                  onPressed: widget.onPublished,
+                  onPressed: widget.onPublished != null 
+                      ? () => _confirmAction(
+                          'Aprovar e Publicar',
+                          'Tem certeza que deseja publicar esta edição? Ela ficará disponível para todos os usuários imediatamente.',
+                          widget.onPublished!)
+                      : null,
                 ),
               ),
               const SizedBox(width: FNSpacing.base),
@@ -333,7 +380,12 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
                   leading: const Icon(LucideIcons.trash_2, size: 16, color: Colors.white),
                   variant: FNButtonVariant.outline,
                   primaryColor: FNColors.error,
-                  onPressed: widget.onRejected,
+                  onPressed: widget.onRejected != null 
+                      ? () => _confirmAction(
+                          'Excluir Rascunho',
+                          'Tem certeza que deseja excluir esta edição? Esta ação não pode ser desfeita e os dados serão perdidos.',
+                          widget.onRejected!)
+                      : null,
                 ),
               ),
             ],
@@ -343,17 +395,39 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
     );
   }
 
-  Widget _buildCategoriesEditor() {
-    if (_content.categories.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text('Nenhuma notícia encontrada nesta edição.', style: FNTypography.bodySmall),
-      );
-    }
-
+  Widget _buildContentEditor() {
     return Column(
-      children: List.generate(_content.categories.length, (catIdx) {
-        final category = _content.categories[catIdx];
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (_quickTakesControllers.isNotEmpty) ...[
+          Text('QUICK TAKES', style: FNTypography.techLabel.copyWith(fontWeight: FontWeight.bold, color: FNColors.primaryViolet)),
+          const SizedBox(height: FNSpacing.sm),
+          ...List.generate(_quickTakesControllers.length, (idx) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: FNSpacing.base),
+              child: TextFormField(
+                controller: _quickTakesControllers[idx],
+                style: FNTypography.bodyMedium,
+                decoration: InputDecoration(
+                  labelText: 'Take #${idx + 1}',
+                  filled: true,
+                  fillColor: FNColors.surfaceVariant.withValues(alpha: 0.3),
+                  border: const OutlineInputBorder(),
+                ),
+                maxLines: 2,
+              ),
+            );
+          }),
+          const SizedBox(height: FNSpacing.lg),
+        ],
+        if (_content.categories.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Nenhuma notícia encontrada nesta edição.', style: FNTypography.bodySmall),
+          )
+        else
+          ...List.generate(_content.categories.length, (catIdx) {
+            final category = _content.categories[catIdx];
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,6 +498,7 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
           ],
         );
       }),
+      ],
     );
   }
 

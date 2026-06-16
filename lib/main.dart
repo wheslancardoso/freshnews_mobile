@@ -3,12 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fresh_news_mobile/app/app.dart';
 import 'package:fresh_news_mobile/core/constants/app_constants.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    await dotenv.load(fileName: ".env.local");
+  } catch (e) {
+    debugPrint('Erro ao carregar .env.local: $e');
+  }
+
   try {
     await Firebase.initializeApp();
   } catch (e) {

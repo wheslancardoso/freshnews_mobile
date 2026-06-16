@@ -25,6 +25,10 @@ class FakeNewsletterRepository implements NewsletterRepository {
   Future<void> delete(String id) async {}
   @override
   Future<void> updateDraft(String id, {String? title, String? imageUrl, String? imagePrompt, Map<String, dynamic>? contentJson, String? summaryIntro}) async {}
+  @override
+  Future<String> createDraft({required String world, required int editionNumber, required String title, required String summaryIntro, required Map<String, dynamic> contentJson, required String imagePrompt}) async => 'fake-id';
+  @override
+  Future<int> getMaxEditionNumber() async => 0;
 }
 
 class FakePostRepository implements PostRepository {
@@ -38,6 +42,8 @@ class FakePostRepository implements PostRepository {
   Future<Post> getById(String id) async => throw UnimplementedError();
   @override
   Future<void> updateStatus(String id, String status) async {}
+  @override
+  Future<void> updateStatuses(List<String> ids, String status) async {}
   @override
   Future<void> delete(String id) async {}
   @override

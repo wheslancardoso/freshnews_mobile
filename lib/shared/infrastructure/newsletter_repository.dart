@@ -11,6 +11,8 @@ abstract class NewsletterRepository {
   Future<void> updateStatus(String id, String status);
   Future<void> delete(String id);
   Future<void> updateDraft(String id, {String? title, String? imageUrl, String? imagePrompt, Map<String, dynamic>? contentJson, String? summaryIntro});
+  Future<String> createDraft({required String world, required int editionNumber, required String title, required String summaryIntro, required Map<String, dynamic> contentJson, required String imagePrompt});
+  Future<int> getMaxEditionNumber();
 }
 
 class SupabaseNewsletterRepository implements NewsletterRepository {
@@ -83,6 +85,36 @@ class SupabaseNewsletterRepository implements NewsletterRepository {
     if (updates.isEmpty) return;
 
     await _client.from('newsletters').update(updates).eq('id', id);
+  }
+
+  @override
+  Future<String> createDraft({required String world, required int editionNumber, required String title, required String summaryIntro, required Map<String, dynamic> contentJson, required String imagePrompt}) async {
+    final response = await _client.from('newsletters').insert({
+      'edition_number': editionNumber,
+      'title': title,
+      'summary_intro': summaryIntro,
+      'content_json': contentJson,
+      'status': 'draft',
+      'category': 'MASTER',
+      'world': world,
+      'image_prompt': imagePrompt,
+      'html_content': '',
+    }).select('id').single();
+
+    return response['id'] as String;
+  }
+
+  @override
+  Future<int> getMaxEditionNumber() async {
+    final response = await _client
+        .from('newsletters')
+        .select('edition_number')
+        .order('edition_number', ascending: false)
+        .limit(1)
+        .maybeSingle();
+    
+    if (response == null || response['edition_number'] == null) return 0;
+    return response['edition_number'] as int;
   }
 }
 

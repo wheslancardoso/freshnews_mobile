@@ -17,49 +17,49 @@ Deixe o aplicativo aberto na Tela Inicial (Home).
 ## 🎬 Cena 2: Mostrando a Aba Preferências Limpa (Tempo estimado: 20s)
 
 **[Ação na Tela]** 
-Navegue até a aba inferior de "Perfil" e clique no botão de "Preferências". Role até a sessão de "Categorias de Interesse". Deixe claro que nada está marcado.
+Navegue até a aba inferior de "Perfil" e clique no botão de "Preferências". Role até a seção de "Categorias de Interesse". Deixe claro que nada está marcado e que o gráfico "Seu Perfil de Leitura" não aparece por falta de dados.
 
 **[Fala do Roteiro]**
-"Vejam que aqui na tela de Preferências, a minha seção de Categorias de Interesse está vazia. Eu não marquei explicitamente que gosto de Inteligência Artificial ou Desenvolvimento. Na maioria dos apps, eu receberia um conteúdo genérico por causa disso."
+"Vejam que aqui na tela de Preferências, a minha seção de Categorias de Interesse está vazia. Eu não marquei nada explicitamente. Na maioria dos apps, eu receberia um conteúdo genérico por causa disso, sem qualquer personalização."
 
 ---
 
-## 🎬 Cena 3: A Entrada de Dados Silenciosa (Dwell Time) (Tempo estimado: 40s)
+## 🎬 Cena 3: A Entrada de Dados Silenciosa (Dwell Time & Cliques) (Tempo estimado: 45s)
 
 **[Ação na Tela]** 
-Volte para a Home (ou Arquivo) e abra uma Edição da Newsletter.
-Role o dedo até achar uma sessão chamada "IA" ou "DEV". 
-Fique com a tela parada nessa notícia por cerca de 10 a 15 segundos. Se quiser, clique em "Ler fonte original".
+Volte para a Home e abra uma Edição da Newsletter.
+Role a tela até achar uma seção de notícias chamada "IA".
+Fique com a tela parada nessa seção por **pelo menos 15 a 20 segundos** para ultrapassar o limiar de scroll rápido. 
+Em seguida, clique na opção de "Ler fonte original" da notícia de IA.
 
 **[Fala do Roteiro]**
-"Para resolver o problema, nós implementamos uma Filtragem Baseada em Conteúdo com Telemetria Implícita. Reparem que eu estou lendo essa notícia da categoria IA. Enquanto eu leio, o frontend em Flutter usa sensores de Visibilidade para calcular o meu 'Dwell Time', ou seja, o meu tempo de permanência na tela lendo esse assunto."
+"Para resolver isso, implementamos Filtragem Baseada em Conteúdo com Telemetria Implícita. Enquanto eu leio esta notícia de IA, o frontend em Flutter monitora a visibilidade usando a classe `VisibilityDetector`. Se eu ficar pelo menos 12 segundos, o app envia o 'Dwell Time' (tempo de leitura) com pesos proporcionais. Como estou aqui há mais de 15 segundos, o app registrará um peso de leitura normal."
 
 *(Faça o clique na fonte original)*
-"Acabei de clicar no link para ler a notícia completa. Esse é o gatilho final de dados."
+"Agora, vou clicar em 'Ler fonte original'. Isso dispara um clique que envia um sinal de conversão forte com peso máximo para o banco."
 
 ---
 
-## 🎬 Cena 4: O Processamento (Back-end) (Tempo estimado: 20s)
+## 🎬 Cena 4: O Processamento (Back-end e Trigger SQL) (Tempo estimado: 20s)
 
 **[Ação na Tela]** 
-Mostre rapidamente a tabela `user_reading_signals` no painel do Supabase ou apenas mantenha a tela no app enquanto explica.
+Volte para o aplicativo e se prepare para navegar até a tela de preferências.
 
 **[Fala do Roteiro]**
-"Ao sair ou interagir com a notícia, esses sinais são enviados para o nosso banco de dados. Lá, utilizamos uma técnica de Média Ponderada Exponencial via Triggers do PostgreSQL. O algoritmo processa o meu tempo de leitura e os meus cliques, e magicamente recalcula um 'Vetor de Afinidade' (Affinity Vector) no banco, atualizando o meu perfil instantaneamente."
+"Esses sinais brutos de telemetria são disparados para a tabela `user_reading_signals` no Supabase. No banco de dados, criamos um Trigger PostgreSQL que intercepta a inserção e aplica a fórmula de Média Móvel Exponencial (EMA), atualizando em tempo real o Vetor de Afinidade (Affinity Vector) no JSONB do usuário com um fator de peso de 30% para a ação atual e 70% para o histórico."
 
 ---
 
-## 🎬 Cena 5: O Resultado e o Explainable AI (Tempo estimado: 30s)
+## 🎬 Cena 5: Explainable AI, Gráficos e Feed Dinâmico (Tempo estimado: 45s)
 
 **[Ação na Tela]** 
-Volte para o aplicativo (se você saiu) e vá novamente até a aba "Perfil -> Preferências". 
-Role até a seção "Categorias de Interesse". A tag de "IA" deverá estar marcada automaticamente, junto com o ícone de brilhinho (✨).
+Navegue até a aba "Perfil -> Preferências". 
+Mostre a barra de progresso no painel "SEU PERFIL DE LEITURA" mostrando a porcentagem de leitura em IA.
+Role até "Categorias de Interesse": a categoria "IA" estará com o ícone de brilhinho (✨).
+Volte para a Home e reabra a edição: a categoria "IA" agora aparece no topo com a tag ✨ *Baseado no seu perfil*.
 
 **[Fala do Roteiro]**
-"A melhor parte é a transparência com a LGPD. Ao invés do algoritmo agir pelas sombras, olhem a nossa tela de Preferências agora. A categoria de 'IA' foi ativada sozinha, e o sistema colocou esse ícone de brilho. É o nosso modelo de 'Explainable AI' avisando ao usuário: *Nossa inteligência notou que você gosta disso*. Se o usuário não quiser, ele tem a liberdade de desmarcar. Assim, nós matamos o problema do Cold Start e entregamos um feed cirúrgico."
+"Vejam a mágica na tela de Preferências! Primeiro, a seção 'SEU PERFIL DE LEITURA' agora exibe um gráfico de barras com a porcentagem exata das minhas interações. Segundo, a categoria de 'IA' foi selecionada automaticamente com esse ícone de brilho mágico (✨). É o nosso modelo de 'Explainable AI': o app explica de forma transparente que notou o nosso interesse baseado no comportamento de leitura. Se o usuário quiser, ele tem a liberdade de desmarcar."
 
-**[Ação na Tela]** 
-Acene / agradeça.
-
-**[Fala do Roteiro]**
-"É isso. Agradeço a atenção, e o relatório completo detalha a nossa orquestração com LLMs para os resumos! Obrigado."
+*(Abra a newsletter na Home e mostre a ordenação)*
+"Para coroar a experiência, as seções da newsletter foram reordenadas dinamicamente: a categoria de IA subiu para o topo do feed acompanhada do selo 'Baseado no seu perfil'. Eliminamos o Cold Start de forma fluida, ética e totalmente controlada pelo leitor. Obrigado pela atenção!"

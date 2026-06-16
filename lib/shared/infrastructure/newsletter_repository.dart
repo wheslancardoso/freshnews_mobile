@@ -12,7 +12,7 @@ abstract class NewsletterRepository {
   Future<void> delete(String id);
   Future<void> updateDraft(String id, {String? title, String? imageUrl, String? imagePrompt, Map<String, dynamic>? contentJson, String? summaryIntro});
   Future<String> createDraft({required String world, required int editionNumber, required String title, required String summaryIntro, required Map<String, dynamic> contentJson, required String imagePrompt});
-  Future<int> getMaxEditionNumber();
+  Future<int> getMaxEditionNumber(String world);
 }
 
 class SupabaseNewsletterRepository implements NewsletterRepository {
@@ -105,10 +105,11 @@ class SupabaseNewsletterRepository implements NewsletterRepository {
   }
 
   @override
-  Future<int> getMaxEditionNumber() async {
+  Future<int> getMaxEditionNumber(String world) async {
     final response = await _client
         .from('newsletters')
         .select('edition_number')
+        .eq('world', world)
         .order('edition_number', ascending: false)
         .limit(1)
         .maybeSingle();

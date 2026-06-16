@@ -13,6 +13,12 @@ class AppConstants {
     return dotenv.env['OPENAI_API_KEY'] ?? '';
   }
 
+  static String get n8nWebhookUrl {
+    const envKey = String.fromEnvironment('N8N_WEBHOOK_URL', defaultValue: '');
+    if (envKey.isNotEmpty) return envKey;
+    return dotenv.env['N8N_WEBHOOK_URL'] ?? '';
+  }
+
   static String get baseApiUrl {
     if (kIsWeb) return 'http://localhost:3000';
     if (Platform.isAndroid) return 'http://10.0.2.2:3000';

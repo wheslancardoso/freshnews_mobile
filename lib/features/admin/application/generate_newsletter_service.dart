@@ -301,13 +301,16 @@ class GenerateNewsletterService {
       final metaResponse = await _callOpenAi([
         {
           'role': 'system',
-          'content': '''Você é o editor-chefe do 'Fresh News'. Sua missão é consolidar a edição diária.
+          'content': '''Você é o editor-chefe do 'Fresh News' responsável pelo editorial do mundo ${world.name.toUpperCase()} (${world.config.label}).
+Sua missão é consolidar a edição diária, escrevendo um título super imersivo e uma introdução que capture a essência deste mundo (Tagline: ${WorldRegistry.get(world).tagline}).
+Por exemplo, se for Tech, use um tom hacker/cyberpunk. Se for Music, um tom artístico/vibrante. Se for Gear, focado em engenharia/RPM. Se for Game, focado em pixel/retro.
+
 SAÍDA JSON OBRIGATÓRIA:
 {
-  "title": "Título criativo e impactante",
-  "intro": "Introdução de 1-2 linhas",
-  "quickTakes": ["⚡ Manchete 1", "🔥 Manchete 2"],
-  "image_prompt": "Prompt detalhado da capa desta edição."
+  "title": "Título criativo e MUITO impactante, condizente com o mundo",
+  "intro": "Uma introdução imersiva, instigante e temática de 2-3 linhas que dê o tom da edição e resuma o principal destaque",
+  "quickTakes": ["⚡ Manchete curta 1", "🔥 Manchete curta 2"],
+  "image_prompt": "Prompt detalhado da capa desta edição, seguindo a estética visual do mundo."
 }'''
         },
         {'role': 'user', 'content': 'Gere os metadados baseado nestas headlines:\\n\$allHeadlines'}
@@ -344,13 +347,13 @@ SAÍDA JSON OBRIGATÓRIA:
       };
 
       // 6. Save Newsletter
-      final maxEdition = await _newsletterRepository.getMaxEditionNumber();
+      final maxEdition = await _newsletterRepository.getMaxEditionNumber(worldSlug);
       final newEdition = maxEdition + 1;
       
       await _newsletterRepository.createDraft(
         world: worldSlug,
         editionNumber: newEdition,
-        title: 'Edição de ${DateFormat('dd/MM/yy').format(DateTime.now())}',
+        title: metaResponse['title'] ?? 'Edição de ${DateFormat('dd/MM/yy').format(DateTime.now())}',
         summaryIntro: metaResponse['intro'] ?? '',
         contentJson: contentJson,
         imagePrompt: metaResponse['image_prompt'] ?? '',

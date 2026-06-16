@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
 import 'package:fresh_news_mobile/core/network/dio_client.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
+import 'package:fresh_news_mobile/core/constants/app_constants.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
 import 'package:fresh_news_mobile/shared/domain/post.entity.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/newsletter_repository.dart';
@@ -55,6 +58,24 @@ class AdminNewsletterController {
 
   Future<void> publishDraft(String id) async {
     await _repository.updateStatus(id, 'published');
+    
+    final webhookUrl = AppConstants.n8nWebhookUrl;
+    if (webhookUrl.isNotEmpty) {
+      try {
+        final dio = Dio();
+        await dio.post(
+          webhookUrl,
+          data: {
+            'event': 'newsletter_published',
+            'newsletter_id': id,
+          },
+        );
+        debugPrint('Webhook disparado com sucesso para \$webhookUrl');
+      } catch (e) {
+        debugPrint('Erro ao disparar webhook n8n: \$e');
+      }
+    }
+    
     _ref.invalidate(adminDraftsProvider);
   }
 

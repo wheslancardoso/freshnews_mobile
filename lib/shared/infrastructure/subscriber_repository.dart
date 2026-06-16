@@ -14,7 +14,7 @@ abstract class SubscriberRepository {
   Future<Subscriber> create({required String email, required List<World> worlds});
   Future<Subscriber?> getByEmail(String email);
   Future<Subscriber?> getById(String id);
-  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences, String? phone, bool? notifyEmail, bool? notifyWhatsapp});
+  Future<void> updatePreferences(String id, {List<World>? worlds, bool? active, List<String>? preferences, String? phone, bool? notifyEmail, bool? notifyWhatsapp, Map<String, double>? affinityVector});
   Future<UnsubscribeResult> unsubscribe(String token);
 }
 

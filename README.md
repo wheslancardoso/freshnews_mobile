@@ -9,10 +9,11 @@ Este é o repositório do aplicativo móvel **Fresh News**, desenvolvido com **F
 O projeto adota uma arquitetura estruturada baseada em **Feature-First** (Funcionalidades) integrada ao **Riverpod** para gerenciamento de estado e injeção de dependências.
 
 ```
+docs/               # Documentação de arquitetura, padrões de código, ADRs e histórico (Logs)
 lib/
   ├── app/                  # Configurações globais de roteamento (GoRouter) e App Widget
   ├── core/                 # Componentes compartilhados, constantes, serviços globais e rede
-  │     ├── constants/      # Constantes estáticas e configurações de mundos (Mundos TECH/MUSIC)
+  │     ├── constants/      # Constantes estáticas e configurações de mundos (Mundos TECH/MUSIC/GEAR/GAME)
   │     ├── network/        # Inicializadores e clientes de API/Supabase
   │     ├── providers/      # Provedores de estado compartilhados
   │     ├── services/       # Serviços como Firebase Cloud Messaging (FCM) e Notificações Locais
@@ -33,6 +34,7 @@ lib/
         ├── domain/         # Modelos de Domínio do Negócio (Post, Newsletter, Subscriber)
         ├── infrastructure/ # Repositórios concretos integrados ao Supabase e Tracking local
         └── widgets/        # Elementos de UI Brutalistas (Bordas grossas, botões sem cantos redondos)
+n8n_workflows/      # Pipelines automatizados do n8n para delivery multiplataforma (E-mail e WhatsApp)
 ```
 
 ---
@@ -44,7 +46,9 @@ O design visual é o diferencial estético do aplicativo, baseado em layouts ret
 2. **Bordas & Sombras Rígidas**: Sem cantos arredondados suavizados (`BorderRadius.zero` ou raio máximo de 4px) e bordas sólidas pretas grossas de `2.5px`, acompanhadas de sombras projetadas duras sem desfoque.
 3. **Chameleon Color Theme**: O tema do aplicativo se adapta dinamicamente às cores do mundo e da categoria selecionados:
    - **Mundo TECH**: Verde Neon (`#22C55E`)
-   - **Mundo MUSIC**: Dourado Hip-Hop (`#EAB308`), Vermelho Grunge (`#DC2626`) ou Roxo Electrónica (`#A855F7`).
+   - **Mundo MUSIC**: Dourado Hip-Hop (`#EAB308`) com variações dinâmicas de categoria.
+   - **Mundo GEAR**: Vermelho Automotivo (`#EF4444`)
+   - **Mundo GAME**: Roxo Arcade (`#A855F7`)
 4. **Efeito Scanline Retro**: Um overlay translúcido de linhas de varredura de TV CRT analógica sobre o feed do aplicativo para reforçar o visual hacker.
 5. **Feedback Tátil**: Vibrações rápidas em toques e interações do usuário.
 
@@ -78,7 +82,7 @@ O design visual é o diferencial estético do aplicativo, baseado em layouts ret
 ## 💻 Como Rodar o Projeto
 
 ### Pré-requisitos
-Certifique-se de ter o Flutter instalado e configurado em seu ambiente de desenvolvimento.
+Certifique-se de ter o Flutter instalado e configurado em seu ambiente de desenvolvimento. Para obter as restrições estritas e versões exatas dos SDKs suportados no projeto, consulte [docs/21_VERSOES_E_REQUISITOS_BUILD.md](docs/21_VERSOES_E_REQUISITOS_BUILD.md).
 
 ### Passos de Execução
 1. Clone este repositório e navegue até a pasta raiz:

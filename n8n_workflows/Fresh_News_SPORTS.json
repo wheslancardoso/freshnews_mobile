@@ -1096,7 +1096,7 @@
           "conditions": [
             {
               "id": "e263b4ba-eda9-46d8-94f8-0c048a118e79",
-              "leftValue": "={{ $json.isoDate }}",
+              "leftValue": "={{ $json.isoDate || ( $json.pubDate ? new Date($json.pubDate).toISOString() : new Date().toISOString() ) }}",
               "rightValue": "={{ new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() }}",
               "operator": {
                 "type": "dateTime",
@@ -1115,7 +1115,8 @@
         16
       ],
       "id": "ccdae842-b52a-4784-98c2-f53fb6cb3877",
-      "name": "Filter1"
+      "name": "Filter1",
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {

@@ -1116,6 +1116,125 @@
       ],
       "id": "ccdae842-b52a-4784-98c2-f53fb6cb3877",
       "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "abc1234",
+              "leftValue": "={{ $json.has_rss }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1600,
+        32
+      ],
+      "id": "if-has-rss",
+      "name": "Check has_rss"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://firecrawl.wfixtech.com.br/v1/scrape",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json.homepage_url || $json.rss_url }}\",\n  \"formats\": [\"markdown\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1400,
+        250
+      ],
+      "id": "http-firecrawl",
+      "name": "HTTP: Firecrawl Markdown",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é um extrator de dados hiper-preciso. A seguir você receberá o conteúdo em Markdown da capa de um site esportivo.\nSua missão é extrair as 10 notícias mais recentes e relevantes.\n\nRetorne APENAS um array JSON válido contendo objetos com as propriedades:\n- 'title': O título da notícia\n- 'link': A URL absoluta (resolva URLs relativas se necessário usando a URL base do site)\n- 'isoDate': A data de publicação no formato ISO 8601 (ex: 2026-06-17T12:00:00Z). Se não houver data explícita, gere a data atual."
+            },
+            {
+              "role": "user",
+              "content": "={{ $json.data.markdown.substring(0, 25000) }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "responseFormat": "jsonObject"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1200,
+        250
+      ],
+      "id": "openai-extrator",
+      "name": "IA: Extrator de Manchetes",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\nreturn { json: { noticias: parsed } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -950,
+        250
+      ],
+      "id": "code-parser",
+      "name": "Code: Parse JSON Extractor"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "noticias",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [
+        -750,
+        250
+      ],
+      "id": "item-lists-split",
+      "name": "Item Lists: Split Arrays"
     }
   ],
   "pinData": {},
@@ -1226,7 +1345,7 @@
         [],
         [
           {
-            "node": "RSS Read",
+            "node": "Check has_rss",
             "type": "main",
             "index": 0
           }
@@ -1465,6 +1584,68 @@
         [
           {
             "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check has_rss": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP: Firecrawl Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Firecrawl Markdown": {
+      "main": [
+        [
+          {
+            "node": "IA: Extrator de Manchetes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA: Extrator de Manchetes": {
+      "main": [
+        [
+          {
+            "node": "Code: Parse JSON Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Parse JSON Extractor": {
+      "main": [
+        [
+          {
+            "node": "Item Lists: Split Arrays",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Lists: Split Arrays": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
             "type": "main",
             "index": 0
           }

@@ -269,6 +269,7 @@ class ArchiveScreen extends ConsumerWidget {
                       edition: 'EDIÇÃO #${newsletter.editionNumber}',
                       date: dateString,
                       categories: newsletter.category != null ? [newsletter.category!] : [],
+                      world: newsletter.world,
                     ),
                     onTap: () => context.push('/archive/${newsletter.id}'),
                   ).animate().fadeIn(delay: (index * 100).ms, duration: 300.ms).slideY(begin: 0.05, end: 0);

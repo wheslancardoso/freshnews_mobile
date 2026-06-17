@@ -69,21 +69,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     });
   }
 
-  Color _getCategoryColor(String category) {
-    switch (category.toUpperCase()) {
-      case 'TECH_HACKER':
-      case 'SEGURANÇA':
-        return const Color(0xFFF87171); // red-400
-      case 'SYNTH_AESTHETICS':
-        return const Color(0xFFA78BFA); // purple-400
-      case 'GEARHEAD':
-        return const Color(0xFFFBBF24); // yellow-400
-      case 'IA':
-        return const Color(0xFF34D399); // emerald-400
-      default:
-        return const Color(0xFF22D3EE); // cyan-400
-    }
-  }
+
 
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
@@ -133,7 +119,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           final contentText = post.content.isNotEmpty ? post.content : post.summary;
           
           // Extrai cores e efeitos do Chameleon Engine
-          final categoryColor = _getCategoryColor(post.category);
+          final categoryColor = FNColors.forCategory(post.category, world: post.world);
           final accentColor = _parseHexColor(post.themeConfig?['accent_color'] as String?, categoryColor);
           final effectsRaw = post.themeConfig?['ui_effects'] as List<dynamic>? ?? const ['scanlines'];
           final effects = effectsRaw.map((e) => e.toString()).toList();
@@ -160,7 +146,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                           const SizedBox(width: 8),
                           FNBadge(label: 'SCORE: ${post.score}'),
                           const SizedBox(width: 8),
-                          FNBadge(label: post.subCategory),
+                          FNBadge.category(
+                            (post.subCategory.isNotEmpty && post.subCategory != 'GERAL') ? post.subCategory : post.category,
+                            world: post.world,
+                          ),
                           const SizedBox(width: 8),
                           FNBadge(label: post.world.name.toUpperCase()),
                         ],

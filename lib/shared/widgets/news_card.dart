@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../core/constants/world.dart';
 import '../../core/theme/fn_colors.dart';
 import '../../core/theme/fn_theme.dart';
 import 'fn_badge.dart';
@@ -13,6 +14,7 @@ class NewsCardData {
   final String edition;
   final String date;
   final List<String> categories;
+  final World? world;
 
   const NewsCardData({
     required this.id,
@@ -22,6 +24,7 @@ class NewsCardData {
     required this.edition,
     required this.date,
     this.categories = const [],
+    this.world,
   });
 }
 
@@ -137,7 +140,7 @@ class NewsCard extends StatelessWidget {
       spacing: 6,
       runSpacing: 6,
       children: data.categories
-          .map((c) => FNBadge.category(c))
+          .map((c) => FNBadge.category(c, world: data.world))
           .toList(),
     );
   }

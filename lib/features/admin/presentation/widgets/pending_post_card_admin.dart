@@ -109,10 +109,9 @@ class _PendingPostCardAdminState extends State<PendingPostCardAdmin> {
                   spacing: 8,
                   runSpacing: 4,
                   children: [
-                    FNBadge(
-                      label: widget.post.category,
-                      color: FNColors.primaryViolet,
-                      backgroundColor: FNColors.primaryViolet.withValues(alpha: 0.12),
+                    FNBadge.category(
+                      (widget.post.subCategory.isNotEmpty && widget.post.subCategory != 'GERAL') ? widget.post.subCategory : widget.post.category,
+                      world: widget.post.world,
                     ),
                     FNBadge(label: 'SCORE: ${widget.post.score}'),
                   ],

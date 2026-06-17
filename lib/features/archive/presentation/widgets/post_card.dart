@@ -16,28 +16,12 @@ class PostCard extends StatelessWidget {
     this.isPreferred = false,
   });
 
-  Color _getCategoryColor(String category) {
-    switch (category.toUpperCase()) {
-      case 'TECH_HACKER':
-      case 'SEGURANÇA':
-        return const Color(0xFFF87171); // red-400
-      case 'SYNTH_AESTHETICS':
-        return const Color(0xFFA78BFA); // purple-400
-      case 'GEARHEAD':
-        return const Color(0xFFFBBF24); // yellow-400
-      case 'IA':
-        return const Color(0xFF34D399); // emerald-400
-      default:
-        return const Color(0xFF22D3EE); // cyan-400
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final categoryColor = FNColors.forCategory(post.category, world: post.world);
     final borderColor = isPreferred
         ? const Color(0xFF34D399).withOpacity(0.6)
         : Colors.white.withOpacity(0.1);
-    final categoryColor = _getCategoryColor(post.category);
 
     return InkWell(
       onTap: () => context.push('/post/${post.id}'),
@@ -70,10 +54,9 @@ class PostCard extends StatelessWidget {
                           spacing: FNSpacing.sm,
                           runSpacing: FNSpacing.sm,
                           children: [
-                            FNBadge(
-                              label: post.category,
-                              color: categoryColor,
-                              backgroundColor: categoryColor.withOpacity(0.12),
+                            FNBadge.category(
+                              (post.subCategory.isNotEmpty && post.subCategory != 'GERAL') ? post.subCategory : post.category,
+                              world: post.world,
                             ),
                             FNBadge(label: 'SCORE: ${post.score}'),
                           ],

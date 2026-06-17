@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/world.dart';
 import '../../core/theme/fn_colors.dart';
 import '../../core/theme/fn_theme.dart';
 
@@ -14,8 +15,8 @@ class FNBadge extends StatelessWidget {
     this.backgroundColor,
   });
 
-  factory FNBadge.category(String category) {
-    final color = FNColors.forCategory(category);
+  factory FNBadge.category(String category, {World? world}) {
+    final color = FNColors.forCategory(category, world: world);
     return FNBadge(
       label: category,
       color: color,

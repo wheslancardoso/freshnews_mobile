@@ -39,12 +39,12 @@ class ChameleonThemeConfig {
     );
   }
 
-  // Default GEAR (Vermelho Automotivo)
-  factory ChameleonThemeConfig.defaultGear() {
+  // Default SPORTS (Laranja Vibrante)
+  factory ChameleonThemeConfig.defaultSports() {
     return ChameleonThemeConfig(
-      bg: const Color(0xFF0D0808),
-      accent: FNColors.primaryRed,
-      primary: FNColors.primaryRed,
+      bg: const Color(0xFF0F0806),
+      accent: const Color(0xFFF97316),
+      primary: const Color(0xFFF97316),
       fontStyle: 'SpaceGrotesk',
       effects: ['scanlines', 'terminal_glow'],
     );
@@ -80,8 +80,8 @@ class ChameleonThemeConfig {
       case World.music:
         bg = const Color(0xFF0C0A09);
         break;
-      case World.gear:
-        bg = const Color(0xFF0D0808);
+      case World.sports:
+        bg = const Color(0xFF0F0806);
         break;
       case World.game:
         bg = const Color(0xFF0B080D);

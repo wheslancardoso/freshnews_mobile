@@ -15,8 +15,8 @@ class ChameleonThemeNotifier extends Notifier<ChameleonThemeConfig> {
     switch (world.toUpperCase()) {
       case 'MUSIC':
         state = ChameleonThemeConfig.defaultMusic();
-      case 'GEAR':
-        state = ChameleonThemeConfig.defaultGear();
+      case 'SPORTS':
+        state = ChameleonThemeConfig.defaultSports();
       case 'GAME':
         state = ChameleonThemeConfig.defaultGame();
       default:

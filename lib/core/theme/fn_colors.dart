@@ -51,12 +51,12 @@ class FNColors {
   static const musicCharts = Color(0xFFFFD700);      // Ouro Puro / Troféu
   static const musicLancamentos = Color(0xFFBFFF00); // Limão Ácido / Novidade
 
-  // === Gear World Category Colors === (Industriais / LEDs / Motores)
-  static const gearAutomotivo = Color(0xFFE60000);  // Vermelho Ferrari
-  static const gearGadgets = Color(0xFF00BFFF);     // Azul Led / Sky Blue
-  static const gearWearables = Color(0xFFFF5500);   // Laranja Segurança / Calor
-  static const gearDiy = Color(0xFFA67B5B);         // Cobre / Madeira
-  static const gearInovacao = Color(0xFFFF00FF);    // Laser Magenta
+  // === Sports World Category Colors === (Arena / Quadras / Concreto)
+  static const sportsFutebol = Color(0xFF10B981);    // Gramado / Verde Pitch
+  static const sportsNba = Color(0xFFF97316);        // Laranja Basquete / Quadra
+  static const sportsSkate = Color(0xFF94A3B8);      // Concreto / Cinza Urbano
+  static const sportsMma = Color(0xFFEF4444);        // Vermelho Sangue / Octógono
+  static const sportsEsports = Color(0xFF8B5CF6);    // Roxo Competitivo
 
   // === Game World Category Colors === (RGB / Arcade / Neons Frios)
   static const gameIndie = Color(0xFFFF3366);       // Rosa Arcade
@@ -102,14 +102,14 @@ class FNColors {
         final musicPool = [musicArtistas, musicProducao, musicIndie, musicCharts, musicLancamentos];
         return musicPool[catUpper.hashCode.abs() % musicPool.length];
 
-      case World.gear:
-        if (catUpper.contains('AUTOMOTIVO') || catUpper.contains('AUTO') || catUpper.contains('RPM') || catUpper.contains('GEAR_AUTO')) return gearAutomotivo;
-        if (catUpper.contains('GADGET') || catUpper.contains('HARDWARE') || catUpper.contains('CHIP') || catUpper.contains('GEAR_GADGETS')) return gearGadgets;
-        if (catUpper.contains('WEARABLE') || catUpper.contains('BIO') || catUpper.contains('BIOMÉTRICA') || catUpper.contains('GEAR_WEARABLES')) return gearWearables;
-        if (catUpper.contains('DIY') || catUpper.contains('MAKER') || catUpper.contains('ELETRÔNICA') || catUpper.contains('GEAR_DIY')) return gearDiy;
-        if (catUpper.contains('INOVAÇÃO') || catUpper.contains('INOVACAO') || catUpper.contains('ROBÓTICA') || catUpper.contains('SEMICOND') || catUpper.contains('GEAR_INNOVATION')) return gearInovacao;
-        final gearPool = [gearAutomotivo, gearGadgets, gearWearables, gearDiy, gearInovacao];
-        return gearPool[catUpper.hashCode.abs() % gearPool.length];
+      case World.sports:
+        if (catUpper.contains('FUTEBOL') || catUpper.contains('SOCCER') || catUpper.contains('BALL') || catUpper.contains('SPORTS_FOOTBALL')) return sportsFutebol;
+        if (catUpper.contains('NBA') || catUpper.contains('BASKET') || catUpper.contains('HOOP') || catUpper.contains('SPORTS_NBA')) return sportsNba;
+        if (catUpper.contains('SKATE') || catUpper.contains('STREET') || catUpper.contains('BOARD') || catUpper.contains('SPORTS_SKATE')) return sportsSkate;
+        if (catUpper.contains('MMA') || catUpper.contains('UFC') || catUpper.contains('FIGHT') || catUpper.contains('SPORTS_MMA')) return sportsMma;
+        if (catUpper.contains('ESPORTS') || catUpper.contains('CS2') || catUpper.contains('LOL') || catUpper.contains('SPORTS_ESPORTS')) return sportsEsports;
+        final sportsPool = [sportsFutebol, sportsNba, sportsSkate, sportsMma, sportsEsports];
+        return sportsPool[catUpper.hashCode.abs() % sportsPool.length];
 
       case World.game:
         if (catUpper.contains('INDIE') || catUpper.contains('RETRO') || catUpper.contains('GAME_INDIE')) return gameIndie;

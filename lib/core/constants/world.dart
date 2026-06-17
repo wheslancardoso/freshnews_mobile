@@ -4,7 +4,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 enum World {
   tech,
   music,
-  gear,
+  sports,
   game,
 }
 
@@ -48,14 +48,14 @@ class WorldRegistry {
       quickTakesTitle: '🎵 SETLIST RÁPIDO',
       categories: ['ARTISTAS', 'PRODUÇÃO', 'INDIE', 'CHARTS', 'LANÇAMENTOS'],
     ),
-    World.gear: WorldMeta(
-      world: World.gear,
-      label: 'GEAR',
-      emoji: '⚙️',
-      primaryColor: const Color(0xFFEF4444),
-      tagline: 'RPM & GADGETS',
-      quickTakesTitle: '⚙️ DIAGNÓSTICO',
-      categories: ['AUTOMOTIVO', 'GADGETS', 'WEARABLES', 'DIY', 'INOVAÇÃO'],
+    World.sports: WorldMeta(
+      world: World.sports,
+      label: 'SPORTS',
+      emoji: '🏆',
+      primaryColor: Color(0xFFF97316),
+      tagline: 'ARENA & STREET',
+      quickTakesTitle: '🏆 PLACAR RÁPIDO',
+      categories: ['FUTEBOL', 'NBA', 'SKATE', 'MMA', 'ESPORTS'],
     ),
     World.game: WorldMeta(
       world: World.game,
@@ -104,8 +104,8 @@ extension WorldExtension on World {
         return LucideIcons.laptop;
       case World.music:
         return LucideIcons.music;
-      case World.gear:
-        return LucideIcons.settings;
+      case World.sports:
+        return LucideIcons.trophy;
       case World.game:
         return LucideIcons.gamepad;
     }

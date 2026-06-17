@@ -14,6 +14,7 @@ import 'package:fresh_news_mobile/shared/infrastructure/tracking_repository.dart
 import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
 import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
+import 'package:fresh_news_mobile/core/theme/chameleon_theme_config.dart';
 import 'package:fresh_news_mobile/shared/widgets/chameleon_effects_overlay.dart';
 
 final postDetailProvider = FutureProvider.autoDispose.family<Post, String>((ref, id) {
@@ -34,18 +35,6 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   bool _tracked = false;
-
-  Color _parseHexColor(String? hexString, Color fallback) {
-    if (hexString == null || hexString.isEmpty) return fallback;
-    try {
-      final buffer = StringBuffer();
-      if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
-      buffer.write(hexString.replaceFirst('#', ''));
-      return Color(int.parse(buffer.toString(), radix: 16));
-    } catch (_) {
-      return fallback;
-    }
-  }
 
   @override
   void didChangeDependencies() {
@@ -118,11 +107,11 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         data: (post) {
           final contentText = post.content.isNotEmpty ? post.content : post.summary;
           
-          // Extrai cores e efeitos do Chameleon Engine
-          final categoryColor = FNColors.forCategory(post.category, world: post.world);
-          final accentColor = _parseHexColor(post.themeConfig?['accent_color'] as String?, categoryColor);
-          final effectsRaw = post.themeConfig?['ui_effects'] as List<dynamic>? ?? const ['scanlines'];
-          final effects = effectsRaw.map((e) => e.toString()).toList();
+          // Extrai cores e efeitos do Chameleon Engine (App)
+          final categoryToUse = (post.subCategory.isNotEmpty && post.subCategory != 'GERAL') ? post.subCategory : post.category;
+          final chameleon = ChameleonThemeConfig.fromCategory(categoryToUse, world: post.world.name);
+          final accentColor = chameleon.primary;
+          final effects = chameleon.effects;
 
           return ChameleonEffectsOverlay(
             accentColor: accentColor,

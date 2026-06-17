@@ -32,7 +32,7 @@
         0
       ],
       "id": "13c8b227-fd31-4446-9e4f-5aa4dddc3b73",
-      "name": "É notícia nova?1"
+      "name": "IF: URL Inédita?"
     },
     {
       "parameters": {
@@ -224,7 +224,7 @@
         -16
       ],
       "id": "73ae5b52-44ea-47df-bdae-68429faec6e7",
-      "name": "Switch"
+      "name": "Switch: Direcionar Categoria"
     },
     {
       "parameters": {
@@ -257,7 +257,7 @@
         32
       ],
       "id": "4645f29a-3c20-4d54-9cbe-6a839e3d1a3d",
-      "name": "Filter"
+      "name": "IF: Palavras Bloqueadas?"
     },
     {
       "parameters": {
@@ -522,7 +522,7 @@
         -16
       ],
       "id": "7c71ce5a-837e-4d78-be9b-b1909258fc51",
-      "name": "Code in JavaScript2"
+      "name": "Code: Ajuste de Categorias"
     },
     {
       "parameters": {
@@ -564,7 +564,7 @@
         64
       ],
       "id": "5e69afb4-2a4c-41f0-86b5-591b0608e113",
-      "name": "Code in JavaScript"
+      "name": "Code: Extrair Domínio"
     },
     {
       "parameters": {
@@ -798,7 +798,7 @@
         "options": {}
       },
       "id": "7746fc1d-96c2-4b18-8b85-ed945546210e",
-      "name": "Formatar Dados",
+      "name": "Code: Formatar Markdown Final",
       "type": "n8n-nodes-base.set",
       "typeVersion": 2,
       "position": [
@@ -1115,7 +1115,7 @@
         16
       ],
       "id": "ccdae842-b52a-4784-98c2-f53fb6cb3877",
-      "name": "Filter1",
+      "name": "IF: Filtro de Data Válida",
       "onError": "continueErrorOutput"
     },
     {
@@ -1149,7 +1149,7 @@
         32
       ],
       "id": "if-has-rss",
-      "name": "Check has_rss"
+      "name": "IF: Fonte tem RSS?"
     },
     {
       "parameters": {
@@ -1236,7 +1236,7 @@
         250
       ],
       "id": "item-lists-split",
-      "name": "Item Lists: Split Arrays"
+      "name": "Code: Separar Manchetes Extraídas"
     },
     {
       "parameters": {
@@ -1275,7 +1275,7 @@
             },
             {
               "role": "user",
-              "content": "Nova Manchete: {{ $('É notícia nova?1').item.json.title }}\n\nManchetes Recentes (24h):\n{{ JSON.stringify($json.recent_titles) }}"
+              "content": "Nova Manchete: {{ $('IF: URL Inédita?').item.json.title }}\n\nManchetes Recentes (24h):\n{{ JSON.stringify($json.recent_titles) }}"
             }
           ]
         },
@@ -1300,7 +1300,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let is_duplicate = false;\ntry {\n  const content = $input.all()[0].json.output[0].content[0].text;\n  is_duplicate = JSON.parse(content).is_duplicate;\n} catch (e) {}\n\nconst original = $('É notícia nova?1').item.json;\nreturn { json: { ...original, is_duplicate: is_duplicate } };"
+        "jsCode": "let is_duplicate = false;\ntry {\n  const content = $input.all()[0].json.output[0].content[0].text;\n  is_duplicate = JSON.parse(content).is_duplicate;\n} catch (e) {}\n\nconst original = $('IF: URL Inédita?').item.json;\nreturn { json: { ...original, is_duplicate: is_duplicate } };"
       },
       "id": "code-parse-duplicate",
       "name": "Code: Parse Duplicate",
@@ -1347,24 +1347,6 @@
   ],
   "pinData": {},
   "connections": {
-    "É notícia nova?1": {
-      "main": [
-        [
-          {
-            "node": "DB: Buscar Manchetes Recentes",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "LOOP 2 (Notícias)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "DB: Verifica URL": {
       "main": [
         [
@@ -1392,56 +1374,6 @@
         [
           {
             "node": "Buscar fontes supabase",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "IA: Especialista GEAR - AUTOMOTIVO",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "IA: Especialista GEAR - GADGETS",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "IA: Especialista GEAR - WEARABLES",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "IA: Especialista GEAR - DIY",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "IA: Especialista GEAR - INOVAÇÃO",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filter": {
-      "main": [
-        [
-          {
-            "node": "LOOP 1 (Sites)",
             "type": "main",
             "index": 0
           }
@@ -1544,17 +1476,6 @@
         ]
       ]
     },
-    "Code in JavaScript2": {
-      "main": [
-        [
-          {
-            "node": "Categoria e Sub_categoria",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Categoria e Sub_categoria": {
       "main": [
         [
@@ -1566,33 +1487,11 @@
         ]
       ]
     },
-    "Code in JavaScript": {
-      "main": [
-        [
-          {
-            "node": "DB: Salvar no Postgres",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "DB: Salvar no Postgres": {
       "main": [
         [
           {
             "node": "LOOP 1 (Sites)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Formatar Dados": {
-      "main": [
-        [
-          {
-            "node": "IA: Diretor de Triagem GEAR",
             "type": "main",
             "index": 0
           }
@@ -1687,35 +1586,6 @@
         ]
       ]
     },
-    "Filter1": {
-      "main": [
-        [
-          {
-            "node": "LOOP 2 (Notícias)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check has_rss": {
-      "main": [
-        [
-          {
-            "node": "RSS Read",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "HTTP: Firecrawl Markdown",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "HTTP: Firecrawl Markdown": {
       "main": [
         [
@@ -1743,17 +1613,6 @@
         [
           {
             "node": "Item Lists: Split Arrays",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Item Lists: Split Arrays": {
-      "main": [
-        [
-          {
-            "node": "Filter1",
             "type": "main",
             "index": 0
           }
@@ -1805,6 +1664,147 @@
         [
           {
             "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: URL Inédita?": {
+      "main": [
+        [
+          {
+            "node": "DB: Buscar Manchetes Recentes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Fonte tem RSS?": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP: Firecrawl Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Filtro de Data Válida": {
+      "main": [
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Extrair Domínio": {
+      "main": [
+        [
+          {
+            "node": "DB: Salvar no Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Ajuste de Categorias": {
+      "main": [
+        [
+          {
+            "node": "Categoria e Sub_categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch: Direcionar Categoria": {
+      "main": [
+        [
+          {
+            "node": "IA: Especialista GEAR - AUTOMOTIVO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IA: Especialista GEAR - GADGETS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IA: Especialista GEAR - WEARABLES",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IA: Especialista GEAR - DIY",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IA: Especialista GEAR - INOVAÇÃO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Palavras Bloqueadas?": {
+      "main": [
+        [
+          {
+            "node": "LOOP 1 (Sites)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Separar Manchetes Extraídas": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Formatar Markdown Final": {
+      "main": [
+        [
+          {
+            "node": "IA: Diretor de Triagem GEAR",
             "type": "main",
             "index": 0
           }

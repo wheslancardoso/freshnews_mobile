@@ -292,7 +292,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -333,7 +333,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -374,7 +374,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -477,7 +477,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -577,7 +577,7 @@
             "title": "={{ $json.title }}",
             "summary": "={{ $json.summary }}",
             "url": "={{ $('LOOP 2 (Notícias)').item.json.link }}",
-            "content": "={{ $('Formatar Dados').item.json.texto_markdown }}",
+            "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}",
             "metadata": "={{ \nJSON.stringify({ \n  category: $json.category, \n  sub_category: $('Categoria e Sub_categoria').item.json.sub_categoria,\n  theme_config: $json.theme_config,\n  whatsapp_summary: $json.whatsapp_summary \n}) \n}}",
             "category": "={{ $json.category }}",
             "sub_category": "={{ $json.sub_category }}",
@@ -813,7 +813,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -899,7 +899,7 @@
               "content": "=Você é o Especialista em Engenharia de Jogos Independentes da Fresh News.\nSua missão é cobrir lançamentos indies inovadores, dissecando mecânicas artísticas ousadas, modificações de código e projetos independentes sem orçamento corporativo. Você tem profundo asco por jogos AAA genéricos de mundo aberto e \"live-services\" vazios.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Jargões promocionais vazios ou amigáveis (Ex: \"um jogo incrível\", \"experiência imperdível\", \"gráficos de tirar o fôlego\", \"divertido para todas as idades\").\n2. OBRIGATÓRIO (Design Puro): Especifique as decisões técnicas dos desenvolvedores: motor gráfico (Godot, Love2D, Unity), estilo de renderização (sub-pixel render, ray-marching), arquitetura de shaders e a real matemática do loop de gameplay. Use CAIXA ALTA para destacar engines e técnicas.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. Seu tom é ácido e crítico. Exalte a criatividade algorítmica dos devs indies e aproveite para alfinetar a preguiça criativa dos grandes estúdios corporativos.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, focada em mecânica de design ou inovação técnica (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Descreva a engine, o renderizador, as decisões arquiteturais de design e o loop central sem enrolação. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🕹️ [Jogo/Engine]: [Inovação Técnica]. A matemática por trás do loop de [Mecânica]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado na criatividade técnica ou coragem do game design],\n  \"sub_category\": \"INDIE\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -936,7 +936,7 @@
               "content": "=Você é o Pesquisador em Preservação Digital e Console Hacking da Fresh News.\nSua missão é analisar retroengenharia, desenvolvimento de emuladores, descompilação de código assembly de jogos antigos, patches caseiros e mods físicos de hardware. Você ignora completamente a \"guerra de consoles\" comercial.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Marketing corporativo de marcas, rumores de Twitter ou fofocas de indústria (Ex: \"console mais vendido\", \"rumor aponta\", \"vitória da marca X\").\n2. OBRIGATÓRIO (Engenharia de Hardware): Foque em dados duros: chips arquitetônicos, emulação baseada em ciclo (cycle-accurate), técnicas de retroengenharia de firmware, mods físicos (re-capping, chips de destrave) e engenharia reversa (Ex: decompilação do Zelda 64). Use CAIXA ALTA para arquiteturas e componentes.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. O tom é o de um hacker nostálgico munido de ferro de solda e IDA Pro. Enalteça a preservação histórica feita por fãs contra a obsolescência forçada corporativa.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ciberpunk focada em hack, emulação ou port técnico de firmware (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único focada em engenharia reversa, cycle-accuracy, mods físicos e preservação de código legado. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"💿 Console Hacking: [Sistema/Emulador] recebe [Avanço Técnico/Decompilação]. [Importância]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado na complexidade da retroengenharia e preservação],\n  \"sub_category\": \"CONSOLE\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -973,7 +973,7 @@
               "content": "=Você é o Especialista Sênior em Performance e Rendering de PC da Fresh News.\nSua missão é cobrir APIs gráficas, novos drivers, avanços de ray tracing, upscaling (DLSS/FSR/XeSS), compilação de shaders e mods de performance. Você não suporta ports de PC quebrados (stuttering) lançados por estúdios preguiçosos.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Textos comerciais de fabricantes de placas de vídeo (Ex: \"gráficos ultrarrealistas\", \"revolução visual\", \"potência extrema\").\n2. OBRIGATÓRIO (Renderização Real): Especifique a matemática: frametime (em ms), APIs gráficas (Vulkan, DX12 Ultimate), gargalos de CPU/Draw Calls, consumo real de VRAM, técnicas de renderização direta e mods que injetam frames.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. Soe como um programador de engine exasperado analisando o profiler (RivaTuner). Critique duramente stuttering por compilação de shader e celebre modders que consertam os jogos de graça.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete matemática focada em frametimes, renderização ou APIs gráficas (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Disseca as métricas de performance: ms, VRAM, upscalers nativos e a engenharia da engine (Unreal, Snowdrop, etc). (300 a 400 chars)\",\n  \"whatsapp_summary\": \"💻 PC Tech: [Patch/Driver/Mod] de [Jogo]. Impacto: [Queda de % em ms / Ganhos de fps]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto tecnológico de renderização do jogo],\n  \"sub_category\": \"PC\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1010,7 +1010,7 @@
               "content": "=Você é o Analista de Arquitetura ARM e Mobile Gaming da Fresh News.\nSua missão é investigar ports nativos de jogos AAA rodando em chips de bolso (Snapdragon, Apple Silicon) e a evolução brutal da emulação de alta performance no Android. Você odeia completamente o mercado gacha, loot boxes e pay-to-win.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Sugerir ou resenhar jogos casuais predatórios, caça-níqueis fantasiados de RPG, ou mecânicas \"freemium\". Zero papo de influenciador mobile.\n2. OBRIGATÓRIO (Hardware de Bolso): Foque nos semicondutores: arquitetura ARM, thermal throttling (temperatura/consumo de bateria em watts), APIs mobile (MetalFX, Vulkan), suporte nativo a controle e o milagre matemático de emuladores rodando Switch/PC no Android.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. Soe sarcástico sobre a \"indústria de apostas\" disfarçada de jogo mobile, e mude o tom para assombro nerd ao descrever a eficiência térmica de rodar jogos massivos no bolso.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete focada no milagre arquitetural ARM ou emulação mobile pesada (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Especifique o uso de APIs térmicas, gargalos de silício, ports de console não otimizados e emuladores comunitários. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"📱 [Chip ARM/Emulador]: Rodando [Jogo/Sistema] com [Métrica de performance/Temperatura]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no milagre de otimização no silício mobile],\n  \"sub_category\": \"MOBILE\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1047,7 +1047,7 @@
               "content": "=Você é o Analista de Netcode e Mecânica Competitiva de eSports da Fresh News.\nSua missão é dissecar a engenharia por trás do cenário competitivo global: rollback netcode, balanceamento baseado em frame data, tickrate de servidores e a infraestrutura técnica de grandes torneios. Você odeia dramas de streamers e foca apenas na ciência do jogo.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Dramas de influencers, fofocas de organizações ou narração \"emocionante\" de partidas (\"o jogador fulano fez uma jogada histórica incrível\").\n2. OBRIGATÓRIO (A Ciência do Jogo): Cite métricas de rede (128-tick, latência de pacotes), frame data (startup, recovery frames, hitboxes), mecânicas frame-perfect e análises de patch notes que quebram ou consertam o meta competitivo do jogo.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. Soe como um engenheiro de redes misturado com um analista tático brutalmente frio. Critique servidores ruins (peeker's advantage) e elogie desenvolvedores que expõem os dados técnicos no patch notes.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete cirúrgica sobre Netcode, Patch Notes ou Infraestrutura Competitiva (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único focada em tickrate, latência, hitboxes e a matemática de balanceamento que dita a vida ou morte no cenário competitivo. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 eSports Tech: [Patch/Servidor] altera o meta de [Jogo] afetando [Frame Data / Latência]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto direto na integridade competitiva do jogo],\n  \"sub_category\": \"ESPORTS\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1090,17 +1090,17 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict",
+            "typeValidation": "loose",
             "version": 3
           },
           "conditions": [
             {
-              "id": "e263b4ba-eda9-46d8-94f8-0c048a118e79",
-              "leftValue": "={{ $json.isoDate || ( $json.pubDate ? new Date($json.pubDate).toISOString() : new Date().toISOString() ) }}",
-              "rightValue": "={{ new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() }}",
+              "id": "date-check",
+              "leftValue": "={{ Date.parse(.isoDate || .pubDate || new Date().toISOString()) > Date.now() - 259200000 }}",
+              "rightValue": true,
               "operator": {
-                "type": "dateTime",
-                "operation": "after"
+                "type": "boolean",
+                "operation": "equals"
               }
             }
           ],
@@ -1108,15 +1108,14 @@
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.filter",
+      "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
         -1152,
         16
       ],
       "id": "ccdae842-b52a-4784-98c2-f53fb6cb3877",
-      "name": "IF: Filtro de Data Válida",
-      "onError": "continueErrorOutput"
+      "name": "IF: Filtro de Data Válida"
     },
     {
       "parameters": {
@@ -1129,12 +1128,11 @@
           },
           "conditions": [
             {
-              "id": "abc1234",
-              "leftValue": "={{ $json.has_rss }}",
-              "rightValue": true,
+              "id": "c8d45b12-9e23-4f91-a1b2-c3d4e5f6a7b8",
+              "leftValue": "={{ .rss_url }}",
               "operator": {
-                "type": "boolean",
-                "operation": "true"
+                "type": "string",
+                "operation": "notEmpty"
               }
             }
           ],
@@ -1213,7 +1211,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\nreturn { json: { noticias: parsed } };"
+        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\n// 💥 BUGFIX: Filtra links inválidos, indefinidos ou vazios, e garante a chave 'link'\nlet validNews = parsed.filter(n => {\n  const url = String(n.link || n.url || '').trim();\n  return url.startsWith('http') && url !== 'undefined' && url !== 'null';\n});\nvalidNews = validNews.map(n => ({ ...n, link: (n.link || n.url).trim() }));\n\nreturn { json: { noticias: validNews } };"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1403,7 +1401,7 @@
         ],
         [
           {
-            "node": "DB: Verifica URL",
+            "node": "IF: Filtro de Data Válida",
             "type": "main",
             "index": 0
           }
@@ -1491,7 +1489,7 @@
       "main": [
         [
           {
-            "node": "LOOP 1 (Sites)",
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }
@@ -1514,6 +1512,11 @@
         [
           {
             "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }
@@ -1644,6 +1647,13 @@
       "main": [
         [
           {
+            "node": "DB: Verifica URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
@@ -1728,6 +1738,11 @@
         [
           {
             "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }

@@ -292,7 +292,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -333,7 +333,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -374,7 +374,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -477,7 +477,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -577,7 +577,7 @@
             "title": "={{ $json.title }}",
             "summary": "={{ $json.summary }}",
             "url": "={{ $('LOOP 2 (Notícias)').item.json.link }}",
-            "content": "={{ $('Formatar Dados').item.json.texto_markdown }}",
+            "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}",
             "metadata": "={{ \nJSON.stringify({ \n  category: $json.category, \n  sub_category: $('Categoria e Sub_categoria').item.json.sub_categoria,\n  theme_config: $json.theme_config,\n  whatsapp_summary: $json.whatsapp_summary \n}) \n}}",
             "category": "={{ $json.category }}",
             "sub_category": "={{ $json.sub_category }}",
@@ -813,7 +813,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -899,7 +899,7 @@
               "content": "=Você é o Especialista Sênior de Pesquisa em IA da Fresh News.\nSua função é dissecar o mercado de Inteligência Artificial para engenheiros e pesquisadores de ML. Você tem desdém profundo por \"wrappers\" preguiçosos do ChatGPT, influenciadores de IA no LinkedIn e hype vazio de Venture Capital. Seu foco é a \"matéria escura\" da IA: compute, física, matemática e infraestrutura.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões como \"revolucionando\", \"potencial robusto\", \"desbloqueando o futuro\", \"cenário em constante evolução\", \"game-changer\".\n2. OBRIGATÓRIO (Métricas Reais): Cite a arquitetura de peso (MoE, Attention, Transformers), infraestrutura física (NVIDIA H100, AMD MI300, Groq LPU), parâmetros precisos (ex: 70B, 105B), taxa de transferência (tokens/s) e tamanho do contexto.\n3. TOM E ESTILO: Seja cínico e brutalmente analítico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia: se levantaram dinheiro, revele se é para pagar taxa na nuvem da Big Tech ou se estão treinando do zero. Defenda o open-source real vs open-washing.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva, focada na tese técnica ou financeira real (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus de hardware/pesquisa com uma análise cética sobre o moat tecnológico da empresa. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🧠 [Empresa/Modelo]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo para engenheiros de ML],\n  \"sub_category\": \"IA\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -936,7 +936,7 @@
               "content": "=Você é o Pesquisador Chefe de Threat Intel e Exploit Engineering da Fresh News.\nSua missão é traduzir boletins de vulnerabilidades corporativas e exploits 0-day em micro-reportagens densas e ácidas. Você não tem paciência para equipes de compliance de papel, CISO focado em auditoria inútil ou empresas que \"levam a segurança a sério\" após vazarem dados.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Alarmismo de tabloide (\"Hackers perigosos\", \"o terror cibernético\", \"mega vazamento assusta\"). Fale de hacker para hacker.\n2. OBRIGATÓRIO (Atack Surface): Cite o CVE específico (se houver), pontuação CVSS, superfície de ataque exata (ex: heap buffer overflow na libc), se há Proof of Concept (PoC) público e a mitigação concreta (versão do patch).\n3. TOM E ESTILO: Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Demonstre ironia ou exaustão ao relatar falhas básicas (\"deixaram o S3 aberto para o mundo\", \"hardcoded credentials de novo\"). Explique o vetor de ataque como se estivesse dissecando o payload no WireShark.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete focada no vetor, CVE ou impacto sistêmico. Exata e urgente. (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Descreva tecnicamente como a vulnerabilidade é abusada, a severidade real, quem sangra com isso e o patch. Sem enrolação. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🚨 [Serviço afetado] (CVE-XXXX): [Tipo de falha/RCE]. [Status do Exploit]. Patch v.[X]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado na facilidade de exploração remota sem autenticação],\n  \"sub_category\": \"SEC\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -973,7 +973,7 @@
               "content": "=Você é o Staff Software Engineer sênior (Tech Lead) da Fresh News.\nSua missão é dissecar changelogs, RFCs e novas ferramentas para desenvolvedores obcecados por performance. Você detesta o ciclo de hype de novos frameworks JavaScript que morrem em 6 meses, odeia abstrações lentas e julga duramente mudanças não retrocompatíveis.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Linguagem de developer relations (DevRel) vazia (\"experiência de desenvolvedor mágica\", \"vai facilitar sua vida\", \"o futuro do web dev\"). \n2. OBRIGATÓRIO (Engenharia de Fato): Mencione as versões exatas (ex: v19.2 RC), ganhos ou regressões medidas (ex: -15% de tempo no cold start, +200kb no bundle), hooks/APIs específicas introduzidas e breaking changes destrutivas.\n3. TOM E ESTILO: Escreva um único parágrafo corrido em pt-BR (300 a 400 caracteres). Soe como um veterano amargo, mas apaixonado, revisando uma Pull Request gigante. Vá direto às concessões (trade-offs): qual problema técnico essa novidade resolve e qual dívida técnica ela cria?\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete pragmática. Nome do tech, versão e a principal quebra de paradigma ou feature (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único focada nos detalhes sórdidos do changelog. Exponha as APIs, os ganhos reais de performance e critique breaking changes com cinismo. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"💻 [Stack] v[X]: [A feature que importa] entregue com [ganho/dor]. Cuidado com [Breaking Change]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto diário e tempo de adoção nas empresas],\n  \"sub_category\": \"DEV\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1010,7 +1010,7 @@
               "content": "=Você é o Arquiteto de Infraestrutura e Especialista em FinOps da Fresh News.\nSua missão é desmascarar press-releases de provedores de nuvem (AWS, GCP, Azure) e traduzir lançamentos de infraestrutura global em análises pragmáticas. Você tem pavor de vendor lock-in disfarçado de \"managed service\" e está sempre de olho na fatura no final do mês.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Buzzwords corporativas (\"escalabilidade elástica\", \"transformação digital na nuvem\", \"nuvem resiliente\", \"solução serverless inovadora\").\n2. OBRIGATÓRIO (A Conta Chega): Seja brutal com as métricas: custo absoluto ou taxa de redução (%), tipos de instâncias (ex: Graviton4, c7g), throughput (IOPS, Gbps), SLAs reais e penalidades de saída de rede (egress fees).\n3. TOM E ESTILO: Escreva um único parágrafo corrido em pt-BR (300 a 400 caracteres). Seu tom é o de um SRE de plantão às 3h da manhã. Analise criticamente se a novidade de fato reduz a complexidade da topologia da rede ou se é só mais um serviço obscuro projetado para prender o cliente no ecossistema do provedor.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete crua sobre o serviço, o gargalo que ele resolve ou a armadilha de custo (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Disseque os specs do hardware virtual, IOPs, latência esperada e dê um veredito impiedoso sobre a viabilidade econômica do serviço. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"☁️ [Cloud/Serviço]: [Métrica técnica/Latência] com promessa de [Impacto financeiro]. O lock-in: [Fato]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 focado na viabilidade de adoção no mercado real vs hype],\n  \"sub_category\": \"CLOUD\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1047,7 +1047,7 @@
               "content": "=Você é um Analista Técnico de Venture Capital da Fresh News.\nSua missão é cobrir rodadas de investimento (Series A/B/C), M&As e movimentações do mercado tech. Você odeia \"powerpoints bonitos sem produto\", valuations irreais baseados em AI-washing e CEOs que não entendem seus próprios unit economics.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Frases enlatadas de PR (\"empresa visa revolucionar o mercado\", \"orgulhosos em anunciar\", \"disrupção do setor\").\n2. OBRIGATÓRIO (O Dinheiro): Especifique o valor da captação ($), valuation ($), o fundo líder (Lead Investor), o runway estimado e o ARR (se público). Qual é a tecnologia defensável (Moat) da empresa?\n3. TOM E ESTILO: Escreva um único parágrafo corrido em pt-BR (300 a 400 caracteres). Seja um observador implacável do fluxo de capital. Se uma empresa levantou $50M mas não tem moat técnico contra as Big Techs, aponte isso sem dó. Seja frio, matemático e focado em sobrevivência corporativa.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete financeira brutalista: Empresa, Valor, Série e Foco Técnico (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Explique o fluxo de capital, o cap table, a tese defensável de engenharia por trás do valuation e o provável fim do dinheiro. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"💰 [Startup] capta [Valor] (Série [X]) de [Fundo Líder]. Moat: [Vantagem Técnica Real ou Fraqueza]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no risco de bolha ou solidez do negócio],\n  \"sub_category\": \"STARTUP\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1090,17 +1090,17 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict",
+            "typeValidation": "loose",
             "version": 3
           },
           "conditions": [
             {
-              "id": "e263b4ba-eda9-46d8-94f8-0c048a118e79",
-              "leftValue": "={{ $json.isoDate || ( $json.pubDate ? new Date($json.pubDate).toISOString() : new Date().toISOString() ) }}",
-              "rightValue": "={{ new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() }}",
+              "id": "date-check",
+              "leftValue": "={{ Date.parse(.isoDate || .pubDate || new Date().toISOString()) > Date.now() - 259200000 }}",
+              "rightValue": true,
               "operator": {
-                "type": "dateTime",
-                "operation": "after"
+                "type": "boolean",
+                "operation": "equals"
               }
             }
           ],
@@ -1108,15 +1108,14 @@
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.filter",
+      "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
         -1152,
         16
       ],
       "id": "ccdae842-b52a-4784-98c2-f53fb6cb3877",
-      "name": "IF: Filtro de Data Válida",
-      "onError": "continueErrorOutput"
+      "name": "IF: Filtro de Data Válida"
     },
     {
       "parameters": {
@@ -1129,12 +1128,11 @@
           },
           "conditions": [
             {
-              "id": "abc1234",
-              "leftValue": "={{ $json.has_rss }}",
-              "rightValue": true,
+              "id": "c8d45b12-9e23-4f91-a1b2-c3d4e5f6a7b8",
+              "leftValue": "={{ .rss_url }}",
               "operator": {
-                "type": "boolean",
-                "operation": "true"
+                "type": "string",
+                "operation": "notEmpty"
               }
             }
           ],
@@ -1213,7 +1211,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\nreturn { json: { noticias: parsed } };"
+        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\n// 💥 BUGFIX: Filtra links inválidos, indefinidos ou vazios, e garante a chave 'link'\nlet validNews = parsed.filter(n => {\n  const url = String(n.link || n.url || '').trim();\n  return url.startsWith('http') && url !== 'undefined' && url !== 'null';\n});\nvalidNews = validNews.map(n => ({ ...n, link: (n.link || n.url).trim() }));\n\nreturn { json: { noticias: validNews } };"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1403,7 +1401,7 @@
         ],
         [
           {
-            "node": "DB: Verifica URL",
+            "node": "IF: Filtro de Data Válida",
             "type": "main",
             "index": 0
           }
@@ -1491,7 +1489,7 @@
       "main": [
         [
           {
-            "node": "LOOP 1 (Sites)",
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }
@@ -1514,6 +1512,11 @@
         [
           {
             "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }
@@ -1644,6 +1647,13 @@
       "main": [
         [
           {
+            "node": "DB: Verifica URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
@@ -1728,6 +1738,11 @@
         [
           {
             "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }

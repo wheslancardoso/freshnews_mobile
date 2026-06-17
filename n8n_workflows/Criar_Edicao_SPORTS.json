@@ -12,13 +12,13 @@
           ]
         }
       },
-      "id": "a6430090-b576-4791-988a-7abb22d61f3c",
+      "id": "6756145a-dde9-4d7b-a4c5-24a383593678",
       "name": "Cron: Fechamento",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        -944,
-        96
+        -816,
+        112
       ]
     },
     {
@@ -27,13 +27,13 @@
         "query": "SELECT * FROM posts WHERE world = 'SPORTS' AND status = 'pending' ORDER BY score DESC LIMIT 20;",
         "options": {}
       },
-      "id": "7a2ea39d-ba94-4e0b-abec-cc4836168365",
+      "id": "c4852289-5e78-4860-b1d4-5c7f06641f2d",
       "name": "DB: Buscar Top Posts",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -752,
-        96
+        -624,
+        112
       ],
       "credentials": {
         "postgres": {
@@ -46,13 +46,13 @@
       "parameters": {
         "jsCode": "\nconst posts = $input.all().map(item => item.json);\nreturn {\n  json: { posts: posts }\n};\n"
       },
-      "id": "57dff102-9057-488b-be0c-7f0b66b4c7e0",
+      "id": "9a180abf-707d-4fae-868e-91feabf16f7a",
       "name": "Agrupar Array",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -544,
-        96
+        -416,
+        112
       ]
     },
     {
@@ -90,26 +90,26 @@
         "looseTypeValidation": true,
         "options": {}
       },
-      "id": "072ebf9d-a8e7-4bd1-8ee8-f974dcfc6acb",
+      "id": "a3cc3915-9134-4bc6-87cf-5591c4697219",
       "name": "Posts Encontrados?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -352,
-        96
+        -224,
+        112
       ]
     },
     {
       "parameters": {
         "jsCode": "\nconst posts = $json.posts;\nconst titles = posts.map(p => p.title).join('\\n- ');\nconst contentStr = posts.map(p => `TÍTULO: ${p.title}\\nRESUMO: ${p.summary}`).join('\\n\\n');\n\nreturn {\n  world: 'SPORTS',\n  posts: posts,\n  titles_list: titles,\n  content_to_read: contentStr\n};\n"
       },
-      "id": "ff888bce-d8c3-499f-958a-7ea752fb61a9",
+      "id": "86604fa8-0403-4c69-bd18-753bdaa1560c",
       "name": "Formatar Posts p/ IA",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -144,
-        -16
+        -16,
+        0
       ]
     },
     {
@@ -134,13 +134,13 @@
         "builtInTools": {},
         "options": {}
       },
-      "id": "df398bdd-a708-42c2-a4d4-aa33beb560f2",
+      "id": "2b8e511b-e486-4100-8278-303031411c85",
       "name": "IA: Editor de Fechamento",
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        -16,
-        -16
+        112,
+        0
       ],
       "credentials": {
         "openAiApi": {
@@ -153,13 +153,13 @@
       "parameters": {
         "jsCode": "// 1. Navegar até onde a IA REALMENTE escondeu o texto\nlet aiText = \"\";\nif ($json.output && Array.isArray($json.output) && $json.output[0] && $json.output[0].content) {\n  aiText = $json.output[0].content[0].text || \"\";\n} else {\n  aiText = $json.text || $json.content || \"\";\n}\n\n// 2. Extrair o bloco JSON da resposta\nlet parsed = {};\ntry {\n  const match = aiText.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  }\n} catch(e) {}\n\nconst posts = $('Formatar Posts p/ IA').item.json.posts;\n\n// Agrupar posts por categoria\nconst categoriesMap = {};\nposts.forEach(post => {\n  const catName = (post.sub_category || post.category || \"GERAL\").toUpperCase();\n  if (!categoriesMap[catName]) categoriesMap[catName] = [];\n  \n  let themeObj = {};\n  try {\n     themeObj = typeof post.theme_config === 'string' ? JSON.parse(post.theme_config) : post.theme_config;\n  } catch(e){}\n\n  categoriesMap[catName].push({\n    headline: post.title,\n    story: post.summary,\n    link: post.url,\n    theme: themeObj || {}\n  });\n});\n\nconst categoriesList = Object.keys(categoriesMap).map(key => {\n  return { name: key, items: categoriesMap[key] };\n});\n\nconst contentJson = {\n  title: parsed.title || \"Fresh News Edição\",\n  intro: parsed.intro || \"Sem resumo disponível.\",\n  quickTakes: parsed.quickTakes || [],\n  categories: categoriesList,\n  image_prompt: \"\"\n};\n\nreturn {\n  title: parsed.title || \"Fresh News Edição\",\n  intro: parsed.intro || \"\",\n  whatsapp_greeting: parsed.whatsapp_greeting || \"\",\n  whatsapp_farewell: parsed.whatsapp_farewell || \"\",\n  world: $('Formatar Posts p/ IA').item.json.world,\n  content_json: contentJson,\n  post_ids: posts.map(p => p.id)\n};\n"
       },
-      "id": "de8fc6ea-44f8-4d2b-b232-8f7e890d402e",
+      "id": "231cef48-325a-4ee1-83eb-e77c2b5cc09f",
       "name": "Montar content_json",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        256,
-        -16
+        384,
+        0
       ]
     },
     {
@@ -168,13 +168,13 @@
         "query": "SELECT COALESCE(MAX(edition_number), 0) + 1 AS next_ed FROM newsletters WHERE world = 'SPORTS';",
         "options": {}
       },
-      "id": "4fdf3d4d-2dc7-4a34-b08c-509ccf02c50d",
+      "id": "74e6e646-5da7-44d5-94cb-e9578abeb3ed",
       "name": "DB: Pegar Ultima Edicao",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        464,
-        -16
+        592,
+        0
       ],
       "credentials": {
         "postgres": {
@@ -189,13 +189,13 @@
         "query": "INSERT INTO newsletters (edition_number, world, title, summary_intro, content_json, whatsapp_greeting, whatsapp_farewell, status) VALUES ({{ $json.next_ed }}, '{{ $('Montar content_json').item.json.world }}', '{{ $('Montar content_json').item.json.title.replace(/'/g, \"''\") }}', '{{ $('Montar content_json').item.json.intro.replace(/'/g, \"''\") }}', '{{ JSON.stringify($('Montar content_json').item.json.content_json).replace(/'/g, \"''\") }}', '{{ $('Montar content_json').item.json.whatsapp_greeting.replace(/'/g, \"''\") }}', '{{ $('Montar content_json').item.json.whatsapp_farewell.replace(/'/g, \"''\") }}', 'draft') RETURNING id;",
         "options": {}
       },
-      "id": "759bcb50-9d9c-4685-9f5b-993f42f36709",
+      "id": "d72e4847-6234-4b4d-9354-60ba077387d8",
       "name": "DB: Insert Newsletter",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        656,
-        -16
+        784,
+        0
       ],
       "credentials": {
         "postgres": {
@@ -210,13 +210,13 @@
         "query": "UPDATE posts SET status = 'published', newsletter_id = '{{ $json.id }}' WHERE id = ANY(ARRAY[{{ $('Montar content_json').item.json.post_ids.map(id => `'${id}'`).join(',') }}]::uuid[]);",
         "options": {}
       },
-      "id": "a7f563c9-adb4-45c1-89cd-4f48bb323932",
+      "id": "24616882-e97d-4946-8efc-5b54a36248be",
       "name": "DB: Update Posts",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        864,
-        -16
+        992,
+        0
       ],
       "credentials": {
         "postgres": {
@@ -328,15 +328,15 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "28893de0-230c-4ac4-a683-f8a82efe5e50",
+  "versionId": "010f794b-cfd6-4e22-9f69-2ae69543b00b",
   "meta": {
     "instanceId": "81d0635acec5467d6fba560d241108a93e1dbf19557fd3600a3d2fa845284989"
   },
-  "id": "fF6RvhH4gaYrUyU6",
+  "id": "NvBnXT0xZ3LDiW2R",
   "tags": []
 }

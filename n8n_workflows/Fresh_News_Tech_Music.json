@@ -292,7 +292,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -333,7 +333,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -374,7 +374,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -477,7 +477,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -577,7 +577,7 @@
             "title": "={{ $json.title }}",
             "summary": "={{ $json.summary }}",
             "url": "={{ $('LOOP 2 (Notícias)').item.json.link }}",
-            "content": "={{ $('Formatar Dados').item.json.texto_markdown }}",
+            "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}",
             "metadata": "={{ \nJSON.stringify({ \n  category: $json.category, \n  sub_category: $('Categoria e Sub_categoria').item.json.sub_categoria,\n  theme_config: $json.theme_config,\n  whatsapp_summary: $json.whatsapp_summary \n}) \n}}",
             "category": "={{ $json.category }}",
             "sub_category": "={{ $json.sub_category }}",
@@ -813,7 +813,7 @@
             {
               "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
               "name": "url",
-              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "value": "={{ $('Code: Formatar Markdown Final').item.json.url_original }}",
               "type": "string"
             },
             {
@@ -899,7 +899,7 @@
               "content": "=Você é o Especialista em Artistas de Hip-Hop e Cena Indie da Fresh News.\nSua missão é documentar perfis, coletivos de rap, bandas de indie rock, turnês underground e a lírica de MCs e compositores alternativos. Você tem profundo asco por \"artistas de algoritmo\", tiktokers musicais e pop fabricado por grandes gravadoras.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar chavões promocionais de assessoria de imprensa (Ex: \"o novo queridinho da cena\", \"sucesso absoluto\", \"promete abalar o mundo da música\").\n2. OBRIGATÓRIO (Estética e Lírica Real): Disseca o flow de rima, a métrica, a poética urbana das letras, a atitude de palco, as referências de contracultura e as escolhas conceituais deliberadas do artista. Use termos em CAIXA ALTA para destacar referências vitais.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. O tom é de um crítico de fanzine impresso visceral: valorize a integridade artística, critique o comercialismo e decodifique o que o artista realmente está dizendo por trás das rimas.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ácida e descritiva sobre a atitude ou a lírica do artista (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Sintetize a lírica, a métrica vocal e o conceito artístico que diferencia este MC/Banda na cena real. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🎤 [Banda/Artista]: [Manchete Curta]. Foco lírico/estético: [Conceito central]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no peso cultural na cena underground/indie],\n  \"sub_category\": \"ARTISTAS\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -936,7 +936,7 @@
               "content": "=Você é o Engenheiro de Áudio e Especialista em Beatmaking da Fresh News.\nSua missão é cobrir a ciência e a sujeira da criação instrumental: hardware analógico, samplers clássicos (MPC, SP-404), técnicas de captação, chopping de vinil e acústica lo-fi. Você odeia \"beats de plástico\" feitos com loops genéricos e mixagens super-comprimidas para rádio.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar adjetivos preguiçosos ou subjetivos (Ex: \"beat incrível\", \"vibe gostosa\", \"guitarra maravilhosa\").\n2. OBRIGATÓRIO (Nerdice de Estúdio): Especifique as máquinas e técnicas reais: pitch shifting, saturação de fita cassete, distorção harmônica (fuzz/overdrive), técnicas de microfonação de amplificador, uso de sub-graves e roteamento de DAW. Use CAIXA ALTA para marcas cult (Ex: MOOG, ROLAND, NEVE).\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. Soe como um 'bedroom producer' obsessivo debatendo timbres em um fórum obscuro às 4h da manhã. \n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete técnica detalhando o equipamento, timbre ou método de mixagem (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Disseque os plugins, a saturação, a gravação de guitarras, os samplers e a engenharia de som crua da track. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🎛️ [Técnica/Hardware]: O segredo do timbre de [Artista/Beatmaker] usando [Equipamento]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado na inovação do método de produção ou hardware],\n  \"sub_category\": \"PRODUCAO\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -973,7 +973,7 @@
               "content": "=Você é o Especialista em Logística DIY e Micro-Selos Independentes da Fresh News.\nSua missão é cobrir a economia paralela da música: selos independentes, duplicação física (fitas K7 e vinil), fanzines, Bandcamp e casas de shows autogeridas. Você despreza o monopólio das \"Majors\" (Universal, Sony, Warner) e o circuito corporativo de festivais.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Linguagem de agência corporativa, \"cases de sucesso\" ou hype mainstream enlatado.\n2. OBRIGATÓRIO (Economia Física): Exponha a engrenagem do corre independente: custos de prensagem de vinil, margens de lucro diretas para a banda no Bandcamp, redes locais de distribuição e tiragens limitadas. Use CAIXA ALTA para citar micro-selos ou casas de shows fundamentais.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. Seu tom é o de quem carrega a própria bateria para o show, garimpa cassetes e luta pela circulação física da música marginal.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete sobre o modelo do selo, o lançamento da fita K7 ou a turnê autogerida (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Foque na realidade dura da rede de distribuição física, a logística de shows independentes e a ética DIY financeira. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"📼 DIY Vivo: [Selo/Fanzine] lança [Material] focado em distribuição física direta para os fãs. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 focado na importância para a manutenção de ecossistemas locais e selos],\n  \"sub_category\": \"INDIE\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1010,7 +1010,7 @@
               "content": "=Você é o Analista Financeiro e Jurídico de Direitos Autorais da Fresh News.\nSua missão é expor os bastidores brutais da economia da música digital: o repasse de centavos do Spotify, acordos draconianos de gravadoras, liberação de direitos autorais (sample clearance) e a manipulação de robôs nas playlists algorítmicas.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Festejar \"bilhões de streams\" sem apresentar imediatamente a taxa miserável que chega ao bolso do compositor. Zero ufanismo corporativo.\n2. OBRIGATÓRIO (Matemática Pura): Traga os números de mercado: frações de centavos ($0.003/play), porcentagens de split sheets (divisão de royalties mecânicos/fonomecânicos), processos de copyright de samples, pagamentos de publishing e fraudes. \n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. Seja matemático, jurídico e brutalmente cínico, desmascarando a ilusão de sucesso do mercado digital e explicando quem realmente fica com o dinheiro.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete matemática focada em royalties, litígios judiciais ou dados numéricos (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Explique o repasse financeiro, os acordos de masters, sample clearance ou as disputas de catálogo. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"📊 A Conta do Streaming: [Fato financeiro/Jurídico]. O impacto real nos royalties de [Artista]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 focado no impacto financeiro sistêmico para produtores e compositores],\n  \"sub_category\": \"CHARTS\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1047,7 +1047,7 @@
               "content": "=Você é o Crítico Técnico Chefe de Álbuns e Mixtapes da Fresh News.\nSua missão é ouvir e dissecar os novos álbuns e EPs da cena rap underground e indie rock. Você tem repulsa por jornalistas musicais que dão \"nota máxima\" por medo de desagradar a fã-base do artista no Twitter.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Jargões de assessoria complacente (\"um marco em sua carreira\", \"música que toca a alma\", \"letras fortes\").\n2. OBRIGATÓRIO (Crítica Fundamentada): Analise a obra como um arquiteto sonoro. Julgue a coerência da masterização, as escolhas de arranjo (timbres de guitarra, peso de 808), a cadência do flow em BPMs diferentes e a progressão lírica entre as faixas. Use CAIXA ALTA para os nomes de álbuns e produtores executivos.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR. O tom é de uma resenha afiada de revista clássica. Aponte exatamente os méritos das melhores faixas, mas não perdoe deslizes como mixagem ruim ou fillers (faixas de enchimento).\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete brutal contendo o Nome do Álbum e o veredicto técnico impiedoso (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único avaliando a engenharia de som, o peso dos arranjos, a coesão da lírica e a curadoria de produtores convidados no projeto. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"💿 Review: [Álbum]. [Veredicto focado no som, beat ou lírica sem perdão]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 focado na qualidade real da obra musical],\n  \"sub_category\": \"LANCAMENTOS\"\n}"
             },
             {
-              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown || $('Formatar Dados').item.json.texto_markdown }}"
+              "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
             }
           ]
         },
@@ -1090,17 +1090,17 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict",
+            "typeValidation": "loose",
             "version": 3
           },
           "conditions": [
             {
-              "id": "e263b4ba-eda9-46d8-94f8-0c048a118e79",
-              "leftValue": "={{ $json.isoDate || ( $json.pubDate ? new Date($json.pubDate).toISOString() : new Date().toISOString() ) }}",
-              "rightValue": "={{ new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() }}",
+              "id": "date-check",
+              "leftValue": "={{ Date.parse(.isoDate || .pubDate || new Date().toISOString()) > Date.now() - 259200000 }}",
+              "rightValue": true,
               "operator": {
-                "type": "dateTime",
-                "operation": "after"
+                "type": "boolean",
+                "operation": "equals"
               }
             }
           ],
@@ -1108,15 +1108,14 @@
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.filter",
+      "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
         -1152,
         16
       ],
       "id": "ccdae842-b52a-4784-98c2-f53fb6cb3877",
-      "name": "IF: Filtro de Data Válida",
-      "onError": "continueErrorOutput"
+      "name": "IF: Filtro de Data Válida"
     },
     {
       "parameters": {
@@ -1129,12 +1128,11 @@
           },
           "conditions": [
             {
-              "id": "abc1234",
-              "leftValue": "={{ $json.has_rss }}",
-              "rightValue": true,
+              "id": "c8d45b12-9e23-4f91-a1b2-c3d4e5f6a7b8",
+              "leftValue": "={{ .rss_url }}",
               "operator": {
-                "type": "boolean",
-                "operation": "true"
+                "type": "string",
+                "operation": "notEmpty"
               }
             }
           ],
@@ -1213,7 +1211,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\nreturn { json: { noticias: parsed } };"
+        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\n// 💥 BUGFIX: Filtra links inválidos, indefinidos ou vazios, e garante a chave 'link'\nlet validNews = parsed.filter(n => {\n  const url = String(n.link || n.url || '').trim();\n  return url.startsWith('http') && url !== 'undefined' && url !== 'null';\n});\nvalidNews = validNews.map(n => ({ ...n, link: (n.link || n.url).trim() }));\n\nreturn { json: { noticias: validNews } };"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1403,7 +1401,7 @@
         ],
         [
           {
-            "node": "DB: Verifica URL",
+            "node": "IF: Filtro de Data Válida",
             "type": "main",
             "index": 0
           }
@@ -1491,7 +1489,7 @@
       "main": [
         [
           {
-            "node": "LOOP 1 (Sites)",
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }
@@ -1514,6 +1512,11 @@
         [
           {
             "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }
@@ -1644,6 +1647,13 @@
       "main": [
         [
           {
+            "node": "DB: Verifica URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
@@ -1728,6 +1738,11 @@
         [
           {
             "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }

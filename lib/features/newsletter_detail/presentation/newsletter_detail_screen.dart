@@ -367,6 +367,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       ),
     ),
     ),
+    ),
     );
   }
 

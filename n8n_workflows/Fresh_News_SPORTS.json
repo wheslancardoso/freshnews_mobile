@@ -69,7 +69,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -256,
+        544,
         -32
       ],
       "retryOnFail": false,
@@ -220,7 +220,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1584,
+        2384,
         -16
       ],
       "id": "73ae5b52-44ea-47df-bdae-68429faec6e7",
@@ -320,7 +320,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2192,
+        2992,
         -32
       ],
       "id": "70386461-b749-4be2-9600-3c0739a86cfa",
@@ -361,7 +361,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2192,
+        2992,
         -192
       ],
       "id": "6f0b616b-d4a1-461a-8818-e9453a85f20e",
@@ -402,7 +402,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2192,
+        2992,
         160
       ],
       "id": "fb8068a1-ab81-466c-a929-02fb1a234b4d",
@@ -443,7 +443,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2432,
+        3232,
         32
       ],
       "id": "f4d087f0-f872-4b22-b983-e22b6763cf75",
@@ -505,7 +505,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2208,
+        3008,
         384
       ],
       "id": "c95632e0-271b-4ced-b6d3-8edd3350e1fc",
@@ -518,7 +518,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        688,
+        1488,
         -16
       ],
       "id": "7c71ce5a-837e-4d78-be9b-b1909258fc51",
@@ -547,7 +547,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1104,
+        1904,
         0
       ],
       "id": "572354df-2b26-462f-be7e-0479d5631c46",
@@ -560,7 +560,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2640,
+        3440,
         64
       ],
       "id": "5e69afb4-2a4c-41f0-86b5-591b0608e113",
@@ -768,7 +768,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        2864,
+        3664,
         80
       ],
       "id": "fe6b7b8e-cb81-4354-a230-8dc77ed3f42e",
@@ -802,7 +802,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 2,
       "position": [
-        48,
+        848,
         -32
       ]
     },
@@ -841,7 +841,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2224,
+        3024,
         560
       ],
       "id": "0bcbe2a4-154c-4ac7-b422-2bf5de6a7958",
@@ -872,7 +872,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        352,
+        1152,
         0
       ],
       "id": "a4ab5ca6-4375-464a-beea-c5b83db4adcb",
@@ -909,7 +909,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        1872,
+        2672,
         -192
       ],
       "id": "7cba69a5-2485-4bd7-b7f2-db555f7333cc",
@@ -946,7 +946,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        1872,
+        2672,
         -32
       ],
       "id": "7f37a8e0-054e-4dff-9de8-c659baec6de3",
@@ -983,7 +983,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        1872,
+        2672,
         112
       ],
       "id": "b5b99c50-0b47-41fc-84e4-7667b4dbaa69",
@@ -1020,7 +1020,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        1872,
+        2672,
         320
       ],
       "id": "b697cca4-e54c-4e2a-b364-bd3c146552ff",
@@ -1057,7 +1057,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        1856,
+        2656,
         512
       ],
       "id": "48a0bb79-2a57-4000-aedb-d8ef8c729bd4",
@@ -1237,6 +1237,112 @@
       ],
       "id": "item-lists-split",
       "name": "Item Lists: Split Arrays"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COALESCE(json_agg(title), '[]'::json) AS recent_titles FROM posts WHERE created_at > now() - interval '24 hours' AND sub_category = '{{ $json.sub_category }}';",
+        "options": {}
+      },
+      "id": "db-buscar-recentes",
+      "name": "DB: Buscar Manchetes Recentes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -350,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é um Analista de Redundância de Notícias. Seu objetivo é evitar postagens repetidas no aplicativo.\nVocê receberá a 'Nova Manchete' e uma lista de 'Manchetes Recentes' (já publicadas hoje).\nDetermine se a Nova Manchete relata o EXATO mesmo evento ou assunto central que alguma das Manchetes Recentes (ex: mesma contratação, mesmo resultado de jogo, mesmo pronunciamento).\n\nSe for sobre o mesmo evento, retorne o JSON {\"is_duplicate\": true}.\nSe o assunto for inédito nas últimas 24h, retorne {\"is_duplicate\": false}.\n\nRetorne APENAS um JSON válido, sem nenhum outro caractere ou formatação markdown."
+            },
+            {
+              "role": "user",
+              "content": "Nova Manchete: {{ $('É notícia nova?1').item.json.title }}\n\nManchetes Recentes (24h):\n{{ JSON.stringify($json.recent_titles) }}"
+            }
+          ]
+        },
+        "options": {
+          "responseFormat": "jsonObject"
+        }
+      },
+      "id": "ia-redundancia",
+      "name": "IA: Analista de Redundância",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -150,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let is_duplicate = false;\ntry {\n  const content = $input.all()[0].json.output[0].content[0].text;\n  is_duplicate = JSON.parse(content).is_duplicate;\n} catch (e) {}\n\nconst original = $('É notícia nova?1').item.json;\nreturn { json: { ...original, is_duplicate: is_duplicate } };"
+      },
+      "id": "code-parse-duplicate",
+      "name": "Code: Parse Duplicate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        50,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "abc123456",
+              "leftValue": "={{ $json.is_duplicate }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-redundante",
+      "name": "IF: É Inédita?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        250,
+        0
+      ]
     }
   ],
   "pinData": {},
@@ -1245,7 +1351,7 @@
       "main": [
         [
           {
-            "node": "API: Firecrawl",
+            "node": "DB: Buscar Manchetes Recentes",
             "type": "main",
             "index": 0
           }
@@ -1648,6 +1754,57 @@
         [
           {
             "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Buscar Manchetes Recentes": {
+      "main": [
+        [
+          {
+            "node": "IA: Analista de Redundância",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA: Analista de Redundância": {
+      "main": [
+        [
+          {
+            "node": "Code: Parse Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Parse Duplicate": {
+      "main": [
+        [
+          {
+            "node": "IF: É Inédita?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: É Inédita?": {
+      "main": [
+        [
+          {
+            "node": "API: Firecrawl",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
             "type": "main",
             "index": 0
           }

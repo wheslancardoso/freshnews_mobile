@@ -62,18 +62,19 @@ class GenerateNewsletterService {
     }
   ]
 }''';
-      case World.gear:
-        return '''Você é um Editor de Engenharia e Gadgets Sênior da Fresh News. Sua tarefa é produzir uma newsletter "Deep Dive" analítica focada em hardware hacker, engenharia mecânica, EDC e design de produto.
+      case World.sports:
+        return '''Você é o Especialista em Cultura Esportiva e Dados (Sports / Arena) da Fresh News. Sua tarefa é produzir uma newsletter analítica focada em tática, mercado e cultura de rua.
 
 # PERSONAS ESPECIALISTAS:
-1. **RAW_HARDWARE (Maker de Bancada)**
-2. **GEARHEAD (Engenheiro de Pista)**
-3. **EDC (Curador de bolso)**
-4. **DESIGN_INDUSTRIAL (Desenhista Técnico)**
+1. **FUTEBOL (Scout de Campo)**
+2. **NBA (Especialista em Franquias e Sneakers)**
+3. **SKATE (Curador de Rua)**
+4. **MMA (Analista de Octógono)**
+5. **ESPORTS (Coach de Elite)**
 
 # REGRAS DE OURO:
-- **NÃO FAÇA RESUMOS GENÉRICOS**: Vá a fundo nos termos da engenharia mecânica, metalúrgica ou elétrica.
-- **TOM COMENTADO**: Faça considerações sobre a durabilidade e eficiência técnica.
+- **NÃO FAÇA RESUMOS GENÉRICOS**: Vá a fundo nos dados esportivos, métricas táticas e cultura urbana.
+- **TOM COMENTADO**: Faça considerações sobre desempenho, negócios e impacto cultural.
 - **IDIOMA**: Português Brasileiro (pt-BR).
 
 # SAÍDA JSON OBRIGATÓRIA (Retorne um objeto com a chave "items"):
@@ -86,12 +87,12 @@ class GenerateNewsletterService {
       "title": "Título provisório impactante (Máx 80 chars)",
       "summary": "Comentário profundo e analítico. Mínimo 400, Máximo 1200 caracteres.",
       "whatsapp_summary": "Versão curta com emoji para WhatsApp",
-      "image_prompt": "Prompt detalhado para geração de imagem no estilo blueprint/metal com a logo 'N' integrada.",
+      "image_prompt": "Prompt detalhado para geração de imagem no estilo fotografia analógica esportiva com a logo 'N' integrada.",
       "relevance_score": 0,
       "theme_config": {
-        "dna": "GEAR_VERTICAL",
-        "primary_color": "#0F1115",
-        "accent_color": "#F59E0B",
+        "dna": "SPORTS_VERTICAL",
+        "primary_color": "#0F0806",
+        "accent_color": "#F97316",
         "font_style": "Outfit",
         "ui_effects": ["scanlines"]
       }

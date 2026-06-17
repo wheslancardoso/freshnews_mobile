@@ -14,9 +14,9 @@ class ImagePromptGenerator {
       case World.music:
         return basePrompt +
             'golden hour studio lighting, warm yellow neon, dynamic concert aesthetic, vintage vinyl or modern synthesizer vibes, cinematic lighting, ultra photorealistic, 8k resolution, --ar 16:9';
-      case World.gear:
+      case World.sports:
         return basePrompt +
-            'high-octane machinery, aggressive red neon lighting, dark metallic textures, automotive and gadget vibe, sleek industrial design, ultra photorealistic, 8k resolution, --ar 16:9';
+            'gritty sports documentary aesthetic, high contrast vibrant orange accents, concrete and arena textures, sweat and motion blur, cinematic stadium lighting, ultra photorealistic, 8k resolution, --ar 16:9';
       case World.game:
         return basePrompt +
             'synthwave aesthetic, deep purple and violet neon, pixel art or hyper-realistic CGI, esports arcade vibe, glowing controller accents, ultra photorealistic, 8k resolution, --ar 16:9';

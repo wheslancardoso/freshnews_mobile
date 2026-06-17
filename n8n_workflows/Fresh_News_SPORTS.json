@@ -1,0 +1,1330 @@
+{
+  "name": "Fresh_News_SPORTS",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8a3fc002-be8f-453f-8550-252e3eece3b7",
+              "leftValue": "={{ $json.ja_existe }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -544,
+        0
+      ],
+      "id": "0d43a279-b1b9-49b6-b87c-1530b8437aff",
+      "name": "É notícia nova?1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  '{{ $json.link }}' AS link,\n  EXISTS(SELECT 1 FROM posts WHERE url = '{{ $json.link }}') AS ja_existe;",
+        "options": {}
+      },
+      "id": "63c1e3c2-3e67-4823-a655-f42dadab0f11",
+      "name": "DB: Verifica URL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -720,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://firecrawl.wfixtech.com.br/v1/scrape",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json.link }}\",\n  \"formats\": [\"markdown\"]\n}",
+        "options": {}
+      },
+      "id": "e3cb7eff-6b95-419c-8058-7ad5a1c5c7d7",
+      "name": "API: Firecrawl",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -256,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2336,
+        32
+      ],
+      "id": "a0037ede-9b36-4996-bd28-6861af9c1362",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "FUTEBOL",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d73fc066-78e5-4e44-8d63-55b4886229fe"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "97c18314-cac6-4fb6-8f7c-081ece64d8a5",
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "NBA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5b84328f-7af9-476e-98b5-32a312f9ac8e",
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "SKATE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bf26b3a9-f0d0-4a71-8893-838f93bd92ed",
+                    "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+                    "rightValue": "MMA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1584,
+        -16
+      ],
+      "id": "265f3d9b-0f12-4e57-85ca-5be58bdf51cc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0f46cb48-70e7-444d-9cda-0e4ee7121b1f",
+              "leftValue": "={{ $json.is_active }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1952,
+        32
+      ],
+      "id": "e6571741-cd5c-4d3e-9965-4a1a0a70d106",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1760,
+        32
+      ],
+      "id": "1e871a2e-1f05-40a5-bbc3-a5267a1f5048",
+      "name": "LOOP 1 (Sites)"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -912,
+        0
+      ],
+      "id": "c75f66e9-253f-4fad-9163-6e576c7ca5b5",
+      "name": "LOOP 2 (Notícias)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        -32
+      ],
+      "id": "96423909-fc1a-4ab6-8e64-88f9e103af28",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        -192
+      ],
+      "id": "00f3b747-e15d-45a3-9edb-c40ca65ec3f6",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        160
+      ],
+      "id": "cea6e212-50bb-48a1-a83e-b454d2056716",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $json.sub_category }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        32
+      ],
+      "id": "c1fe2858-38d1-4d30-9976-52f353fd2498",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM public.sources WHERE is_active = true AND world = 'SPORTS';\\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2128,
+        32
+      ],
+      "id": "f8da7ab4-51fb-48dc-91e6-7dc27849f98c",
+      "name": "Buscar fontes supabase",
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e690a006-b33d-4819-a64c-b22d630ef19f",
+              "name": "url",
+              "value": "={{ $('Formatar Dados').item.json.url_original }}",
+              "type": "string"
+            },
+            {
+              "id": "aceafc67-8355-4440-af9a-2cf2687e257a",
+              "name": "content",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "df6edd20-929a-4ef7-a2a2-f77c32d444b7",
+              "name": "category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "a12a37cb-42d3-47f3-addd-14f02dbd4dff",
+              "name": "sub_category",
+              "value": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        416
+      ],
+      "id": "119582df-9bba-4841-b525-72a374f01a1f",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é o Editor-Chefe de Triagem da Fresh News (Mundo SPORTS).\nSua única missão é classificar o artigo fornecido na subcategoria correta.\n\nDIRETRIZES DE CLASSIFICAÇÃO:\n- FUTEBOL: Foco em FUTEBOL\n- NBA: Foco em NBA\n- SKATE: Foco em SKATE\n- MMA: Foco em MMA\n\nCONTRATO DE SAÍDA (Retorne APENAS o objeto JSON abaixo):\n{\n  \"category\": \"SPORTS_SETUP\",\n  \"sub_category\": \"FUTEBOL\" | \"NBA\" | \"SKATE\" | \"MMA\",\n  \"routing_reason\": \"Justificativa direta em 1 frase em pt-BR.\"\n}"
+            },
+            {
+              "content": "={{ $json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "9363caf8-8f7d-4625-b474-4506ca9f335c",
+      "name": "IA: Editor-Chefe SPORTS",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map((item) => {\n  const data = item.json;\n  \n  try {\n    const rawText = data.output?.[0]?.content?.[0]?.text || \"{}\";\n    const parsed = JSON.parse(rawText);\n\n    return {\n      ...data,\n      category: parsed.category || \"SPORTS_SETUP\",\n      sub_category: parsed.sub_category || \"SEM_SUBCATEGORIA\"\n    };\n    \n  } catch (err) {\n    return {\n      ...data,\n      category: \"SPORTS_SETUP\",\n      sub_category: \"ERRO_JSON\",\n      error_details: String(err)\n    };\n  }\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -16
+      ],
+      "id": "71ec2650-7cec-4c6c-9617-0fe4817fcf26",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dedc21f1-20db-4fce-95dc-0a521b642b8f",
+              "name": "categoria",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "5a51f822-ea2e-4cdf-82e8-b347931bb6b8",
+              "name": "sub_categoria",
+              "value": "={{ $json.sub_category }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "3d743f41-81f0-4e5d-bdcc-35b24679d7a4",
+      "name": "Categoria e Sub_categoria"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  // 1. Pega todos os dados que você unificou no Edit Fields anterior\n  const data = item.json;\n\n  // 2. Inicia a variável que vai guardar o JSON limpo\n  let parsedIA = {};\n\n  try {\n    // Pega o texto bruto que veio da IA\n    let aiText = data.content || \"{}\";\n\n    // MÁGICA: Limpa sujeiras que o GPT às vezes coloca (```json ... ```)\n    aiText = aiText.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\n    // Transforma o texto em um Objeto JSON real\n    parsedIA = JSON.parse(aiText);\n    \n  } catch (error) {\n    // Se a IA errar completamente a formatação, criamos um fallback seguro\n    parsedIA = {\n      title: \"Erro de Formatação da IA\",\n      summary: \"A resposta não pôde ser lida corretamente.\",\n      whatsapp_summary: \"\",\n      relevance_score: 0,\n      theme_config: {}\n    };\n  }\n\n  // 3. Monta o objeto final EXATAMENTE como o banco de dados precisa\n  return {\n    json: {\n      title: parsedIA.title || \"Sem título\",\n      summary: parsedIA.summary || \"\",\n      whatsapp_summary: parsedIA.whatsapp_summary || \"\",\n      score: parsedIA.relevance_score || 0,\n      theme_config: parsedIA.theme_config || {},\n      \n      // Trazendo as variáveis que você já tinha no Unificador:\n      url: data.url, \n      category: data.category, \n      sub_category: data.sub_category,\n      \n      // NOVO: Define o mundo do fluxo\n      // (Mude para \"GAME\", \"MUSIC\" ou \"SPORTS\" nas cópias dos outros fluxos)\n      world: \"SPORTS\"\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        64
+      ],
+      "id": "a5fc8f16-5de7-46a2-be33-a7cc74b245f4",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "schema": "public",
+        "table": "posts",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "score": "={{ $json.score }}",
+            "title": "={{ $json.title }}",
+            "summary": "={{ $json.summary }}",
+            "url": "={{ $('LOOP 2 (Notícias)').item.json.link }}",
+            "content": "={{ $('Formatar Dados').item.json.texto_markdown }}",
+            "metadata": "={{ \nJSON.stringify({ \n  category: $json.category, \n  sub_category: $('Categoria e Sub_categoria').item.json.sub_categoria,\n  theme_config: $json.theme_config,\n  whatsapp_summary: $json.whatsapp_summary \n}) \n}}",
+            "category": "={{ $json.category }}",
+            "sub_category": "={{ $json.sub_category }}",
+            "theme_config": "={{ $json.theme_config }}",
+            "status": "pending",
+            "source": "={{ $json.url }}",
+            "whatsapp_summary": "={{ $json.whatsapp_summary }}",
+            "world": "={{ $json.world }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "pending",
+                  "value": "pending"
+                },
+                {
+                  "name": "approved",
+                  "value": "approved"
+                },
+                {
+                  "name": "rejected",
+                  "value": "rejected"
+                },
+                {
+                  "name": "published",
+                  "value": "published"
+                }
+              ],
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "metadata",
+              "displayName": "metadata",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sub_category",
+              "displayName": "sub_category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "theme_config",
+              "displayName": "theme_config",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "whatsapp_summary",
+              "displayName": "whatsapp_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "world",
+              "displayName": "world",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2864,
+        80
+      ],
+      "id": "718f0eb1-d1b2-4616-a225-3a355abf1c54",
+      "name": "DB: Salvar no Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "pP8yWr9x5fTmLR7m",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é o Especialista em NBA da Fresh News. Fale sobre chips, placas, arquitetura e specs.\nDIRETRIZES EDITORIAIS (Pegada de Notícia):\n1. Escreva direto e sem hype. Fale de especialista para especialista.\n2. Seja denso, técnico e cite especificações reais.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete forte em pt-BR (Máx 60 chars)\",\n  \"summary\": \"Uma micro-reportagem técnica. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🔥 [NBA] [Manchete Curta]. [Veredicto]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100],\n  \"theme_config\": {\n    \"dna\": \"SPORTS_RED\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#EF4444\",\n    \"font_style\": \"Mono\",\n    \"ui_effects\": [\"scanlines\"]\n  }\n}"
+            },
+            {
+              "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        -32
+      ],
+      "id": "093f2c13-7d44-4133-b825-1c22094ce37c",
+      "name": "Especialista NBA",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é o Especialista em FUTEBOL da Fresh News. Fale sobre novos devices, wearables e inovações de consumo.\nDIRETRIZES EDITORIAIS (Pegada de Notícia):\n1. Escreva direto e sem hype. Fale de especialista para especialista.\n2. Seja denso, técnico e cite especificações reais.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete forte em pt-BR (Máx 60 chars)\",\n  \"summary\": \"Uma micro-reportagem técnica. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🔥 [FUTEBOL] [Manchete Curta]. [Veredicto]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100],\n  \"theme_config\": {\n    \"dna\": \"SPORTS_RED\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#EF4444\",\n    \"font_style\": \"Mono\",\n    \"ui_effects\": [\"scanlines\"]\n  }\n}"
+            },
+            {
+              "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        -192
+      ],
+      "id": "1920b726-4ef2-425e-85cc-6bde85567f85",
+      "name": "Especialista FUTEBOL",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é o Especialista SKATE da Fresh News. Fale sobre EVs, motores, modificações e telemetria.\nDIRETRIZES EDITORIAIS (Pegada de Notícia):\n1. Escreva direto e sem hype. Fale de especialista para especialista.\n2. Seja denso, técnico e cite especificações reais.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete forte em pt-BR (Máx 60 chars)\",\n  \"summary\": \"Uma micro-reportagem técnica. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🔥 [SKATE] [Manchete Curta]. [Veredicto]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100],\n  \"theme_config\": {\n    \"dna\": \"SPORTS_RED\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#EF4444\",\n    \"font_style\": \"Mono\",\n    \"ui_effects\": [\"scanlines\"]\n  }\n}"
+            },
+            {
+              "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        112
+      ],
+      "id": "385b39b3-ed8a-4b82-88e3-70cfc7455779",
+      "name": "Especialista SKATE",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é o Especialista em MMA e IoT da Fresh News. Fale sobre Raspberry Pi, Arduino, automação e código aberto.\nDIRETRIZES EDITORIAIS (Pegada de Notícia):\n1. Escreva direto e sem hype. Fale de especialista para especialista.\n2. Seja denso, técnico e cite especificações reais.\n3. RITMO E ESTILO: Escreva um parágrafo corrido e fluido (300 a 400 caracteres) em pt-BR.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete forte em pt-BR (Máx 60 chars)\",\n  \"summary\": \"Uma micro-reportagem técnica. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🔥 [MMA] [Manchete Curta]. [Veredicto]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100],\n  \"theme_config\": {\n    \"dna\": \"SPORTS_RED\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#EF4444\",\n    \"font_style\": \"Mono\",\n    \"ui_effects\": [\"scanlines\"]\n  }\n}"
+            },
+            {
+              "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        320
+      ],
+      "id": "88f7d1ca-e54a-4f75-bf91-4565539dbc79",
+      "name": "Especialista MMA",
+      "credentials": {
+        "openAiApi": {
+          "id": "wcWQeHLQ90vJVbyG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "texto_markdown",
+              "value": "={{ $json.data.markdown }}"
+            },
+            {
+              "name": "url_original",
+              "value": "={{ $('LOOP 2 (Notícias)').item.json.link }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c9016256-2e39-47e1-a1db-f98c1fcbec6e",
+      "name": "Formatar Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        48,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.rss_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -1376,
+        16
+      ],
+      "id": "0fc3a1ca-6806-48ed-add6-20b72b02d802",
+      "name": "RSS Read",
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-06-15T10:37:49.407-04:00",
+          "Readable date": "June 15th 2026, 10:37:49 am",
+          "Readable time": "10:37:49 am",
+          "Day of week": "Monday",
+          "Year": "2026",
+          "Month": "June",
+          "Day of month": "15",
+          "Hour": "10",
+          "Minute": "37",
+          "Second": "49",
+          "Timezone": "America/New_York (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "É notícia nova?1": {
+      "main": [
+        [
+          {
+            "node": "API: Firecrawl",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Verifica URL": {
+      "main": [
+        [
+          {
+            "node": "É notícia nova?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API: Firecrawl": {
+      "main": [
+        [
+          {
+            "node": "Formatar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Buscar fontes supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Especialista FUTEBOL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Especialista NBA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Especialista SKATE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Especialista MMA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "LOOP 1 (Sites)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LOOP 1 (Sites)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LOOP 2 (Notícias)": {
+      "main": [
+        [
+          {
+            "node": "LOOP 1 (Sites)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DB: Verifica URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar fontes supabase": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA: Editor-Chefe SPORTS": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Categoria e Sub_categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categoria e Sub_categoria": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "DB: Salvar no Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB: Salvar no Postgres": {
+      "main": [
+        [
+          {
+            "node": "LOOP 1 (Sites)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista FUTEBOL": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista NBA": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista SKATE": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Especialista MMA": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Dados": {
+      "main": [
+        [
+          {
+            "node": "IA: Editor-Chefe SPORTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "LOOP 2 (Notícias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "db5664db-3dbc-4b5d-a82b-9d1922b7c2c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "81d0635acec5467d6fba560d241108a93e1dbf19557fd3600a3d2fa845284989"
+  },
+  "id": "fresh_news_SPORTS",
+  "tags": []
+}

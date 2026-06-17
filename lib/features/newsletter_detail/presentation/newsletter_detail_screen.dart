@@ -34,15 +34,17 @@ class NewsletterDetailScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<NewsletterDetailScreen> createState() => _NewsletterDetailScreenState();
+  ConsumerState<NewsletterDetailScreen> createState() =>
+      _NewsletterDetailScreenState();
 }
 
-class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen> {
+class _NewsletterDetailScreenState
+    extends ConsumerState<NewsletterDetailScreen> {
   bool _tracked = false;
-  
+
   // Rastreamento de Dwell Time: momento em que a categoria ficou visível
   final Map<String, DateTime> _categoryStartTimes = {};
-  
+
   // Referência segura do repository (capturada antes do dispose)
   TelemetryRepository? _telemetryRepo;
 
@@ -56,11 +58,13 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   @override
   void dispose() {
     _flushAllDwellTimes();
-    
+
     // Restaurar o tema global para o mundo ativo ao sair da tela
     try {
       final activeWorld = ref.read(activeWorldProvider);
-      ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
+      ref
+          .read(chameleonThemeProvider.notifier)
+          .updateThemeByWorld(activeWorld.config.slug);
     } catch (_) {}
 
     super.dispose();
@@ -69,25 +73,30 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   /// Envia IMEDIATAMENTE o dwell time de UMA categoria quando ela sai do viewport
   void _sendCategoryDwellTime(String category, Duration duration) {
     if (_telemetryRepo == null) return;
-    print('[TELEMETRY] 🚀 Enviando dwell time INLINE para "$category": ${duration.inSeconds}s');
-    _telemetryRepo!.recordDwellTime(category: category, visibleDuration: duration);
+    print(
+        '[TELEMETRY] 🚀 Enviando dwell time INLINE para "$category": ${duration.inSeconds}s');
+    _telemetryRepo!
+        .recordDwellTime(category: category, visibleDuration: duration);
   }
 
   /// Flush final: envia o tempo de todas as categorias que AINDA estavam visíveis quando o user saiu da tela
   void _flushAllDwellTimes() {
     if (_telemetryRepo == null) return;
     final now = DateTime.now();
-    
+
     for (final entry in Map.of(_categoryStartTimes).entries) {
       final duration = now.difference(entry.value);
-      print('[TELEMETRY] 🔚 Flush no dispose para "${entry.key}": ${duration.inSeconds}s');
-      _telemetryRepo!.recordDwellTime(category: entry.key, visibleDuration: duration);
+      print(
+          '[TELEMETRY] 🔚 Flush no dispose para "${entry.key}": ${duration.inSeconds}s');
+      _telemetryRepo!
+          .recordDwellTime(category: entry.key, visibleDuration: duration);
     }
     _categoryStartTimes.clear();
   }
 
   /// Chamado pelo VisibilityDetector quando uma categoria entra/sai do viewport
-  void _onCategoryVisibilityChanged(String categoryName, double visibleFraction) {
+  void _onCategoryVisibilityChanged(
+      String categoryName, double visibleFraction) {
     if (visibleFraction > 0.1) {
       // Categoria está visível — começar a contar se ainda não começou
       if (!_categoryStartTimes.containsKey(categoryName)) {
@@ -99,7 +108,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       if (_categoryStartTimes.containsKey(categoryName)) {
         final start = _categoryStartTimes.remove(categoryName)!;
         final duration = DateTime.now().difference(start);
-        print('[TELEMETRY] 📤 Saiu de "$categoryName" após ${duration.inSeconds}s');
+        print(
+            '[TELEMETRY] 📤 Saiu de "$categoryName" após ${duration.inSeconds}s');
         _sendCategoryDwellTime(categoryName, duration);
       }
     }
@@ -119,7 +129,6 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       });
     });
   }
-
 
   Color _getCategoryColor(String name, String? worldSlug) {
     return ChameleonThemeConfig.fromCategory(name, world: worldSlug).primary;
@@ -158,216 +167,263 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
           onPopInvokedWithResult: (didPop, result) {
             try {
               final activeWorld = ref.read(activeWorldProvider);
-              ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
+              ref
+                  .read(chameleonThemeProvider.notifier)
+                  .updateThemeByWorld(activeWorld.config.slug);
             } catch (e) {
               print('[TELEMETRY] Erro no PopScope ao resetar tema: $e');
             }
           },
           child: Scaffold(
             backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
-            onPressed: () {
-              try {
-                final activeWorld = ref.read(activeWorldProvider);
-                ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
-              } catch (_) {}
-              context.pop();
-            },
-          ),
-          title: Text(
-            newsletterAsync.when(
-              data: (n) => 'EDIÇÃO #${n.editionNumber}',
-              loading: () => 'CARREGANDO...',
-              error: (_, __) => 'ERRO',
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
+                onPressed: () {
+                  try {
+                    final activeWorld = ref.read(activeWorldProvider);
+                    ref
+                        .read(chameleonThemeProvider.notifier)
+                        .updateThemeByWorld(activeWorld.config.slug);
+                  } catch (_) {}
+                  context.pop();
+                },
+              ),
+              title: Text(
+                newsletterAsync.when(
+                  data: (n) => 'EDIÇÃO #${n.editionNumber}',
+                  loading: () => 'CARREGANDO...',
+                  error: (_, __) => 'ERRO',
+                ),
+                style: FNTypography.headingMedium.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: chameleonTheme.primary,
+                ),
+              ),
+              backgroundColor: chameleonTheme.bg.withOpacity(0.85),
+              elevation: 0,
             ),
-            style: FNTypography.headingMedium.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: chameleonTheme.primary,
-            ),
-          ),
-          backgroundColor: chameleonTheme.bg.withOpacity(0.85),
-          elevation: 0,
-        ),
-        body: newsletterAsync.when(
-        data: (newsletter) {
-          final content = newsletter.contentJson;
+            body: newsletterAsync.when(
+              data: (newsletter) {
+                final content = newsletter.contentJson;
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // 1. Cover Image
-                _buildCoverImage(newsletter.imageUrl),
-                
-                Padding(
-                  padding: const EdgeInsets.all(FNSpacing.lg),
+                return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // 2. Edition Metadata
-                      Row(
-                        children: [
-                          FNBadge(label: 'EDIÇÃO #${newsletter.editionNumber}'),
-                          const SizedBox(width: 8),
-                          FNBadge(label: newsletter.category ?? 'MASTER'),
-                          const Spacer(),
-                          Text(
-                            _formatDate(newsletter.createdAt),
-                            style: FNTypography.techLabel.copyWith(color: FNColors.mutedForeground),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: FNSpacing.lg),
-                      
-                      // 3. Title
-                      Text(
-                        newsletter.title,
-                        style: FNTypography.h2.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: FNSpacing.md),
-                      
-                      // 4. Intro editorial
-                      if (newsletter.summaryIntro != null && newsletter.summaryIntro!.isNotEmpty) ...[
-                        Text(
-                          newsletter.summaryIntro!,
-                          style: FNTypography.bodyLarge.copyWith(
-                            color: FNColors.mutedForeground,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                        const SizedBox(height: FNSpacing.lg),
-                      ],
-                      
-                      const Divider(),
-                      const SizedBox(height: FNSpacing.lg),
-                      
-                      // 5. Quick Takes (dinâmico por mundo)
-                      if (content != null && content.quickTakes.isNotEmpty) ...[
-                        _buildQuickTakes(content.quickTakes, newsletter.world),
-                        const SizedBox(height: FNSpacing.xl),
-                        const Divider(),
-                        const SizedBox(height: FNSpacing.lg),
-                      ],
+                      // 1. Cover Image
+                      _buildCoverImage(newsletter.imageUrl),
 
-                      // 6. Categorias e Notícias
-                      if (content != null && content.categories.isNotEmpty) ...[
-                        Builder(
-                          builder: (context) {
-                            final subscriber = ref.watch(subscriberProvider).valueOrNull;
-                            final affinity = subscriber?.affinityVector ?? {};
-                            
-                            // Remove emojis e espaços para comparar com as chaves do banco
-                            String normalizeCat(String raw) {
-                              return raw.replaceAll(RegExp(r'[^\w\sÀ-ÿ]', unicode: true), '').trim().toUpperCase();
-                            }
-                            
-                            final sortedCategories = List<NewsCategory>.from(content.categories);
-                            final originalOrder = { for (var i = 0; i < content.categories.length; i++) content.categories[i].name: i };
-                            
-                            if (affinity.isNotEmpty) {
-                              sortedCategories.sort((a, b) {
-                                final scoreA = affinity[normalizeCat(a.name)] ?? 0.0;
-                                final scoreB = affinity[normalizeCat(b.name)] ?? 0.0;
-                                
-                                if (scoreB != scoreA) {
-                                  return scoreB.compareTo(scoreA);
-                                }
-                                // Fallback para a ordem original
-                                return originalOrder[a.name]!.compareTo(originalOrder[b.name]!);
-                              });
-                            }
-
-                            final showSoftGate = ref.watch(subscriberIdProvider) == null;
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: sortedCategories.asMap().entries.map((entry) {
-                                final idx = entry.key;
-                                final cat = entry.value;
-                                final score = affinity[normalizeCat(cat.name)] ?? 0.0;
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildCategorySection(cat, newsletter.world.config.slug, isAiRecommended: score >= 0.3),
-                                    if (showSoftGate && idx == 0) ...[
-                                      const SizedBox(height: FNSpacing.base),
-                                      _buildSoftGateCard(context, chameleonTheme.primary),
-                                      const SizedBox(height: FNSpacing.xl),
-                                    ],
-                                  ],
-                                );
-                              }).toList(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: FNSpacing.md),
-                      ],
-                      
-                      // 7. Terminal Debate
-                      if (newsletter.debateLog.isNotEmpty) ...[
-                        VisibilityDetector(
-                          key: Key('detail-debate-${newsletter.id}'),
-                          onVisibilityChanged: (info) {
-                            if (info.visibleFraction > 0.4) {
-                              ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(
-                                    newsletter.category ?? 'MASTER',
-                                    world: newsletter.world.config.slug,
-                                  );
-                            }
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                '── TERMINAL DEBATE ──',
-                                style: FNTypography.techLabel.copyWith(
-                                  color: FNColors.mutedForeground.withOpacity(0.5),
-                                  fontSize: 11,
+                      Padding(
+                        padding: const EdgeInsets.all(FNSpacing.lg),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // 2. Edition Metadata
+                            Row(
+                              children: [
+                                FNBadge(
+                                    label:
+                                        'EDIÇÃO #${newsletter.editionNumber}'),
+                                const SizedBox(width: 8),
+                                FNBadge(label: newsletter.category ?? 'MASTER'),
+                                const Spacer(),
+                                Text(
+                                  _formatDate(newsletter.createdAt),
+                                  style: FNTypography.techLabel.copyWith(
+                                      color: FNColors.mutedForeground),
                                 ),
-                                textAlign: TextAlign.center,
+                              ],
+                            ),
+                            const SizedBox(height: FNSpacing.lg),
+
+                            // 3. Title
+                            Text(
+                              newsletter.title,
+                              style: FNTypography.h2.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: FNSpacing.md),
+
+                            // 4. Intro editorial
+                            if (newsletter.summaryIntro != null &&
+                                newsletter.summaryIntro!.isNotEmpty) ...[
+                              Text(
+                                newsletter.summaryIntro!,
+                                style: FNTypography.bodyLarge.copyWith(
+                                  color: FNColors.mutedForeground,
+                                  fontStyle: FontStyle.italic,
+                                ),
                               ),
                               const SizedBox(height: FNSpacing.lg),
-                              TerminalDebate(messages: newsletter.debateLog),
-                              const SizedBox(height: FNSpacing.xl),
                             ],
-                          ),
-                        ),
-                      ],
 
-                      // 8. Admin Actions (Publish / Reject)
-                      if (authState.isAdmin && newsletter.isDraft) ...[
-                        const Divider(),
-                        const SizedBox(height: FNSpacing.lg),
-                        _buildAdminActions(context, ref, newsletter.id),
-                      ],
+                            const Divider(),
+                            const SizedBox(height: FNSpacing.lg),
+
+                            // 5. Quick Takes (dinâmico por mundo)
+                            if (content != null &&
+                                content.quickTakes.isNotEmpty) ...[
+                              _buildQuickTakes(
+                                  content.quickTakes, newsletter.world),
+                              const SizedBox(height: FNSpacing.xl),
+                              const Divider(),
+                              const SizedBox(height: FNSpacing.lg),
+                            ],
+
+                            // 6. Categorias e Notícias
+                            if (content != null &&
+                                content.categories.isNotEmpty) ...[
+                              Builder(
+                                builder: (context) {
+                                  final subscriber =
+                                      ref.watch(subscriberProvider).valueOrNull;
+                                  final affinity =
+                                      subscriber?.affinityVector ?? {};
+
+                                  // Remove emojis e espaços para comparar com as chaves do banco
+                                  String normalizeCat(String raw) {
+                                    return raw
+                                        .replaceAll(
+                                            RegExp(r'[^\w\sÀ-ÿ]',
+                                                unicode: true),
+                                            '')
+                                        .trim()
+                                        .toUpperCase();
+                                  }
+
+                                  final sortedCategories =
+                                      List<NewsCategory>.from(
+                                          content.categories);
+                                  final originalOrder = {
+                                    for (var i = 0;
+                                        i < content.categories.length;
+                                        i++)
+                                      content.categories[i].name: i
+                                  };
+
+                                  if (affinity.isNotEmpty) {
+                                    sortedCategories.sort((a, b) {
+                                      final scoreA =
+                                          affinity[normalizeCat(a.name)] ?? 0.0;
+                                      final scoreB =
+                                          affinity[normalizeCat(b.name)] ?? 0.0;
+
+                                      if (scoreB != scoreA) {
+                                        return scoreB.compareTo(scoreA);
+                                      }
+                                      // Fallback para a ordem original
+                                      return originalOrder[a.name]!
+                                          .compareTo(originalOrder[b.name]!);
+                                    });
+                                  }
+
+                                  final showSoftGate =
+                                      ref.watch(subscriberIdProvider) == null;
+
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: sortedCategories
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      final idx = entry.key;
+                                      final cat = entry.value;
+                                      final score =
+                                          affinity[normalizeCat(cat.name)] ??
+                                              0.0;
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          _buildCategorySection(
+                                              cat, newsletter.world.config.slug,
+                                              isAiRecommended: score >= 0.3),
+                                          if (showSoftGate && idx == 0) ...[
+                                            const SizedBox(
+                                                height: FNSpacing.base),
+                                            _buildSoftGateCard(context,
+                                                chameleonTheme.primary),
+                                            const SizedBox(
+                                                height: FNSpacing.xl),
+                                          ],
+                                        ],
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: FNSpacing.md),
+                            ],
+
+                            // 7. Terminal Debate
+                            if (newsletter.debateLog.isNotEmpty) ...[
+                              VisibilityDetector(
+                                key: Key('detail-debate-${newsletter.id}'),
+                                onVisibilityChanged: (info) {
+                                  if (info.visibleFraction > 0.4) {
+                                    ref
+                                        .read(chameleonThemeProvider.notifier)
+                                        .updateThemeByCategory(
+                                          newsletter.category ?? 'MASTER',
+                                          world: newsletter.world.config.slug,
+                                        );
+                                  }
+                                },
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      '── TERMINAL DEBATE ──',
+                                      style: FNTypography.techLabel.copyWith(
+                                        color: FNColors.mutedForeground
+                                            .withOpacity(0.5),
+                                        fontSize: 11,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: FNSpacing.lg),
+                                    TerminalDebate(
+                                        messages: newsletter.debateLog),
+                                    const SizedBox(height: FNSpacing.xl),
+                                  ],
+                                ),
+                              ),
+                            ],
+
+                            // 8. Admin Actions (Publish / Reject)
+                            if (authState.isAdmin && newsletter.isDraft) ...[
+                              const Divider(),
+                              const SizedBox(height: FNSpacing.lg),
+                              _buildAdminActions(context, ref, newsletter.id),
+                            ],
+                          ],
+                        ),
+                      ),
                     ],
                   ),
+                );
+              },
+              loading: () => const _LoadingDetailView(),
+              error: (error, __) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(FNSpacing.xxl),
+                  child: Text(
+                    'Erro ao carregar detalhes da newsletter:\n$error',
+                    style: FNTypography.bodyMedium.copyWith(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ],
-            ),
-          );
-        },
-        loading: () => const _LoadingDetailView(),
-        error: (error, __) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(FNSpacing.xxl),
-            child: Text(
-              'Erro ao carregar detalhes da newsletter:\n$error',
-              style: FNTypography.bodyMedium.copyWith(color: Colors.red),
-              textAlign: TextAlign.center,
+              ),
             ),
           ),
         ),
       ),
-    ),
-    ),
-    ),
     );
   }
 
@@ -434,7 +490,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
         child: Stack(
           children: [
             const Center(
-              child: Icon(LucideIcons.newspaper, color: Colors.white30, size: 48),
+              child:
+                  Icon(LucideIcons.newspaper, color: Colors.white30, size: 48),
             ),
           ],
         ),
@@ -454,7 +511,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
               highlightColor: const Color(0xFF2C2C2E),
               child: Container(color: Colors.black),
             ),
-            errorWidget: (context, url, error) => Icon(LucideIcons.image_off, color: Colors.white24),
+            errorWidget: (context, url, error) =>
+                Icon(LucideIcons.image_off, color: Colors.white24),
           ),
           // Dark gradient overlay
           Positioned.fill(
@@ -507,7 +565,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                   children: [
                     Text(
                       '• ',
-                      style: FNTypography.code.copyWith(color: accentColor, fontWeight: FontWeight.bold),
+                      style: FNTypography.code.copyWith(
+                          color: accentColor, fontWeight: FontWeight.bold),
                     ),
                     Expanded(
                       child: Text(
@@ -527,7 +586,8 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
     );
   }
 
-  Widget _buildCategorySection(NewsCategory category, String worldSlug, {bool isAiRecommended = false}) {
+  Widget _buildCategorySection(NewsCategory category, String worldSlug,
+      {bool isAiRecommended = false}) {
     final catColor = _getCategoryColor(category.name, worldSlug);
 
     return VisibilityDetector(
@@ -535,7 +595,9 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       onVisibilityChanged: (info) {
         // Chameleon theme: Se a categoria ocupar pelo menos 10% da tela (ou do seu próprio tamanho), ativa a cor
         if (info.visibleFraction > 0.1) {
-          ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(category.name, world: worldSlug);
+          ref
+              .read(chameleonThemeProvider.notifier)
+              .updateThemeByCategory(category.name, world: worldSlug);
         }
         // Telemetria de Dwell Time: Exige 10% para evitar contabilizar bordas vizinhas
         _onCategoryVisibilityChanged(category.name, info.visibleFraction);
@@ -583,14 +645,16 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
           ),
           const SizedBox(height: FNSpacing.base),
           // News Items List
-          ...category.items.map((item) => _buildNewsItemCard(item, catColor, category.name)),
+          ...category.items
+              .map((item) => _buildNewsItemCard(item, catColor, category.name)),
           const SizedBox(height: FNSpacing.lg),
         ],
       ),
     );
   }
 
-  Widget _buildNewsItemCard(NewsItem item, Color catColor, String categoryName) {
+  Widget _buildNewsItemCard(
+      NewsItem item, Color catColor, String categoryName) {
     return Container(
       margin: const EdgeInsets.only(bottom: FNSpacing.lg),
       padding: const EdgeInsets.only(left: FNSpacing.base),
@@ -610,8 +674,10 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                 child: CachedNetworkImage(
                   imageUrl: item.imageUrl!,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(color: Colors.white10),
-                  errorWidget: (context, url, error) => Icon(LucideIcons.image_off, color: Colors.white24),
+                  placeholder: (context, url) =>
+                      Container(color: Colors.white10),
+                  errorWidget: (context, url, error) =>
+                      Icon(LucideIcons.image_off, color: Colors.white24),
                 ),
               ),
             ),
@@ -667,13 +733,16 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                 await controller.publish(id);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Newsletter publicada com sucesso!')),
+                    const SnackBar(
+                        content: Text('Newsletter publicada com sucesso!')),
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Erro ao publicar: $e'), backgroundColor: Colors.red),
+                    SnackBar(
+                        content: Text('Erro ao publicar: $e'),
+                        backgroundColor: Colors.red),
                   );
                 }
               }
@@ -690,13 +759,17 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                 await controller.reject(id);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Newsletter rejeitada (mantida em rascunho).')),
+                    const SnackBar(
+                        content: Text(
+                            'Newsletter rejeitada (mantida em rascunho).')),
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Erro ao rejeitar: $e'), backgroundColor: Colors.red),
+                    SnackBar(
+                        content: Text('Erro ao rejeitar: $e'),
+                        backgroundColor: Colors.red),
                   );
                 }
               }
@@ -734,4 +807,3 @@ class _LoadingDetailView extends StatelessWidget {
     );
   }
 }
-

@@ -11,6 +11,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:fresh_news_mobile/core/theme/chameleon_theme_provider.dart';
 import 'package:fresh_news_mobile/core/theme/chameleon_theme_config.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
+import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
 
 import 'package:fresh_news_mobile/features/auth/application/auth_notifier.dart';
 import 'package:fresh_news_mobile/features/newsletter_detail/application/newsletter_detail_provider.dart';
@@ -55,6 +56,13 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
   @override
   void dispose() {
     _flushAllDwellTimes();
+    
+    // Restaurar o tema global para o mundo ativo ao sair da tela
+    try {
+      final activeWorld = ref.read(activeWorldProvider);
+      ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
+    } catch (_) {}
+
     super.dispose();
   }
 

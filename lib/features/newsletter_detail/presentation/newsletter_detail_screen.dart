@@ -154,12 +154,27 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       child: ChameleonEffectsOverlay(
         effects: chameleonTheme.effects,
         accentColor: chameleonTheme.primary,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
+        child: PopScope(
+          onPopInvokedWithResult: (didPop, result) {
+            try {
+              final activeWorld = ref.read(activeWorldProvider);
+              ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
+            } catch (e) {
+              print('[TELEMETRY] Erro no PopScope ao resetar tema: $e');
+            }
+          },
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(LucideIcons.arrow_left, color: Colors.white),
-            onPressed: () => context.pop(),
+            onPressed: () {
+              try {
+                final activeWorld = ref.read(activeWorldProvider);
+                ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(activeWorld.config.slug);
+              } catch (_) {}
+              context.pop();
+            },
           ),
           title: Text(
             newsletterAsync.when(

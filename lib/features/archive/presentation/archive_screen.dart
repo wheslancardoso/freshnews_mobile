@@ -6,6 +6,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:fresh_news_mobile/core/constants/world.dart';
 import 'package:fresh_news_mobile/core/theme/fn_colors.dart';
 import 'package:fresh_news_mobile/core/theme/fn_theme.dart';
+import 'package:fresh_news_mobile/core/theme/chameleon_theme_provider.dart';
 import 'package:fresh_news_mobile/features/world_selector/application/world_controller.dart';
 import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
 import 'package:fresh_news_mobile/shared/domain/newsletter.entity.dart';
@@ -30,8 +31,8 @@ class ArchiveScreen extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           _buildAppBar(context, ref, activeWorld),
-          _buildHeroCardSection(archivedNewslettersAsync),
-          _buildArchivedEditionsSection(archivedNewslettersAsync, crossAxisCount),
+          _buildHeroCardSection(archivedNewslettersAsync, activeWorld),
+          _buildArchivedEditionsSection(archivedNewslettersAsync, crossAxisCount, activeWorld),
           const SliverToBoxAdapter(child: SizedBox(height: FNSpacing.xxl)),
         ],
       ),
@@ -61,7 +62,10 @@ class ArchiveScreen extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
               side: const BorderSide(color: FNColors.border),
             ),
-            onSelected: (world) => ref.read(worldControllerProvider.notifier).setWorld(world),
+            onSelected: (world) {
+              ref.read(worldControllerProvider.notifier).setWorld(world);
+              ref.read(chameleonThemeProvider.notifier).updateThemeByWorld(world.config.slug);
+            },
             itemBuilder: (context) => World.values.map((world) {
               return PopupMenuItem(
                 value: world,
@@ -80,7 +84,7 @@ class ArchiveScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeroCardSection(AsyncValue<List<dynamic>> newslettersAsync) {
+  Widget _buildHeroCardSection(AsyncValue<List<dynamic>> newslettersAsync, World activeWorld) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(FNSpacing.lg),
@@ -154,7 +158,7 @@ class ArchiveScreen extends ConsumerWidget {
                                       fontSize: 32,
                                       fontWeight: FontWeight.w900,
                                       fontStyle: FontStyle.italic,
-                                      color: FNColors.primaryViolet,
+                                      color: activeWorld.config.primaryColor,
                                     ),
                                   ),
                                 ],
@@ -212,7 +216,7 @@ class ArchiveScreen extends ConsumerWidget {
 
 
 
-  Widget _buildArchivedEditionsSection(AsyncValue<List<Newsletter>> newslettersAsync, int crossAxisCount) {
+  Widget _buildArchivedEditionsSection(AsyncValue<List<Newsletter>> newslettersAsync, int crossAxisCount, World activeWorld) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: FNSpacing.lg),
       sliver: SliverList(
@@ -221,7 +225,7 @@ class ArchiveScreen extends ConsumerWidget {
           const SizedBox(height: FNSpacing.lg),
           Row(
             children: [
-              const Icon(LucideIcons.archive, size: 16, color: FNColors.primaryViolet),
+              Icon(LucideIcons.archive, size: 16, color: activeWorld.config.primaryColor),
               const SizedBox(width: FNSpacing.sm),
               Text(
                 'EDIÇÕES ARQUIVADAS',

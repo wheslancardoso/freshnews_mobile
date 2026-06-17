@@ -12,10 +12,15 @@ class ChameleonThemeNotifier extends Notifier<ChameleonThemeConfig> {
   }
 
   void updateThemeByWorld(String world) {
-    if (world.toUpperCase() == 'MUSIC') {
-      state = ChameleonThemeConfig.defaultMusic();
-    } else {
-      state = ChameleonThemeConfig.defaultTech();
+    switch (world.toUpperCase()) {
+      case 'MUSIC':
+        state = ChameleonThemeConfig.defaultMusic();
+      case 'GEAR':
+        state = ChameleonThemeConfig.defaultGear();
+      case 'GAME':
+        state = ChameleonThemeConfig.defaultGame();
+      default:
+        state = ChameleonThemeConfig.defaultTech();
     }
   }
 

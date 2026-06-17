@@ -20,6 +20,7 @@ import 'package:fresh_news_mobile/shared/widgets/chameleon_effects_overlay.dart'
 import 'package:fresh_news_mobile/shared/widgets/fn_badge.dart';
 import 'package:fresh_news_mobile/shared/widgets/fn_button.dart';
 import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
+import 'package:fresh_news_mobile/shared/widgets/glass_card.dart';
 import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/telemetry_repository.dart';
 
@@ -223,9 +224,9 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                       const Divider(),
                       const SizedBox(height: FNSpacing.lg),
                       
-                      // 5. Quick Takes (⚡ GIRO TECH)
+                      // 5. Quick Takes (dinâmico por mundo)
                       if (content != null && content.quickTakes.isNotEmpty) ...[
-                        _buildQuickTakes(content.quickTakes),
+                        _buildQuickTakes(content.quickTakes, newsletter.world),
                         const SizedBox(height: FNSpacing.xl),
                         const Divider(),
                         const SizedBox(height: FNSpacing.lg),
@@ -259,11 +260,25 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                               });
                             }
 
+                            final showSoftGate = ref.watch(subscriberIdProvider) == null;
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: sortedCategories.map((cat) {
+                              children: sortedCategories.asMap().entries.map((entry) {
+                                final idx = entry.key;
+                                final cat = entry.value;
                                 final score = affinity[normalizeCat(cat.name)] ?? 0.0;
-                                return _buildCategorySection(cat, newsletter.world.config.slug, isAiRecommended: score >= 0.3);
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildCategorySection(cat, newsletter.world.config.slug, isAiRecommended: score >= 0.3),
+                                    if (showSoftGate && idx == 0) ...[
+                                      const SizedBox(height: FNSpacing.base),
+                                      _buildSoftGateCard(context, chameleonTheme.primary),
+                                      const SizedBox(height: FNSpacing.xl),
+                                    ],
+                                  ],
+                                );
                               }).toList(),
                             );
                           },
@@ -332,6 +347,52 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
     );
   }
 
+  Widget _buildSoftGateCard(BuildContext context, Color accentColor) {
+    return GlassCard(
+      borderColor: accentColor,
+      borderWidth: 2.0,
+      backgroundColor: Colors.black.withOpacity(0.5),
+      padding: const EdgeInsets.all(FNSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(LucideIcons.terminal, color: accentColor, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'ALERTA DE TRANSMISSÃO // CONEXÃO RESTRITA',
+                  style: FNTypography.techLabel.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: FNSpacing.base),
+          Text(
+            'Seu dispositivo está recebendo este feed no modo passivo de demonstração. Conecte-se para ativar o algoritmo de afinidade de inteligência artificial e passar a receber os boletins personalizados diretamente no seu E-mail ou WhatsApp.',
+            style: FNTypography.bodyMedium.copyWith(
+              color: FNColors.mutedForeground,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: FNSpacing.lg),
+          FNButton(
+            label: 'ESTABELECER CONEXÃO',
+            primaryColor: accentColor,
+            onPressed: () {
+              context.push('/subscriber-login');
+            },
+            fullWidth: true,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCoverImage(String? imageUrl) {
     if (imageUrl == null || imageUrl.isEmpty) {
       return Container(
@@ -393,7 +454,10 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
     );
   }
 
-  Widget _buildQuickTakes(List<String> takes) {
+  Widget _buildQuickTakes(List<String> takes, World world) {
+    final worldMeta = WorldRegistry.get(world);
+    final accentColor = worldMeta.primaryColor;
+
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF121214),
@@ -404,9 +468,9 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '⚡ GIRO TECH',
+            worldMeta.quickTakesTitle,
             style: FNTypography.techLabel.copyWith(
-              color: FNColors.primaryYellow,
+              color: accentColor,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -419,7 +483,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
                   children: [
                     Text(
                       '• ',
-                      style: FNTypography.code.copyWith(color: FNColors.primaryYellow, fontWeight: FontWeight.bold),
+                      style: FNTypography.code.copyWith(color: accentColor, fontWeight: FontWeight.bold),
                     ),
                     Expanded(
                       child: Text(
@@ -447,7 +511,7 @@ class _NewsletterDetailScreenState extends ConsumerState<NewsletterDetailScreen>
       onVisibilityChanged: (info) {
         // Chameleon theme: Se a categoria ocupar pelo menos 10% da tela (ou do seu próprio tamanho), ativa a cor
         if (info.visibleFraction > 0.1) {
-          ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(category.name);
+          ref.read(chameleonThemeProvider.notifier).updateThemeByCategory(category.name, world: worldSlug);
         }
         // Telemetria de Dwell Time: Exige 10% para evitar contabilizar bordas vizinhas
         _onCategoryVisibilityChanged(category.name, info.visibleFraction);

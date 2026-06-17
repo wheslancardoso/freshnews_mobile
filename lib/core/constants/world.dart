@@ -14,6 +14,7 @@ class WorldMeta {
   final String emoji;
   final Color primaryColor;
   final String tagline;
+  final String quickTakesTitle;
   final List<String> categories;
 
   const WorldMeta({
@@ -22,6 +23,7 @@ class WorldMeta {
     required this.emoji,
     required this.primaryColor,
     required this.tagline,
+    required this.quickTakesTitle,
     required this.categories,
   });
 }
@@ -34,6 +36,7 @@ class WorldRegistry {
       emoji: '💻',
       primaryColor: Color(0xFF22C55E),
       tagline: 'CÓDIGO & IA',
+      quickTakesTitle: '⚡ GIRO TECH',
       categories: ['DEV', 'IA', 'SEGURANÇA', 'STARTUPS', 'CLOUD'],
     ),
     World.music: WorldMeta(
@@ -42,6 +45,7 @@ class WorldRegistry {
       emoji: '🎵',
       primaryColor: Color(0xFFEAB308),
       tagline: 'BEATS & NOISE',
+      quickTakesTitle: '🎵 SETLIST RÁPIDO',
       categories: ['ARTISTAS', 'PRODUÇÃO', 'INDIE', 'CHARTS', 'LANÇAMENTOS'],
     ),
     World.gear: WorldMeta(
@@ -50,6 +54,7 @@ class WorldRegistry {
       emoji: '⚙️',
       primaryColor: const Color(0xFFEF4444),
       tagline: 'RPM & GADGETS',
+      quickTakesTitle: '⚙️ DIAGNÓSTICO',
       categories: ['AUTOMOTIVO', 'GADGETS', 'WEARABLES', 'DIY', 'INOVAÇÃO'],
     ),
     World.game: WorldMeta(
@@ -58,6 +63,7 @@ class WorldRegistry {
       emoji: '🎮',
       primaryColor: Color(0xFFA855F7),
       tagline: 'ARCADE & PIXEL',
+      quickTakesTitle: '🕹️ PRESS START',
       categories: ['PC', 'CONSOLE', 'MOBILE', 'ESPORTS', 'INDIE'],
     ),
   };

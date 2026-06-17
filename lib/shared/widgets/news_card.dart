@@ -45,7 +45,8 @@ class NewsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (data.imageUrl != null) _buildImage(),
+          // Descomente a linha abaixo para voltar a exibir a imagem nos cards:
+          // if (data.imageUrl != null) _buildImage(),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

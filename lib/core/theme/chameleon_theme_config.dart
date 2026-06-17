@@ -38,6 +38,28 @@ class ChameleonThemeConfig {
     );
   }
 
+  // Default GEAR (Vermelho Automotivo)
+  factory ChameleonThemeConfig.defaultGear() {
+    return ChameleonThemeConfig(
+      bg: const Color(0xFF0D0808),
+      accent: FNColors.primaryRed,
+      primary: FNColors.primaryRed,
+      fontStyle: 'SpaceGrotesk',
+      effects: ['scanlines', 'terminal_glow'],
+    );
+  }
+
+  // Default GAME (Roxo Arcade)
+  factory ChameleonThemeConfig.defaultGame() {
+    return ChameleonThemeConfig(
+      bg: const Color(0xFF0B080D),
+      accent: FNColors.primaryPurple,
+      primary: FNColors.primaryPurple,
+      fontStyle: 'SpaceGrotesk',
+      effects: ['scanlines', 'cloud_compute_grid'],
+    );
+  }
+
   // IA (Lavender / Purple)
   factory ChameleonThemeConfig.ia() {
     return ChameleonThemeConfig(
@@ -147,6 +169,12 @@ class ChameleonThemeConfig {
     // Caso padrão baseado no mundo ativo
     if (world?.toUpperCase() == 'MUSIC') {
       return ChameleonThemeConfig.defaultMusic();
+    }
+    if (world?.toUpperCase() == 'GEAR') {
+      return ChameleonThemeConfig.defaultGear();
+    }
+    if (world?.toUpperCase() == 'GAME') {
+      return ChameleonThemeConfig.defaultGame();
     }
     return ChameleonThemeConfig.defaultTech();
   }

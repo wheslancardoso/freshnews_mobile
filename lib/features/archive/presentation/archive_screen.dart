@@ -248,7 +248,8 @@ class ArchiveScreen extends ConsumerWidget {
                   crossAxisCount: crossAxisCount,
                   crossAxisSpacing: FNSpacing.lg,
                   mainAxisSpacing: FNSpacing.lg,
-                  mainAxisExtent: 390,
+                  // Altere para 390 caso volte a ativar as imagens dos cards (no news_card.dart)
+                  mainAxisExtent: 220,
                 ),
                 itemCount: newsletters.length,
                 itemBuilder: (context, index) {

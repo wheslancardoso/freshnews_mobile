@@ -1157,7 +1157,7 @@
         "url": "https://firecrawl.wfixtech.com.br/v1/scrape",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"url\": \"{{ $json.homepage_url || $json.rss_url }}\",\n  \"formats\": [\"markdown\"]\n}",
+        "jsonBody": "={\n  \"url\": \"{{ $json.homepage_url || $json.rss_url }}\",\n  \"formats\": [\"markdown\"],\n  \"timeout\": 60000\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -1168,7 +1168,8 @@
       ],
       "id": "http-firecrawl",
       "name": "HTTP: Firecrawl Markdown",
-      "retryOnFail": true
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -1186,7 +1187,7 @@
             },
             {
               "role": "user",
-              "content": "={{ $json.data.markdown.substring(0, 25000) }}"
+              "content": "={{ ($json.data && $json.data.markdown) ? $json.data.markdown.substring(0, 25000) : 'ERRO_DE_TIMEOUT_IGNORAR' }}"
             }
           ]
         },
@@ -1212,7 +1213,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\nreturn { json: { noticias: parsed } };"
+        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\nreturn { json: { noticias: parsed } };"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,

@@ -68,47 +68,25 @@ class ChameleonThemeConfig {
 
     final catUpper = category.toUpperCase();
 
+    // Imersão global: todos os assuntos ganham o brilho e scanlines
+    List<String> effects = ['scanlines', 'terminal_glow'];
+
     Color bg;
-    List<String> effects;
     switch (activeWorld) {
       case World.tech:
         bg = const Color(0xFF090A0C);
-        if (catUpper.contains('IA')) {
-          effects = const ['scanlines', 'terminal_glow'];
-        } else if (catUpper.contains('CLOUD')) {
-          effects = const ['scanlines', 'cloud_compute_grid'];
-        } else if (catUpper.contains('SEC')) {
-          effects = const ['scanlines', 'terminal_glow']; // Glitch adaptado para glow
-        } else {
-          effects = const ['scanlines'];
-        }
+        if (catUpper.contains('CLOUD')) effects.add('cloud_compute_grid');
         break;
       case World.music:
         bg = const Color(0xFF0C0A09);
-        if (catUpper.contains('ARTISTAS') || catUpper.contains('LANCAMENTOS')) {
-          effects = const ['scanlines', 'terminal_glow']; // Neon glow
-        } else if (catUpper.contains('PRODUCAO') || catUpper.contains('CHARTS')) {
-          effects = const ['scanlines', 'terminal_glow'];
-        } else {
-          effects = const ['scanlines'];
-        }
         break;
       case World.gear:
         bg = const Color(0xFF0D0808);
-        if (catUpper.contains('DIY') || catUpper.contains('GADGETS')) {
-          effects = const ['scanlines', 'terminal_glow'];
-        } else {
-          effects = const ['scanlines'];
-        }
         break;
       case World.game:
         bg = const Color(0xFF0B080D);
-        if (catUpper.contains('INDIE') || catUpper.contains('PC')) {
-          effects = const ['scanlines', 'terminal_glow'];
-        } else if (catUpper.contains('CONSOLE') || catUpper.contains('ESPORTS')) {
-          effects = const ['scanlines', 'cloud_compute_grid'];
-        } else {
-          effects = const ['scanlines'];
+        if (catUpper.contains('CONSOLE') || catUpper.contains('ESPORTS')) {
+          effects.add('cloud_compute_grid');
         }
         break;
     }

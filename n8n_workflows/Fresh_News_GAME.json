@@ -1,5 +1,5 @@
 {
-  "name": "Fresh_News_SPORTS",
+  "name": "Fresh_News_GAME",
   "nodes": [
     {
       "parameters": {
@@ -107,7 +107,7 @@
                 "conditions": [
                   {
                     "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
-                    "rightValue": "PERFORMANCE",
+                    "rightValue": "INDUSTRY",
                     "operator": {
                       "type": "string",
                       "operation": "equals"
@@ -130,7 +130,7 @@
                   {
                     "id": "97c18314-cac6-4fb6-8f7c-081ece64d8a5",
                     "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
-                    "rightValue": "BUSINESS",
+                    "rightValue": "RELEASES",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -153,7 +153,7 @@
                   {
                     "id": "5b84328f-7af9-476e-98b5-32a312f9ac8e",
                     "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
-                    "rightValue": "TOURNAMENTS",
+                    "rightValue": "ESPORTS",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -176,7 +176,7 @@
                   {
                     "id": "bf26b3a9-f0d0-4a71-8893-838f93bd92ed",
                     "leftValue": "={{ $('Categoria e Sub_categoria').item.json.sub_categoria }}",
-                    "rightValue": "CULTURE",
+                    "rightValue": "TECH",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -426,7 +426,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT * FROM public.sources WHERE is_active = true AND world = 'SPORTS';\n",
+        "query": "SELECT * FROM public.sources WHERE is_active = true AND world = 'GAME';\n",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -497,7 +497,7 @@
           "values": [
             {
               "role": "system",
-              "content": "Você é o Editor-Chefe de Triagem da Fresh News (Mundo SPORTS).\nSua única missão é classificar a notícia esportiva fornecida na subcategoria correta para direcioná-la ao especialista adequado.\n\nDIRETRIZES DE CLASSIFICAÇÃO:\n- PERFORMANCE: Táticas, estatísticas avançadas, ciência do esporte, treinos e análise de desempenho.\n- BUSINESS: Transferências, contratos, patrocínios, direitos de transmissão e finanças dos clubes/franquias.\n- TOURNAMENTS: Resumos de competições, mudanças de regras, chaves, resultados críticos e calendários.\n- CULTURE: Bastidores, impacto social, rivalidades, entrevistas e política esportiva.\n\nCONTRATO DE SAÍDA (Retorne APENAS o objeto JSON abaixo):\n{\n  \"category\": \"SPORTS\",\n  \"sub_category\": \"PERFORMANCE\" | \"BUSINESS\" | \"TOURNAMENTS\" | \"CULTURE\",\n  \"routing_reason\": \"Justificativa analítica direta em 1 frase em pt-BR.\"\n}\n"
+              "content": "Você é o Editor-Chefe de Triagem da Fresh News (Mundo GAME).\nSua única missão é classificar a notícia de games fornecida na subcategoria correta para direcioná-la ao especialista adequado.\n\nDIRETRIZES DE CLASSIFICAÇÃO:\n- INDUSTRY: Aquisições, finanças de estúdios, demissões, modelos de monetização e mercado global de games.\n- RELEASES: Análises de jogos, game design, mecânicas, trailers e reviews profundos.\n- ESPORTS: Campeonatos, meta, balanceamentos (patch notes), times profissionais e desempenho de jogadores.\n- TECH: Motores gráficos (Unreal, Unity), hardware (consoles, GPUs, portáteis), otimização e VR/AR.\n\nCONTRATO DE SAÍDA (Retorne APENAS o objeto JSON abaixo):\n{\n  \"category\": \"GAME\",\n  \"sub_category\": \"INDUSTRY\" | \"RELEASES\" | \"ESPORTS\" | \"TECH\",\n  \"routing_reason\": \"Justificativa analítica direta em 1 frase em pt-BR.\"\n}\n"
             },
             {
               "content": "={{ $json.texto_markdown }}"
@@ -514,7 +514,7 @@
         0
       ],
       "id": "9363caf8-8f7d-4625-b474-4506ca9f335c",
-      "name": "IA: Especialista Sports (Editor-Chefe)",
+      "name": "IA: Especialista Game (Editor-Chefe)",
       "credentials": {
         "openAiApi": {
           "id": "wcWQeHLQ90vJVbyG",
@@ -524,7 +524,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return $input.all().map((item) => {\n  const data = item.json;\n  \n  try {\n    const rawText = data.output?.[0]?.content?.[0]?.text || \"{}\";\n    const parsed = JSON.parse(rawText);\n\n    return {\n      ...data,\n      category: parsed.category || \"SPORTS\",\n      sub_category: parsed.sub_category || \"SEM_SUBCATEGORIA\"\n    };\n    \n  } catch (err) {\n    return {\n      ...data,\n      category: \"SPORTS\",\n      sub_category: \"ERRO_JSON\",\n      error_details: String(err)\n    };\n  }\n});"
+        "jsCode": "return $input.all().map((item) => {\n  const data = item.json;\n  \n  try {\n    const rawText = data.output?.[0]?.content?.[0]?.text || \"{}\";\n    const parsed = JSON.parse(rawText);\n\n    return {\n      ...data,\n      category: parsed.category || \"GAME\",\n      sub_category: parsed.sub_category || \"SEM_SUBCATEGORIA\"\n    };\n    \n  } catch (err) {\n    return {\n      ...data,\n      category: \"GAME\",\n      sub_category: \"ERRO_JSON\",\n      error_details: String(err)\n    };\n  }\n});"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -566,7 +566,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return $input.all().map(item => {\n  // 1. Pega todos os dados que você unificou no Edit Fields anterior\n  const data = item.json;\n\n  // 2. Inicia a variável que vai guardar o JSON limpo\n  let parsedIA = {};\n\n  try {\n    // Pega o texto bruto que veio da IA\n    let aiText = data.content || \"{}\";\n\n    // MÁGICA: Limpa sujeiras que o GPT às vezes coloca (```json ... ```)\n    aiText = aiText.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\n    // Transforma o texto em um Objeto JSON real\n    parsedIA = JSON.parse(aiText);\n    \n  } catch (error) {\n    // Se a IA errar completamente a formatação, criamos um fallback seguro\n    parsedIA = {\n      title: \"Erro de Formatação da IA\",\n      summary: \"A resposta não pôde ser lida corretamente.\",\n      whatsapp_summary: \"\",\n      relevance_score: 0,\n      theme_config: {}\n    };\n  }\n\n  // 3. Monta o objeto final EXATAMENTE como o banco de dados precisa\n  return {\n    json: {\n      title: parsedIA.title || \"Sem título\",\n      summary: parsedIA.summary || \"\",\n      whatsapp_summary: parsedIA.whatsapp_summary || \"\",\n      score: parsedIA.relevance_score || 0,\n      theme_config: parsedIA.theme_config || {},\n      \n      // Trazendo as variáveis que você já tinha no Unificador:\n      url: data.url, \n      category: data.category, \n      sub_category: data.sub_category,\n      \n      // NOVO: Define o mundo do fluxo\n      // (Mude para \"GAME\", \"MUSIC\" ou \"GEAR\" nas cópias dos outros fluxos)\n      world: \"SPORTS\"\n    }\n  };\n});"
+        "jsCode": "return $input.all().map(item => {\n  // 1. Pega todos os dados que você unificou no Edit Fields anterior\n  const data = item.json;\n\n  // 2. Inicia a variável que vai guardar o JSON limpo\n  let parsedIA = {};\n\n  try {\n    // Pega o texto bruto que veio da IA\n    let aiText = data.content || \"{}\";\n\n    // MÁGICA: Limpa sujeiras que o GPT às vezes coloca (```json ... ```)\n    aiText = aiText.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\n    // Transforma o texto em um Objeto JSON real\n    parsedIA = JSON.parse(aiText);\n    \n  } catch (error) {\n    // Se a IA errar completamente a formatação, criamos um fallback seguro\n    parsedIA = {\n      title: \"Erro de Formatação da IA\",\n      summary: \"A resposta não pôde ser lida corretamente.\",\n      whatsapp_summary: \"\",\n      relevance_score: 0,\n      theme_config: {}\n    };\n  }\n\n  // 3. Monta o objeto final EXATAMENTE como o banco de dados precisa\n  return {\n    json: {\n      title: parsedIA.title || \"Sem título\",\n      summary: parsedIA.summary || \"\",\n      whatsapp_summary: parsedIA.whatsapp_summary || \"\",\n      score: parsedIA.relevance_score || 0,\n      theme_config: parsedIA.theme_config || {},\n      \n      // Trazendo as variáveis que você já tinha no Unificador:\n      url: data.url, \n      category: data.category, \n      sub_category: data.sub_category,\n      \n      // NOVO: Define o mundo do fluxo\n      // (Mude para \"GAME\", \"MUSIC\" ou \"GEAR\" nas cópias dos outros fluxos)\n      world: \"GAME\"\n    }\n  };\n});"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -803,7 +803,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Analista Especialista em BUSINESS da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Esportes e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Valores exatos de transferências, cláusulas contratuais, balanços financeiros, naming rights, impacto de fair play financeiro e estratégias de mercado.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [BUSINESS]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"SPORTS\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#FFD700\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"money_glitch\", \"ticker_tape\"]\n  }\n}"
+              "content": "=Você é o Analista Especialista em RELEASES da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Games e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Análise crua de game design, mecânicas quebradas ou inovadoras, loops de gameplay, impacto narrativo e veredito sobre entregas reais vs promessas de hype.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [RELEASES]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"GAME\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#FF3366\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"arcade_glow\", \"crt_flicker\"]\n  }\n}"
             },
             {
               "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
@@ -820,7 +820,7 @@
         -32
       ],
       "id": "093f2c13-7d44-4133-b825-1c22094ce37c",
-      "name": "Especialista em BUSINESS",
+      "name": "Especialista em RELEASES",
       "credentials": {
         "openAiApi": {
           "id": "wcWQeHLQ90vJVbyG",
@@ -840,7 +840,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Analista Especialista em PERFORMANCE da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Esportes e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Análise tática, estatísticas avançadas de desempenho (ex: xG, métricas de eficiência), ciência do esporte, biomecânica e inovações no treinamento.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [PERFORMANCE]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"SPORTS\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#FF3366\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"stadium_lights\", \"scanlines\"]\n  }\n}"
+              "content": "=Você é o Analista Especialista em INDUSTRY da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Games e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Valores financeiros de aquisições, reestruturações de estúdios, queima de caixa, estratégias de monetização predatórias ou inovadoras, e dados reais de mercado.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [INDUSTRY]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"GAME\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#FFD700\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"pixel_glitch\", \"scanlines\"]\n  }\n}"
             },
             {
               "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
@@ -857,7 +857,7 @@
         -192
       ],
       "id": "1920b726-4ef2-425e-85cc-6bde85567f85",
-      "name": "Especialista em PERFORMANCE",
+      "name": "Especialista em INDUSTRY",
       "credentials": {
         "openAiApi": {
           "id": "wcWQeHLQ90vJVbyG",
@@ -877,7 +877,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Analista Especialista em TOURNAMENTS da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Esportes e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Alterações críticas em formatos de torneio, impacto de novas regras, chaves, classificação, calendário e desdobramentos de vitórias/derrotas cruciais.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [TOURNAMENTS]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"SPORTS\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#00FF41\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"bracket_grid\", \"pulse\"]\n  }\n}"
+              "content": "=Você é o Analista Especialista em ESPORTS da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Games e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Análise profunda de patch notes, mudanças de meta, impacto de buffs/nerfs na viabilidade de personagens, premiações de torneios e resultados críticos de equipes.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [ESPORTS]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"GAME\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#00FF41\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"hex_grid\", \"neon_border\"]\n  }\n}"
             },
             {
               "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
@@ -894,7 +894,7 @@
         112
       ],
       "id": "385b39b3-ed8a-4b82-88e3-70cfc7455779",
-      "name": "Especialista em TOURNAMENTS",
+      "name": "Especialista em ESPORTS",
       "credentials": {
         "openAiApi": {
           "id": "wcWQeHLQ90vJVbyG",
@@ -914,7 +914,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Analista Especialista em CULTURE da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Esportes e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Decisões de bastidores, política esportiva, impacto no comportamento dos fãs, declarações de forte peso nos vestiários e crises institucionais.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [CULTURE]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"SPORTS\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#BD00FF\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"spotlight\", \"noise_overlay\"]\n  }\n}"
+              "content": "=Você é o Analista Especialista em TECH da Fresh News.\nSua missão é extrair dados crus e informações técnicas de notícias sobre Games e transformá-las em micro-reportagens curtas, densas e diretas para profissionais e fãs hardcore.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões vazios, obviedades, clichês narrativos ou tom de assessoria de imprensa. Vá direto ao ponto.\n2. OBRIGATÓRIO (Métricas Reais): Foque na mecânica da notícia: Arquitetura de engine (Unreal 5, Unity), taxas de frame, resoluções escalonadas (DLSS/FSR), bottlenecks de CPU/GPU e inovação em hardware/VR.\n3. RITMO E ESTILO: Seja brutalmente analítico, quase cínico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia e exponha o impacto real sem enrolação.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva e focada na tese real do fato (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus com uma análise contundente do impacto na área. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🏆 [TECH]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo na área],\n  \"theme_config\": {\n    \"dna\": \"GAME\",\n    \"primary_color\": \"#0D0D0D\",\n    \"accent_color\": \"#BD00FF\",\n    \"font_style\": \"Sans\",\n    \"ui_effects\": [\"wireframe\", \"hologram\"]\n  }\n}"
             },
             {
               "content": "={{ $('Formatar Dados').item.json.texto_markdown }}"
@@ -931,7 +931,7 @@
         320
       ],
       "id": "88f7d1ca-e54a-4f75-bf91-4565539dbc79",
-      "name": "Especialista em CULTURE",
+      "name": "Especialista em TECH",
       "credentials": {
         "openAiApi": {
           "id": "wcWQeHLQ90vJVbyG",

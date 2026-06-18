@@ -59,24 +59,46 @@ class AdminNewsletterController {
   Future<void> publishDraft(String id) async {
     await _repository.updateStatus(id, 'published');
     
-    final webhookUrl = AppConstants.n8nWebhookUrl;
-    if (webhookUrl.isNotEmpty) {
-      try {
-        final dio = Dio();
-        await dio.post(
-          webhookUrl,
-          data: {
-            'event': 'newsletter_published',
-            'newsletter_id': id,
-          },
-        );
-        debugPrint('Webhook disparado com sucesso para \$webhookUrl');
-      } catch (e) {
-        debugPrint('Erro ao disparar webhook n8n: \$e');
-      }
+    final webhookUrl = AppConstants.n8nWebhookUrl.isNotEmpty 
+        ? AppConstants.n8nWebhookUrl 
+        : 'https://n8n.wfixtech.com.br/webhook/newsletters';
+        
+    try {
+      final dio = Dio();
+      await dio.post(
+        webhookUrl,
+        data: {
+          'event': 'newsletter_published',
+          'newsletter_id': id,
+        },
+      );
+      debugPrint('Webhook disparado com sucesso para $webhookUrl');
+    } catch (e) {
+      debugPrint('Erro ao disparar webhook n8n: $e');
     }
     
     _ref.invalidate(adminDraftsProvider);
+  }
+
+  Future<void> triggerN8nWebhook(String id) async {
+    final webhookUrl = AppConstants.n8nWebhookUrl.isNotEmpty 
+        ? AppConstants.n8nWebhookUrl 
+        : 'https://n8n.wfixtech.com.br/webhook/newsletters';
+        
+    try {
+      final dio = Dio();
+      await dio.post(
+        webhookUrl,
+        data: {
+          'event': 'newsletter_published',
+          'newsletter_id': id,
+        },
+      );
+      debugPrint('Webhook manual disparado com sucesso para $webhookUrl');
+    } catch (e) {
+      debugPrint('Erro ao disparar webhook manual n8n: $e');
+      throw Exception('Falha ao acionar n8n: $e');
+    }
   }
 
   Future<void> deleteDraft(String id) async {

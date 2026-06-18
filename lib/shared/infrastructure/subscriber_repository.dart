@@ -59,8 +59,9 @@ class SupabaseSubscriberRepository implements SubscriberRepository {
     if (active != null) updates['status'] = active ? 'active' : 'unsubscribed';
     if (preferences != null) updates['preferences'] = preferences;
     if (phone != null) updates['phone'] = phone;
+    if (notifyEmail != null) updates['notify_email'] = notifyEmail;
+    if (notifyWhatsapp != null) updates['notify_whatsapp'] = notifyWhatsapp;
     if (affinityVector != null) updates['affinity_vector'] = affinityVector;
-    // notify_email e notify_whatsapp não existem no banco ainda, ignorar por ora
 
     if (updates.isEmpty) return;
 

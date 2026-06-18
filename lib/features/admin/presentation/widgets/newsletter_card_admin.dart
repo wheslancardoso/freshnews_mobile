@@ -363,12 +363,12 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
           ],
           const SizedBox(height: FNSpacing.lg),
 
-          // Botões de Curadoria (Aprovar / Rejeitar)
+          // Botões de Curadoria (Aprovar / Rejeitar / Webhook)
           Row(
             children: [
               Expanded(
                 child: FNButton(
-                  label: 'APROVAR E PUBLICAR',
+                  label: 'APROVAR',
                   leading: const Icon(LucideIcons.check, size: 16, color: Colors.white),
                   onPressed: widget.onPublished != null 
                       ? () => _confirmAction(
@@ -381,7 +381,32 @@ class _NewsletterCardAdminState extends ConsumerState<NewsletterCardAdmin> {
               const SizedBox(width: FNSpacing.base),
               Expanded(
                 child: FNButton(
-                  label: 'EXCLUIR RASCUNHO',
+                  label: 'TESTAR WEBHOOK',
+                  leading: const Icon(LucideIcons.rocket, size: 16, color: Colors.white),
+                  variant: FNButtonVariant.outline,
+                  primaryColor: FNColors.primaryViolet,
+                  onPressed: () async {
+                    try {
+                      await ref.read(adminNewsletterControllerProvider).triggerN8nWebhook(widget.draft.id);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Gatilho enviado com sucesso ao n8n!')),
+                        );
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(width: FNSpacing.base),
+              Expanded(
+                child: FNButton(
+                  label: 'EXCLUIR',
                   leading: const Icon(LucideIcons.trash_2, size: 16, color: Colors.white),
                   variant: FNButtonVariant.outline,
                   primaryColor: FNColors.error,

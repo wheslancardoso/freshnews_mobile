@@ -74,7 +74,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const newsletter = $(\"Buscar Newsletter (Supabase)\").first().json[0];\nconst content = newsletter.content_json || {};\nconst world = newsletter.world || \"tech\";\n\n// === ENGINE CAMALEÃO (THEMES) — Sincronizado com world.dart ===\nconst THEMES = {\n  \"tech\": {\n    primaryColor: \"#22C55E\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Protocolo de Inteligência Técnica\",\n    quickTakesTitle: \"⚡ GIRO TECH\",\n    footerSignOff: \"Deslogando do Terminal...\",\n    bgColor: \"#050505\",\n    containerBg: \"#0d0d0d\",\n    borderColor: \"rgba(34, 197, 94, 0.2)\",\n    mutedColor: \"#b9cacb\",\n    badgeBg: \"rgba(34, 197, 94, 0.1)\",\n    waIcon: \"🟢\"\n  },\n  \"game\": {\n    primaryColor: \"#A855F7\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Player One Ready\",\n    quickTakesTitle: \"🕹️ PRESS START\",\n    footerSignOff: \"Salvando o progresso... Game Over.\",\n    bgColor: \"#040008\",\n    containerBg: \"#0a0012\",\n    borderColor: \"rgba(168, 85, 247, 0.2)\",\n    mutedColor: \"#d8c8e0\",\n    badgeBg: \"rgba(168, 85, 247, 0.1)\",\n    waIcon: \"🟣\"\n  },\n  \"music\": {\n    primaryColor: \"#EAB308\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Sintonizado na Frequência\",\n    quickTakesTitle: \"🎵 SETLIST RÁPIDO\",\n    footerSignOff: \"Desligando os amplificadores... Fim da faixa.\",\n    bgColor: \"#080600\",\n    containerBg: \"#120e00\",\n    borderColor: \"rgba(234, 179, 8, 0.2)\",\n    mutedColor: \"#e0d5c8\",\n    badgeBg: \"rgba(234, 179, 8, 0.1)\",\n    waIcon: \"🟡\"\n  },\n  \"gear\": {\n    primaryColor: \"#EF4444\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Engenharia e Maquinário\",\n    quickTakesTitle: \"⚙️ DIAGNÓSTICO\",\n    footerSignOff: \"Desligando as máquinas... Sistema em repouso.\",\n    bgColor: \"#080000\",\n    containerBg: \"#120000\",\n    borderColor: \"rgba(239, 68, 68, 0.2)\",\n    mutedColor: \"#e0c8c8\",\n    badgeBg: \"rgba(239, 68, 68, 0.1)\",\n    waIcon: \"🔴\"\n  }\n};\n\nconst theme = THEMES[world] || THEMES[\"tech\"];\nconst editionPadded = (newsletter.edition_number || 1).toString().padStart(3, '0');\nconst year = new Date().getFullYear();\n\n// === GERAÇÃO DO HTML ESTILIZADO (E-MAIL) ===\nlet html = `\n<div style=\"background-color: ${theme.bgColor}; padding: 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif;\">\n  <div style=\"background-color: ${theme.containerBg}; margin: 0 auto; padding: 0; max-width: 640px; border: 1px solid ${theme.borderColor}; border-radius: 16px; overflow: hidden;\">\n    \n    <!-- Header -->\n    <div style=\"padding: 40px 20px; text-align: center; position: relative;\">\n      <span style=\"display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 16px; color: ${theme.primaryColor}; background-color: ${theme.badgeBg};\">\n        ED. ${editionPadded}\n      </span>\n      <h1 style=\"font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -1px; text-transform: uppercase; color: ${theme.primaryColor}; font-family: 'Outfit', -apple-system, sans-serif;\">\n        ${theme.headerTitle}\n      </h1>\n      <p style=\"font-size: 11px; margin: 12px 0 0; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; color: ${theme.primaryColor};\">\n        ${theme.headerSub}\n      </p>\n    </div>\n\n    <!-- Content Intro -->\n    <div style=\"padding: 0 40px 40px;\">\n      <h2 style=\"color: #ffffff; font-size: 28px; font-weight: 800; line-height: 1.3; margin: 0 0 20px; letter-spacing: -0.5px;\">\n        ${newsletter.title || \"\"}\n      </h2>\n      \n      <!-- Box Summary Intro -->\n      <div style=\"padding: 20px; border-left: 4px solid ${theme.primaryColor}; background-color: ${theme.badgeBg}; margin-bottom: 35px; border-radius: 0 8px 8px 0;\">\n        <p style=\"font-size: 17px; line-height: 26px; margin: 0; font-style: italic; color: ${theme.mutedColor};\">\n          ${newsletter.summary_intro || \"\"}\n        </p>\n      </div>\n`;\n\n// === QUICK TAKES ===\nif (content.quickTakes && content.quickTakes.length > 0) {\n  html += `\n      <div style=\"border: 2px solid ${theme.borderColor}; padding: 24px; margin-bottom: 30px; border-radius: 8px; background-color: ${theme.bgColor};\">\n        <h3 style=\"font-size: 16px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; color: ${theme.primaryColor};\">\n          ${theme.quickTakesTitle}\n        </h3>\n        <ul style=\"margin: 0; padding: 0; list-style-type: none;\">\n  `;\n  content.quickTakes.forEach(take => {\n    html += `\n          <li style=\"font-size: 15px; line-height: 24px; margin-bottom: 12px; font-weight: 500; color: ${theme.mutedColor};\">\n            <span style=\"color: ${theme.primaryColor}; margin-right: 8px;\">■</span>${take}\n          </li>\n    `;\n  });\n  html += `\n        </ul>\n      </div>\n  `;\n}\n\nhtml += `\n      <hr style=\"margin: 40px 0; border: 0; border-top: 1px dashed ${theme.borderColor};\" />\n`;\n\n// === CATEGORIES / ITENS ===\nif (content.categories && content.categories.length > 0) {\n  content.categories.forEach(cat => {\n    html += `\n      <div style=\"margin-bottom: 50px;\">\n        <div style=\"border-bottom: 2px solid ${theme.primaryColor}; margin-bottom: 25px; padding-bottom: 8px;\">\n          <h3 style=\"font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: ${theme.primaryColor};\">\n            ${cat.name}\n          </h3>\n        </div>\n    `;\n    \n    cat.items.forEach((item, index) => {\n      html += `\n        <div style=\"margin-bottom: 35px; padding-left: 16px; border-left: 2px solid ${theme.primaryColor};\">\n      `;\n      \n      // Imagem opcional\n      if (item.imageUrl) {\n        html += `\n          <a href=\"${item.link || '#'}\" style=\"text-decoration: none;\">\n            <img src=\"${item.imageUrl}\" alt=\"${item.headline}\" style=\"border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 560px; object-fit: cover;\" />\n          </a>\n        `;\n      }\n\n      html += `\n          <a href=\"${item.link || '#'}\" style=\"text-decoration: none; color: inherit;\">\n            <h4 style=\"color: #ffffff; font-size: 22px; font-weight: bold; line-height: 1.4; margin-top: 0; margin-bottom: 12px;\">\n              ${item.headline}\n            </h4>\n          </a>\n          <p style=\"font-size: 16px; line-height: 1.6; margin: 0 0 16px; color: ${theme.mutedColor};\">\n            ${item.story}\n          </p>\n          <a href=\"${item.link || '#'}\" style=\"font-size: 14px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: ${theme.primaryColor};\">\n            Ler fonte original &rarr;\n          </a>\n      `;\n      \n      // Separador entre itens (exceto no último)\n      if (index < cat.items.length - 1) {\n        html += `\n          <div style=\"height: 1px; margin: 25px 0; background-color: ${theme.borderColor};\"></div>\n        `;\n      }\n      \n      html += `\n        </div>\n      `;\n    });\n    \n    html += `\n      </div>\n    `;\n  });\n}\n\n// === FOOTER ===\nhtml += `\n      <!-- Footer -->\n      <div style=\"padding: 40px; text-align: center; margin-top: 50px; border-top: 2px solid ${theme.borderColor}; background-color: ${theme.bgColor}; margin-left: -40px; margin-right: -40px; margin-bottom: -40px;\">\n        <p style=\"font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; color: ${theme.primaryColor};\">\n          ${theme.footerSignOff}\n        </p>\n        <p style=\"color: #919191; font-size: 12px; line-height: 20px; text-transform: uppercase; letter-spacing: 1px; margin: 0;\">\n          © ${year} Fresh News. Multiverse Edition.<br/>\n          <a href=\"{{ unsubscribe_url }}\" style=\"text-decoration: underline; font-weight: normal; margin-top: 10px; display: inline-block; color: ${theme.mutedColor};\">Unsubscribe</a>\n        </p>\n      </div>\n\n    </div> <!-- Fecha Content Intro -->\n  </div> <!-- Fecha ContainerBg -->\n</div> <!-- Fecha BgColor -->\n`;\n\n// === GERAÇÃO DO MARKDOWN (WHATSAPP) ===\nlet whatsapp = `*=== ED. #${editionPadded} | ${world.toUpperCase()} ===*\\n\\n`;\nwhatsapp += `*${newsletter.title}*\\n_${newsletter.summary_intro}_\\n\\n`;\n\nif (content.quickTakes && content.quickTakes.length > 0) {\n  whatsapp += `\\`\\`\\`> ${theme.quickTakesTitle}\\`\\`\\`\\n`;\n  content.quickTakes.forEach(take => {\n    whatsapp += `${theme.waIcon} ${take}\\n`; // Ícone muda conforme o mundo\n  });\n  whatsapp += `\\n`;\n}\n\nif (content.categories && content.categories.length > 0) {\n  content.categories.forEach(cat => {\n    whatsapp += `\\`\\`\\`[ ${cat.name} ]\\`\\`\\`\\n\\n`;\n    cat.items.forEach(item => {\n      whatsapp += `*${item.headline}*\\n${item.story}\\n\\n`;\n    });\n  });\n}\n\n// Fechamento WhatsApp Dinâmico\nwhatsapp += `\\`\\`\\`${theme.footerSignOff}\\`\\`\\``;\n\n// === RETORNO N8N ===\nreturn {\n  html_email: html,\n  whatsapp_message: whatsapp\n};\n"
+        "jsCode": "// Pega os dados do nó anterior (compatível com array ou objeto)\nlet data = $(\"Buscar Newsletter (Supabase)\").first().json;\nconst newsletter = Array.isArray(data) ? data[0] : data;\n\nconst content = newsletter.content_json || {};\nconst world = (newsletter.world || \"tech\").toLowerCase();\n\n// === ENGINE CAMALEÃO (THEMES) — Sincronizado com world.dart ===\nconst THEMES = {\n  \"tech\": {\n    primaryColor: \"#22C55E\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Protocolo de Inteligência Técnica\",\n    quickTakesTitle: \"⚡ GIRO TECH\",\n    footerSignOff: \"Deslogando do Terminal...\",\n    bgColor: \"#050505\",\n    containerBg: \"#0d0d0d\",\n    borderColor: \"rgba(34, 197, 94, 0.2)\",\n    mutedColor: \"#b9cacb\",\n    badgeBg: \"rgba(34, 197, 94, 0.1)\",\n    waIcon: \"🟢\"\n  },\n  \"game\": {\n    primaryColor: \"#A855F7\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Player One Ready\",\n    quickTakesTitle: \"🕹️ PRESS START\",\n    footerSignOff: \"Salvando o progresso... Game Over.\",\n    bgColor: \"#040008\",\n    containerBg: \"#0a0012\",\n    borderColor: \"rgba(168, 85, 247, 0.2)\",\n    mutedColor: \"#d8c8e0\",\n    badgeBg: \"rgba(168, 85, 247, 0.1)\",\n    waIcon: \"🟣\"\n  },\n  \"music\": {\n    primaryColor: \"#EAB308\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Sintonizado na Frequência\",\n    quickTakesTitle: \"🎵 SETLIST RÁPIDO\",\n    footerSignOff: \"Desligando os amplificadores... Fim da faixa.\",\n    bgColor: \"#080600\",\n    containerBg: \"#120e00\",\n    borderColor: \"rgba(234, 179, 8, 0.2)\",\n    mutedColor: \"#e0d5c8\",\n    badgeBg: \"rgba(234, 179, 8, 0.1)\",\n    waIcon: \"🟡\"\n  },\n  \"sports\": {\n    primaryColor: \"#F97316\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Arena & Street\",\n    quickTakesTitle: \"🏆 PLACAR RÁPIDO\",\n    footerSignOff: \"Apito final. Até a próxima rodada.\",\n    bgColor: \"#080400\",\n    containerBg: \"#120a00\",\n    borderColor: \"rgba(249, 115, 22, 0.2)\",\n    mutedColor: \"#e0d0c0\",\n    badgeBg: \"rgba(249, 115, 22, 0.1)\",\n    waIcon: \"🟠\"\n  },\n  \"gear\": {\n    primaryColor: \"#EF4444\",\n    headerTitle: \"FRESH NEWS\",\n    headerSub: \"Engenharia e Maquinário\",\n    quickTakesTitle: \"⚙️ DIAGNÓSTICO\",\n    footerSignOff: \"Desligando as máquinas... Sistema em repouso.\",\n    bgColor: \"#080000\",\n    containerBg: \"#120000\",\n    borderColor: \"rgba(239, 68, 68, 0.2)\",\n    mutedColor: \"#e0c8c8\",\n    badgeBg: \"rgba(239, 68, 68, 0.1)\",\n    waIcon: \"🔴\"\n  }\n};\n\nconst theme = THEMES[world] || THEMES[\"tech\"];\nconst editionPadded = (newsletter.edition_number || 1).toString().padStart(3, '0');\nconst year = new Date().getFullYear();\n\n// === GERAÇÃO DO HTML ESTILIZADO (E-MAIL) ===\n// Fundo externo cinza escuro neutro, container centralizado com largura confortável\nlet html = `\n<div style=\"background-color: #111111; padding: 40px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif;\">\n  <div style=\"background-color: ${theme.containerBg}; margin: 0 auto; padding: 0; max-width: 600px; width: 100%; border: 1px solid ${theme.borderColor}; border-radius: 16px; overflow: hidden;\">\n    \n    <!-- Header -->\n    <div style=\"padding: 40px 20px; text-align: center;\">\n      <span style=\"display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 16px; color: ${theme.primaryColor}; background-color: ${theme.badgeBg};\">\n        ED. ${editionPadded}\n      </span>\n      <h1 style=\"font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -1px; text-transform: uppercase; color: ${theme.primaryColor}; font-family: 'Outfit', -apple-system, sans-serif;\">\n        ${theme.headerTitle}\n      </h1>\n      <p style=\"font-size: 11px; margin: 12px 0 0; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; color: ${theme.primaryColor};\">\n        ${theme.headerSub}\n      </p>\n    </div>\n\n    <!-- Content Intro -->\n    <div style=\"padding: 0 32px 32px;\">\n      <h2 style=\"color: #ffffff; font-size: 26px; font-weight: 800; line-height: 1.3; margin: 0 0 20px; letter-spacing: -0.5px;\">\n        ${newsletter.title || \"\"}\n      </h2>\n      \n      <!-- Box Summary Intro -->\n      <div style=\"padding: 20px; border-left: 4px solid ${theme.primaryColor}; background-color: ${theme.badgeBg}; margin-bottom: 35px; border-radius: 0 8px 8px 0;\">\n        <p style=\"font-size: 16px; line-height: 26px; margin: 0; font-style: italic; color: ${theme.mutedColor};\">\n          ${newsletter.summary_intro || \"\"}\n        </p>\n      </div>\n`;\n\n// === QUICK TAKES ===\nif (content.quickTakes && content.quickTakes.length > 0) {\n  html += `\n      <div style=\"border: 2px solid ${theme.borderColor}; padding: 24px; margin-bottom: 30px; border-radius: 8px; background-color: ${theme.bgColor};\">\n        <h3 style=\"font-size: 16px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; color: ${theme.primaryColor};\">\n          ${theme.quickTakesTitle}\n        </h3>\n        <ul style=\"margin: 0; padding: 0; list-style-type: none;\">\n  `;\n  content.quickTakes.forEach(take => {\n    html += `\n          <li style=\"font-size: 15px; line-height: 24px; margin-bottom: 12px; font-weight: 500; color: ${theme.mutedColor};\">\n            <span style=\"color: ${theme.primaryColor}; margin-right: 8px;\">■</span>${take}\n          </li>\n    `;\n  });\n  html += `\n        </ul>\n      </div>\n  `;\n}\n\nhtml += `\n      <hr style=\"margin: 40px 0; border: 0; border-top: 1px dashed ${theme.borderColor};\" />\n`;\n\n// === CATEGORIES / ITENS ===\nif (content.categories && content.categories.length > 0) {\n  content.categories.forEach(cat => {\n    html += `\n      <div style=\"margin-bottom: 50px;\">\n        <div style=\"border-bottom: 2px solid ${theme.primaryColor}; margin-bottom: 25px; padding-bottom: 8px;\">\n          <h3 style=\"font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: ${theme.primaryColor};\">\n            ${cat.name}\n          </h3>\n        </div>\n    `;\n    \n    cat.items.forEach((item, index) => {\n      html += `\n        <div style=\"margin-bottom: 35px; padding-left: 16px; border-left: 2px solid ${theme.primaryColor};\">\n      `;\n      \n      if (item.imageUrl) {\n        html += `\n          <a href=\"${item.link || '#'}\" style=\"text-decoration: none;\">\n            <img src=\"${item.imageUrl}\" alt=\"${item.headline}\" style=\"border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 536px; object-fit: cover;\" />\n          </a>\n        `;\n      }\n\n      html += `\n          <a href=\"${item.link || '#'}\" style=\"text-decoration: none; color: inherit;\">\n            <h4 style=\"color: #ffffff; font-size: 20px; font-weight: bold; line-height: 1.4; margin-top: 0; margin-bottom: 12px;\">\n              ${item.headline}\n            </h4>\n          </a>\n          <p style=\"font-size: 15px; line-height: 1.6; margin: 0 0 16px; color: ${theme.mutedColor};\">\n            ${item.story}\n          </p>\n          <a href=\"${item.link || '#'}\" style=\"font-size: 13px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: ${theme.primaryColor};\">\n            Ler fonte original &rarr;\n          </a>\n      `;\n      \n      if (index < cat.items.length - 1) {\n        html += `\n          <div style=\"height: 1px; margin: 25px 0; background-color: ${theme.borderColor};\"></div>\n        `;\n      }\n      \n      html += `\n        </div>\n      `;\n    });\n    \n    html += `\n      </div>\n    `;\n  });\n}\n\n// === FOOTER ===\nhtml += `\n      <!-- Footer -->\n      <div style=\"padding: 32px; text-align: center; margin-top: 50px; border-top: 2px solid ${theme.borderColor}; background-color: ${theme.bgColor}; margin-left: -32px; margin-right: -32px; margin-bottom: -32px;\">\n        <p style=\"font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; color: ${theme.primaryColor};\">\n          ${theme.footerSignOff}\n        </p>\n        <p style=\"color: #919191; font-size: 12px; line-height: 20px; text-transform: uppercase; letter-spacing: 1px; margin: 0;\">\n          &copy; ${year} Fresh News. Multiverse Edition.<br/>\n          <a href=\"{{ unsubscribe_url }}\" style=\"text-decoration: underline; font-weight: normal; margin-top: 10px; display: inline-block; color: ${theme.mutedColor};\">Unsubscribe</a>\n        </p>\n      </div>\n\n    </div> <!-- Fecha Content Intro -->\n  </div> <!-- Fecha ContainerBg -->\n</div> <!-- Fecha BgColor -->\n`;\n\n// === GERAÇÃO DO MARKDOWN (WHATSAPP) ===\nlet whatsapp = \"*=== ED. #\" + editionPadded + \" | \" + world.toUpperCase() + \" ===*\\n\\n\";\nwhatsapp += \"*\" + theme.headerSub + \"*\\n_\" + (newsletter.summary_intro || \"\") + \"_\\n\\n\";\n\nif (content.quickTakes && content.quickTakes.length > 0) {\n  whatsapp += \"*\" + theme.quickTakesTitle + \"*\\n\";\n  content.quickTakes.slice(0, 3).forEach(take => {\n    whatsapp += theme.waIcon + \" \" + take + \"\\n\";\n  });\n  whatsapp += \"\\n\";\n}\n\nwhatsapp += \"🔥 *Tem muito mais rolando agora!*\\n\";\nwhatsapp += \"Leia as matérias completas, análises e bastidores direto no FreshNews.\\n\\n\";\nwhatsapp += \"📱 *Abra o App:*\\n\";\nwhatsapp += \"👉 https://app.freshnews.com.br/editions/\" + newsletter.edition_number + \"\\n\\n\";\nwhatsapp += \"```\" + theme.footerSignOff + \"```\";\n\n// === RETORNO N8N ===\nreturn {\n  html_email: html,\n  whatsapp_message: whatsapp\n};\n"
       },
       "id": "99df8f2b-c73c-4bc6-adb7-a27c6a358752",
       "name": "Formatar Templates",
@@ -152,7 +152,7 @@
       "parameters": {
         "resource": "messages-api",
         "instanceName": "atendimento",
-        "remoteJid": "{{ $json[\"phone_number\"] }}",
+        "remoteJid": "{{ $json[\"phone\"] }}",
         "messageText": "={{ $(\"Formatar Templates\").first().json.whatsapp_message }}",
         "options_message": {}
       },
@@ -170,6 +170,46 @@
           "name": "Evolution account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.notify_email }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-email-node-id",
+      "name": "Verifica IF Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1150,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.notify_whatsapp }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-whatsapp-node-id",
+      "name": "Verifica IF WhatsApp",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1150,
+        580
+      ]
     }
   ],
   "pinData": {},
@@ -216,12 +256,12 @@
       "main": [
         [
           {
-            "node": "Enviar E-mail (Resend)",
+            "node": "Verifica IF Email",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Enviar WhatsApp (Evolution API)",
+            "node": "Verifica IF WhatsApp",
             "type": "main",
             "index": 0
           }
@@ -241,6 +281,42 @@
     },
     "Enviar WhatsApp (Evolution API)": {
       "main": [
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica IF Email": {
+      "main": [
+        [
+          {
+            "node": "Enviar E-mail (Resend)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Assinantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica IF WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp (Evolution API)",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Loop Assinantes",

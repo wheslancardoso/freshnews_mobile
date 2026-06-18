@@ -32,7 +32,7 @@
         0
       ],
       "id": "13c8b227-fd31-4446-9e4f-5aa4dddc3b73",
-      "name": "IF: URL Inédita?"
+      "name": "IF: URL In\u00e9dita?"
     },
     {
       "parameters": {
@@ -283,7 +283,7 @@
         0
       ],
       "id": "5eb4f9c7-b279-4cd2-8b09-4f968fe4cc1e",
-      "name": "LOOP 2 (Notícias)"
+      "name": "LOOP 2 (Not\u00edcias)"
     },
     {
       "parameters": {
@@ -555,7 +555,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return $input.all().map(item => {\n  // 1. Pega todos os dados que você unificou no Edit Fields anterior\n  const data = item.json;\n\n  // 2. Inicia a variável que vai guardar o JSON limpo\n  let parsedIA = {};\n\n  try {\n    // Pega o texto bruto que veio da IA\n    let aiText = data.content || \"{}\";\n\n    // MÁGICA: Limpa sujeiras que o GPT às vezes coloca (```json ... ```)\n    aiText = aiText.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\n    // Transforma o texto em um Objeto JSON real\n    parsedIA = JSON.parse(aiText);\n    \n  } catch (error) {\n    // Se a IA errar completamente a formatação, criamos um fallback seguro\n    parsedIA = {\n      title: \"Erro de Formatação da IA\",\n      summary: \"A resposta não pôde ser lida corretamente.\",\n      whatsapp_summary: \"\",\n      relevance_score: 0,\n      theme_config: {}\n    };\n  }\n\n  // 3. Monta o objeto final EXATAMENTE como o banco de dados precisa\n  return {\n    json: {\n      title: parsedIA.title || \"Sem título\",\n      summary: parsedIA.summary || \"\",\n      whatsapp_summary: parsedIA.whatsapp_summary || \"\",\n      score: parsedIA.relevance_score || 0,\n      theme_config: parsedIA.theme_config || {},\n      \n      // Trazendo as variáveis que você já tinha no Unificador:\n      url: data.url, \n      category: data.category, \n      sub_category: data.sub_category,\n      \n      // NOVO: Define o mundo do fluxo\n      // (Mude para \"GAME\", \"MUSIC\" ou \"SPORTS\" nas cópias dos outros fluxos)\n      world: \"SPORTS\"\n    }\n  };\n});"
+        "jsCode": "return $input.all().map(item => {\n  // 1. Pega todos os dados que voc\u00ea unificou no Edit Fields anterior\n  const data = item.json;\n\n  // 2. Inicia a vari\u00e1vel que vai guardar o JSON limpo\n  let parsedIA = {};\n\n  try {\n    // Pega o texto bruto que veio da IA\n    let aiText = data.content || \"{}\";\n\n    // M\u00c1GICA: Limpa sujeiras que o GPT \u00e0s vezes coloca (```json ... ```)\n    aiText = aiText.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\n    // Transforma o texto em um Objeto JSON real\n    parsedIA = JSON.parse(aiText);\n    \n  } catch (error) {\n    // Se a IA errar completamente a formata\u00e7\u00e3o, criamos um fallback seguro\n    parsedIA = {\n      title: \"Erro de Formata\u00e7\u00e3o da IA\",\n      summary: \"A resposta n\u00e3o p\u00f4de ser lida corretamente.\",\n      whatsapp_summary: \"\",\n      relevance_score: 0,\n      theme_config: {}\n    };\n  }\n\n  // 3. Monta o objeto final EXATAMENTE como o banco de dados precisa\n  return {\n    json: {\n      title: parsedIA.title || \"Sem t\u00edtulo\",\n      summary: parsedIA.summary || \"\",\n      whatsapp_summary: parsedIA.whatsapp_summary || \"\",\n      score: parsedIA.relevance_score || 0,\n      theme_config: parsedIA.theme_config || {},\n      \n      // Trazendo as vari\u00e1veis que voc\u00ea j\u00e1 tinha no Unificador:\n      url: data.url, \n      category: data.category, \n      sub_category: data.sub_category,\n      \n      // NOVO: Define o mundo do fluxo\n      // (Mude para \"GAME\", \"MUSIC\" ou \"SPORTS\" nas c\u00f3pias dos outros fluxos)\n      world: \"SPORTS\"\n    }\n  };\n});"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -564,7 +564,7 @@
         64
       ],
       "id": "5e69afb4-2a4c-41f0-86b5-591b0608e113",
-      "name": "Code: Extrair Domínio"
+      "name": "Code: Extrair Dom\u00ednio"
     },
     {
       "parameters": {
@@ -576,7 +576,7 @@
             "score": "={{ $json.score }}",
             "title": "={{ $json.title }}",
             "summary": "={{ $json.summary }}",
-            "url": "={{ $('LOOP 2 (Notícias)').item.json.link }}",
+            "url": "={{ $('LOOP 2 (Not\u00edcias)').item.json.link }}",
             "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}",
             "metadata": "={{ \nJSON.stringify({ \n  category: $json.category, \n  sub_category: $('Categoria e Sub_categoria').item.json.sub_categoria,\n  theme_config: $json.theme_config,\n  whatsapp_summary: $json.whatsapp_summary \n}) \n}}",
             "category": "={{ $json.category }}",
@@ -585,7 +585,8 @@
             "status": "pending",
             "source": "={{ $json.url }}",
             "whatsapp_summary": "={{ $json.whatsapp_summary }}",
-            "world": "={{ $json.world }}"
+            "world": "={{ $json.world }}",
+            "created_at": "={{ $('Code: Parse Duplicate').item.json.original_date || new Date().toISOString() }}"
           },
           "matchingColumns": [
             "id"
@@ -697,7 +698,7 @@
               "display": true,
               "type": "dateTime",
               "canBeUsedToMatch": true,
-              "removed": true
+              "removed": false
             },
             {
               "id": "metadata",
@@ -791,7 +792,7 @@
             },
             {
               "name": "url_original",
-              "value": "={{ $('LOOP 2 (Notícias)').item.json.link }}"
+              "value": "={{ $('LOOP 2 (Not\u00edcias)').item.json.link }}"
             }
           ]
         },
@@ -859,7 +860,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Editor-Chefe de Triagem da Fresh News (Mundo TECH).\nSua única missão é classificar o artigo fornecido na subcategoria correta para direcioná-lo ao especialista adequado.\nDIRETRIZES DE CLASSIFICAÇÃO:\n- IA\n- SEGURAN\n- DEV\n- CLOUD\n- STARTUP\nCONTRATO DE SAÍDA (Retorne APENAS o objeto JSON abaixo):\n{\n  \"category\": \"TECH\",\n  \"sub_category\": \"IA | SEGURAN | DEV | CLOUD | STARTUP\",\n  \"routing_reason\": \"Justificativa direta em 1 frase em pt-BR.\"\n}"
+              "content": "=Voc\u00ea \u00e9 o Editor-Chefe de Triagem da Fresh News (Mundo TECH).\nSua \u00fanica miss\u00e3o \u00e9 classificar o artigo fornecido na subcategoria correta para direcion\u00e1-lo ao especialista adequado.\nDIRETRIZES DE CLASSIFICA\u00c7\u00c3O:\n- IA\n- SEGURAN\n- DEV\n- CLOUD\n- STARTUP\nCONTRATO DE SA\u00cdDA (Retorne APENAS o objeto JSON abaixo):\n{\n  \"category\": \"TECH\",\n  \"sub_category\": \"IA | SEGURAN | DEV | CLOUD | STARTUP\",\n  \"routing_reason\": \"Justificativa direta em 1 frase em pt-BR.\"\n}"
             },
             {
               "content": "={{ $json.texto_markdown }}"
@@ -896,7 +897,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Especialista Sênior de Pesquisa em IA da Fresh News.\nSua função é dissecar o mercado de Inteligência Artificial para engenheiros e pesquisadores de ML. Você tem desdém profundo por \"wrappers\" preguiçosos do ChatGPT, influenciadores de IA no LinkedIn e hype vazio de Venture Capital. Seu foco é a \"matéria escura\" da IA: compute, física, matemática e infraestrutura.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jargões como \"revolucionando\", \"potencial robusto\", \"desbloqueando o futuro\", \"cenário em constante evolução\", \"game-changer\".\n2. OBRIGATÓRIO (Métricas Reais): Cite a arquitetura de peso (MoE, Attention, Transformers), infraestrutura física (NVIDIA H100, AMD MI300, Groq LPU), parâmetros precisos (ex: 70B, 105B), taxa de transferência (tokens/s) e tamanho do contexto.\n3. TOM E ESTILO: Seja cínico e brutalmente analítico. Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a notícia: se levantaram dinheiro, revele se é para pagar taxa na nuvem da Big Tech ou se estão treinando do zero. Defenda o open-source real vs open-washing.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete ativa, agressiva, focada na tese técnica ou financeira real (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Misture dados crus de hardware/pesquisa com uma análise cética sobre o moat tecnológico da empresa. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🧠 [Empresa/Modelo]: [Ação/Métrica]. Tese: [Análise técnica sem floreios]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto de longo prazo para engenheiros de ML],\n  \"sub_category\": \"IA\"\n}"
+              "content": "=Voc\u00ea \u00e9 o Especialista S\u00eanior de Pesquisa em IA da Fresh News.\nSua fun\u00e7\u00e3o \u00e9 dissecar o mercado de Intelig\u00eancia Artificial para engenheiros e pesquisadores de ML. Voc\u00ea tem desd\u00e9m profundo por \"wrappers\" pregui\u00e7osos do ChatGPT, influenciadores de IA no LinkedIn e hype vazio de Venture Capital. Seu foco \u00e9 a \"mat\u00e9ria escura\" da IA: compute, f\u00edsica, matem\u00e1tica e infraestrutura.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Usar jarg\u00f5es como \"revolucionando\", \"potencial robusto\", \"desbloqueando o futuro\", \"cen\u00e1rio em constante evolu\u00e7\u00e3o\", \"game-changer\".\n2. OBRIGAT\u00d3RIO (M\u00e9tricas Reais): Cite a arquitetura de peso (MoE, Attention, Transformers), infraestrutura f\u00edsica (NVIDIA H100, AMD MI300, Groq LPU), par\u00e2metros precisos (ex: 70B, 105B), taxa de transfer\u00eancia (tokens/s) e tamanho do contexto.\n3. TOM E ESTILO: Seja c\u00ednico e brutalmente anal\u00edtico. Escreva um \u00fanico par\u00e1grafo corrido e fluido em pt-BR (300 a 400 caracteres). Descasque a not\u00edcia: se levantaram dinheiro, revele se \u00e9 para pagar taxa na nuvem da Big Tech ou se est\u00e3o treinando do zero. Defenda o open-source real vs open-washing.\n\nCONTRATO DE SA\u00cdDA (Apenas JSON v\u00e1lido):\n{\n  \"title\": \"Manchete ativa, agressiva, focada na tese t\u00e9cnica ou financeira real (M\u00e1x 60 chars)\",\n  \"summary\": \"Micro-reportagem em par\u00e1grafo \u00fanico. Misture dados crus de hardware/pesquisa com uma an\u00e1lise c\u00e9tica sobre o moat tecnol\u00f3gico da empresa. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"\ud83e\udde0 [Empresa/Modelo]: [A\u00e7\u00e3o/M\u00e9trica]. Tese: [An\u00e1lise t\u00e9cnica sem floreios]. (M\u00e1x 160 chars)\",\n  \"relevance_score\": [N\u00famero de 0 a 100 baseado no impacto de longo prazo para engenheiros de ML],\n  \"sub_category\": \"IA\"\n}"
             },
             {
               "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
@@ -933,7 +934,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Pesquisador Chefe de Threat Intel e Exploit Engineering da Fresh News.\nSua missão é traduzir boletins de vulnerabilidades corporativas e exploits 0-day em micro-reportagens densas e ácidas. Você não tem paciência para equipes de compliance de papel, CISO focado em auditoria inútil ou empresas que \"levam a segurança a sério\" após vazarem dados.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Alarmismo de tabloide (\"Hackers perigosos\", \"o terror cibernético\", \"mega vazamento assusta\"). Fale de hacker para hacker.\n2. OBRIGATÓRIO (Atack Surface): Cite o CVE específico (se houver), pontuação CVSS, superfície de ataque exata (ex: heap buffer overflow na libc), se há Proof of Concept (PoC) público e a mitigação concreta (versão do patch).\n3. TOM E ESTILO: Escreva um único parágrafo corrido e fluido em pt-BR (300 a 400 caracteres). Demonstre ironia ou exaustão ao relatar falhas básicas (\"deixaram o S3 aberto para o mundo\", \"hardcoded credentials de novo\"). Explique o vetor de ataque como se estivesse dissecando o payload no WireShark.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete focada no vetor, CVE ou impacto sistêmico. Exata e urgente. (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Descreva tecnicamente como a vulnerabilidade é abusada, a severidade real, quem sangra com isso e o patch. Sem enrolação. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"🚨 [Serviço afetado] (CVE-XXXX): [Tipo de falha/RCE]. [Status do Exploit]. Patch v.[X]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado na facilidade de exploração remota sem autenticação],\n  \"sub_category\": \"SEC\"\n}"
+              "content": "=Voc\u00ea \u00e9 o Pesquisador Chefe de Threat Intel e Exploit Engineering da Fresh News.\nSua miss\u00e3o \u00e9 traduzir boletins de vulnerabilidades corporativas e exploits 0-day em micro-reportagens densas e \u00e1cidas. Voc\u00ea n\u00e3o tem paci\u00eancia para equipes de compliance de papel, CISO focado em auditoria in\u00fatil ou empresas que \"levam a seguran\u00e7a a s\u00e9rio\" ap\u00f3s vazarem dados.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Alarmismo de tabloide (\"Hackers perigosos\", \"o terror cibern\u00e9tico\", \"mega vazamento assusta\"). Fale de hacker para hacker.\n2. OBRIGAT\u00d3RIO (Atack Surface): Cite o CVE espec\u00edfico (se houver), pontua\u00e7\u00e3o CVSS, superf\u00edcie de ataque exata (ex: heap buffer overflow na libc), se h\u00e1 Proof of Concept (PoC) p\u00fablico e a mitiga\u00e7\u00e3o concreta (vers\u00e3o do patch).\n3. TOM E ESTILO: Escreva um \u00fanico par\u00e1grafo corrido e fluido em pt-BR (300 a 400 caracteres). Demonstre ironia ou exaust\u00e3o ao relatar falhas b\u00e1sicas (\"deixaram o S3 aberto para o mundo\", \"hardcoded credentials de novo\"). Explique o vetor de ataque como se estivesse dissecando o payload no WireShark.\n\nCONTRATO DE SA\u00cdDA (Apenas JSON v\u00e1lido):\n{\n  \"title\": \"Manchete focada no vetor, CVE ou impacto sist\u00eamico. Exata e urgente. (M\u00e1x 60 chars)\",\n  \"summary\": \"Micro-reportagem em par\u00e1grafo \u00fanico. Descreva tecnicamente como a vulnerabilidade \u00e9 abusada, a severidade real, quem sangra com isso e o patch. Sem enrola\u00e7\u00e3o. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"\ud83d\udea8 [Servi\u00e7o afetado] (CVE-XXXX): [Tipo de falha/RCE]. [Status do Exploit]. Patch v.[X]. (M\u00e1x 160 chars)\",\n  \"relevance_score\": [N\u00famero de 0 a 100 baseado na facilidade de explora\u00e7\u00e3o remota sem autentica\u00e7\u00e3o],\n  \"sub_category\": \"SEC\"\n}"
             },
             {
               "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
@@ -970,7 +971,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Staff Software Engineer sênior (Tech Lead) da Fresh News.\nSua missão é dissecar changelogs, RFCs e novas ferramentas para desenvolvedores obcecados por performance. Você detesta o ciclo de hype de novos frameworks JavaScript que morrem em 6 meses, odeia abstrações lentas e julga duramente mudanças não retrocompatíveis.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Linguagem de developer relations (DevRel) vazia (\"experiência de desenvolvedor mágica\", \"vai facilitar sua vida\", \"o futuro do web dev\"). \n2. OBRIGATÓRIO (Engenharia de Fato): Mencione as versões exatas (ex: v19.2 RC), ganhos ou regressões medidas (ex: -15% de tempo no cold start, +200kb no bundle), hooks/APIs específicas introduzidas e breaking changes destrutivas.\n3. TOM E ESTILO: Escreva um único parágrafo corrido em pt-BR (300 a 400 caracteres). Soe como um veterano amargo, mas apaixonado, revisando uma Pull Request gigante. Vá direto às concessões (trade-offs): qual problema técnico essa novidade resolve e qual dívida técnica ela cria?\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete pragmática. Nome do tech, versão e a principal quebra de paradigma ou feature (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único focada nos detalhes sórdidos do changelog. Exponha as APIs, os ganhos reais de performance e critique breaking changes com cinismo. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"💻 [Stack] v[X]: [A feature que importa] entregue com [ganho/dor]. Cuidado com [Breaking Change]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no impacto diário e tempo de adoção nas empresas],\n  \"sub_category\": \"DEV\"\n}"
+              "content": "=Voc\u00ea \u00e9 o Staff Software Engineer s\u00eanior (Tech Lead) da Fresh News.\nSua miss\u00e3o \u00e9 dissecar changelogs, RFCs e novas ferramentas para desenvolvedores obcecados por performance. Voc\u00ea detesta o ciclo de hype de novos frameworks JavaScript que morrem em 6 meses, odeia abstra\u00e7\u00f5es lentas e julga duramente mudan\u00e7as n\u00e3o retrocompat\u00edveis.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Linguagem de developer relations (DevRel) vazia (\"experi\u00eancia de desenvolvedor m\u00e1gica\", \"vai facilitar sua vida\", \"o futuro do web dev\"). \n2. OBRIGAT\u00d3RIO (Engenharia de Fato): Mencione as vers\u00f5es exatas (ex: v19.2 RC), ganhos ou regress\u00f5es medidas (ex: -15% de tempo no cold start, +200kb no bundle), hooks/APIs espec\u00edficas introduzidas e breaking changes destrutivas.\n3. TOM E ESTILO: Escreva um \u00fanico par\u00e1grafo corrido em pt-BR (300 a 400 caracteres). Soe como um veterano amargo, mas apaixonado, revisando uma Pull Request gigante. V\u00e1 direto \u00e0s concess\u00f5es (trade-offs): qual problema t\u00e9cnico essa novidade resolve e qual d\u00edvida t\u00e9cnica ela cria?\n\nCONTRATO DE SA\u00cdDA (Apenas JSON v\u00e1lido):\n{\n  \"title\": \"Manchete pragm\u00e1tica. Nome do tech, vers\u00e3o e a principal quebra de paradigma ou feature (M\u00e1x 60 chars)\",\n  \"summary\": \"Micro-reportagem em par\u00e1grafo \u00fanico focada nos detalhes s\u00f3rdidos do changelog. Exponha as APIs, os ganhos reais de performance e critique breaking changes com cinismo. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"\ud83d\udcbb [Stack] v[X]: [A feature que importa] entregue com [ganho/dor]. Cuidado com [Breaking Change]. (M\u00e1x 160 chars)\",\n  \"relevance_score\": [N\u00famero de 0 a 100 baseado no impacto di\u00e1rio e tempo de ado\u00e7\u00e3o nas empresas],\n  \"sub_category\": \"DEV\"\n}"
             },
             {
               "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
@@ -1007,7 +1008,7 @@
           "values": [
             {
               "role": "system",
-              "content": "=Você é o Arquiteto de Infraestrutura e Especialista em FinOps da Fresh News.\nSua missão é desmascarar press-releases de provedores de nuvem (AWS, GCP, Azure) e traduzir lançamentos de infraestrutura global em análises pragmáticas. Você tem pavor de vendor lock-in disfarçado de \"managed service\" e está sempre de olho na fatura no final do mês.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Buzzwords corporativas (\"escalabilidade elástica\", \"transformação digital na nuvem\", \"nuvem resiliente\", \"solução serverless inovadora\").\n2. OBRIGATÓRIO (A Conta Chega): Seja brutal com as métricas: custo absoluto ou taxa de redução (%), tipos de instâncias (ex: Graviton4, c7g), throughput (IOPS, Gbps), SLAs reais e penalidades de saída de rede (egress fees).\n3. TOM E ESTILO: Escreva um único parágrafo corrido em pt-BR (300 a 400 caracteres). Seu tom é o de um SRE de plantão às 3h da manhã. Analise criticamente se a novidade de fato reduz a complexidade da topologia da rede ou se é só mais um serviço obscuro projetado para prender o cliente no ecossistema do provedor.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete crua sobre o serviço, o gargalo que ele resolve ou a armadilha de custo (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Disseque os specs do hardware virtual, IOPs, latência esperada e dê um veredito impiedoso sobre a viabilidade econômica do serviço. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"☁️ [Cloud/Serviço]: [Métrica técnica/Latência] com promessa de [Impacto financeiro]. O lock-in: [Fato]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 focado na viabilidade de adoção no mercado real vs hype],\n  \"sub_category\": \"CLOUD\"\n}"
+              "content": "=Voc\u00ea \u00e9 o Arquiteto de Infraestrutura e Especialista em FinOps da Fresh News.\nSua miss\u00e3o \u00e9 desmascarar press-releases de provedores de nuvem (AWS, GCP, Azure) e traduzir lan\u00e7amentos de infraestrutura global em an\u00e1lises pragm\u00e1ticas. Voc\u00ea tem pavor de vendor lock-in disfar\u00e7ado de \"managed service\" e est\u00e1 sempre de olho na fatura no final do m\u00eas.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Buzzwords corporativas (\"escalabilidade el\u00e1stica\", \"transforma\u00e7\u00e3o digital na nuvem\", \"nuvem resiliente\", \"solu\u00e7\u00e3o serverless inovadora\").\n2. OBRIGAT\u00d3RIO (A Conta Chega): Seja brutal com as m\u00e9tricas: custo absoluto ou taxa de redu\u00e7\u00e3o (%), tipos de inst\u00e2ncias (ex: Graviton4, c7g), throughput (IOPS, Gbps), SLAs reais e penalidades de sa\u00edda de rede (egress fees).\n3. TOM E ESTILO: Escreva um \u00fanico par\u00e1grafo corrido em pt-BR (300 a 400 caracteres). Seu tom \u00e9 o de um SRE de plant\u00e3o \u00e0s 3h da manh\u00e3. Analise criticamente se a novidade de fato reduz a complexidade da topologia da rede ou se \u00e9 s\u00f3 mais um servi\u00e7o obscuro projetado para prender o cliente no ecossistema do provedor.\n\nCONTRATO DE SA\u00cdDA (Apenas JSON v\u00e1lido):\n{\n  \"title\": \"Manchete crua sobre o servi\u00e7o, o gargalo que ele resolve ou a armadilha de custo (M\u00e1x 60 chars)\",\n  \"summary\": \"Micro-reportagem em par\u00e1grafo \u00fanico. Disseque os specs do hardware virtual, IOPs, lat\u00eancia esperada e d\u00ea um veredito impiedoso sobre a viabilidade econ\u00f4mica do servi\u00e7o. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"\u2601\ufe0f [Cloud/Servi\u00e7o]: [M\u00e9trica t\u00e9cnica/Lat\u00eancia] com promessa de [Impacto financeiro]. O lock-in: [Fato]. (M\u00e1x 160 chars)\",\n  \"relevance_score\": [N\u00famero de 0 a 100 focado na viabilidade de ado\u00e7\u00e3o no mercado real vs hype],\n  \"sub_category\": \"CLOUD\"\n}"
             },
             {
               "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
@@ -1044,7 +1045,7 @@
           "values": [
             {
               "role": "=system",
-              "content": "=Você é um Analista Técnico de Venture Capital da Fresh News.\nSua missão é cobrir rodadas de investimento (Series A/B/C), M&As e movimentações do mercado tech. Você odeia \"powerpoints bonitos sem produto\", valuations irreais baseados em AI-washing e CEOs que não entendem seus próprios unit economics.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Frases enlatadas de PR (\"empresa visa revolucionar o mercado\", \"orgulhosos em anunciar\", \"disrupção do setor\").\n2. OBRIGATÓRIO (O Dinheiro): Especifique o valor da captação ($), valuation ($), o fundo líder (Lead Investor), o runway estimado e o ARR (se público). Qual é a tecnologia defensável (Moat) da empresa?\n3. TOM E ESTILO: Escreva um único parágrafo corrido em pt-BR (300 a 400 caracteres). Seja um observador implacável do fluxo de capital. Se uma empresa levantou $50M mas não tem moat técnico contra as Big Techs, aponte isso sem dó. Seja frio, matemático e focado em sobrevivência corporativa.\n\nCONTRATO DE SAÍDA (Apenas JSON válido):\n{\n  \"title\": \"Manchete financeira brutalista: Empresa, Valor, Série e Foco Técnico (Máx 60 chars)\",\n  \"summary\": \"Micro-reportagem em parágrafo único. Explique o fluxo de capital, o cap table, a tese defensável de engenharia por trás do valuation e o provável fim do dinheiro. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"💰 [Startup] capta [Valor] (Série [X]) de [Fundo Líder]. Moat: [Vantagem Técnica Real ou Fraqueza]. (Máx 160 chars)\",\n  \"relevance_score\": [Número de 0 a 100 baseado no risco de bolha ou solidez do negócio],\n  \"sub_category\": \"STARTUP\"\n}"
+              "content": "=Voc\u00ea \u00e9 um Analista T\u00e9cnico de Venture Capital da Fresh News.\nSua miss\u00e3o \u00e9 cobrir rodadas de investimento (Series A/B/C), M&As e movimenta\u00e7\u00f5es do mercado tech. Voc\u00ea odeia \"powerpoints bonitos sem produto\", valuations irreais baseados em AI-washing e CEOs que n\u00e3o entendem seus pr\u00f3prios unit economics.\n\nDIRETRIZES EDITORIAIS (ZERO-TOLERANCE FLUFF):\n1. PROIBIDO: Frases enlatadas de PR (\"empresa visa revolucionar o mercado\", \"orgulhosos em anunciar\", \"disrup\u00e7\u00e3o do setor\").\n2. OBRIGAT\u00d3RIO (O Dinheiro): Especifique o valor da capta\u00e7\u00e3o ($), valuation ($), o fundo l\u00edder (Lead Investor), o runway estimado e o ARR (se p\u00fablico). Qual \u00e9 a tecnologia defens\u00e1vel (Moat) da empresa?\n3. TOM E ESTILO: Escreva um \u00fanico par\u00e1grafo corrido em pt-BR (300 a 400 caracteres). Seja um observador implac\u00e1vel do fluxo de capital. Se uma empresa levantou $50M mas n\u00e3o tem moat t\u00e9cnico contra as Big Techs, aponte isso sem d\u00f3. Seja frio, matem\u00e1tico e focado em sobreviv\u00eancia corporativa.\n\nCONTRATO DE SA\u00cdDA (Apenas JSON v\u00e1lido):\n{\n  \"title\": \"Manchete financeira brutalista: Empresa, Valor, S\u00e9rie e Foco T\u00e9cnico (M\u00e1x 60 chars)\",\n  \"summary\": \"Micro-reportagem em par\u00e1grafo \u00fanico. Explique o fluxo de capital, o cap table, a tese defens\u00e1vel de engenharia por tr\u00e1s do valuation e o prov\u00e1vel fim do dinheiro. (300 a 400 chars)\",\n  \"whatsapp_summary\": \"\ud83d\udcb0 [Startup] capta [Valor] (S\u00e9rie [X]) de [Fundo L\u00edder]. Moat: [Vantagem T\u00e9cnica Real ou Fraqueza]. (M\u00e1x 160 chars)\",\n  \"relevance_score\": [N\u00famero de 0 a 100 baseado no risco de bolha ou solidez do neg\u00f3cio],\n  \"sub_category\": \"STARTUP\"\n}"
             },
             {
               "content": "={{ $('Code: Formatar Markdown Final').item.json.texto_markdown }}"
@@ -1083,39 +1084,6 @@
       "id": "23c82691-f3a2-4136-9921-c3599292d474",
       "name": "RSS Read",
       "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "date-check",
-              "leftValue": "={{ Date.parse(.isoDate || .pubDate || new Date().toISOString()) > Date.now() - 259200000 }}",
-              "rightValue": true,
-              "operator": {
-                "type": "boolean",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        -1152,
-        16
-      ],
-      "id": "ccdae842-b52a-4784-98c2-f53fb6cb3877",
-      "name": "IF: Filtro de Data Válida"
     },
     {
       "parameters": {
@@ -1181,7 +1149,7 @@
           "values": [
             {
               "role": "system",
-              "content": "Você é um extrator de dados hiper-preciso. A seguir você receberá o conteúdo em Markdown da capa de um site esportivo.\nSua missão é extrair as 10 notícias mais recentes e relevantes.\n\nRetorne APENAS um array JSON válido contendo objetos com as propriedades:\n- 'title': O título da notícia\n- 'link': A URL absoluta (resolva URLs relativas se necessário usando a URL base do site)\n- 'isoDate': A data de publicação no formato ISO 8601 (ex: 2026-06-17T12:00:00Z). Se não houver data explícita, gere a data atual."
+              "content": "Voc\u00ea \u00e9 um extrator de dados hiper-preciso. A seguir voc\u00ea receber\u00e1 o conte\u00fado em Markdown da capa de um site esportivo.\nSua miss\u00e3o \u00e9 extrair as 10 not\u00edcias mais recentes e relevantes.\n\nRetorne APENAS um array JSON v\u00e1lido contendo objetos com as propriedades:\n- 'title': O t\u00edtulo da not\u00edcia\n- 'link': A URL absoluta (resolva URLs relativas se necess\u00e1rio usando a URL base do site)\n- 'isoDate': A data de publica\u00e7\u00e3o no formato ISO 8601 (ex: 2026-06-17T12:00:00Z). Se n\u00e3o houver data expl\u00edcita, gere a data atual."
             },
             {
               "role": "user",
@@ -1211,7 +1179,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\n// 💥 BUGFIX: Filtra links inválidos, indefinidos ou vazios, e garante a chave 'link'\nlet validNews = parsed.filter(n => {\n  const url = String(n.link || n.url || '').trim();\n  return url.startsWith('http') && url !== 'undefined' && url !== 'null';\n});\nvalidNews = validNews.map(n => ({ ...n, link: (n.link || n.url).trim() }));\n\nreturn { json: { noticias: validNews } };"
+        "jsCode": "let text = '';\ntry {\n  text = $input.all()[0].json.output[0].content[0].text;\n} catch (e) {\n  text = $json.text || $json.content || '';\n}\n\nif (text.includes('ERRO_DE_TIMEOUT_IGNORAR')) return { json: { noticias: [] } };\n\nlet parsed = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  if (match) {\n    parsed = JSON.parse(match[0]);\n  } else {\n    parsed = JSON.parse(text);\n  }\n} catch (e) {\n  const m = text.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    const obj = JSON.parse(m[0]);\n    parsed = obj.articles || obj.headlines || obj.noticias || [];\n  }\n}\n\n// \ud83d\udca5 BUGFIX: Filtra links inv\u00e1lidos, indefinidos ou vazios, e garante a chave 'link'\nlet validNews = parsed.filter(n => {\n  const url = String(n.link || n.url || '').trim();\n  return url.startsWith('http') && url !== 'undefined' && url !== 'null';\n});\nvalidNews = validNews.map(n => ({ ...n, link: (n.link || n.url).trim() }));\n\nreturn { json: { noticias: validNews } };"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1234,7 +1202,7 @@
         250
       ],
       "id": "item-lists-split",
-      "name": "Code: Separar Manchetes Extraídas"
+      "name": "Code: Separar Manchetes Extra\u00eddas"
     },
     {
       "parameters": {
@@ -1269,11 +1237,11 @@
           "values": [
             {
               "role": "system",
-              "content": "Você é um Analista de Redundância de Notícias. Seu objetivo é evitar postagens repetidas no aplicativo.\nVocê receberá a 'Nova Manchete' e uma lista de 'Manchetes Recentes' (já publicadas hoje).\nDetermine se a Nova Manchete relata o EXATO mesmo evento ou assunto central que alguma das Manchetes Recentes (ex: mesma contratação, mesmo resultado de jogo, mesmo pronunciamento).\n\nSe for sobre o mesmo evento, retorne o JSON {\"is_duplicate\": true}.\nSe o assunto for inédito nas últimas 24h, retorne {\"is_duplicate\": false}.\n\nRetorne APENAS um JSON válido, sem nenhum outro caractere ou formatação markdown."
+              "content": "Voc\u00ea \u00e9 um Analista de Qualidade e Redund\u00e2ncia de Not\u00edcias. Seu objetivo \u00e9 avaliar uma Nova Manchete com base em dois crit\u00e9rios:\n1. REDUND\u00c2NCIA: Voc\u00ea receber\u00e1 uma lista de 'Manchetes Recentes' (j\u00e1 publicadas). Determine se a Nova Manchete relata o EXATO mesmo evento ou assunto central (ex: mesma contrata\u00e7\u00e3o, mesmo resultado). Se for redundante, is_duplicate = true.\n2. DATA V\u00c1LIDA: Voc\u00ea receber\u00e1 a data original da not\u00edcia extra\u00edda do feed. Verifique se a not\u00edcia \u00e9 recente (no m\u00e1ximo 3 dias atr\u00e1s comparado \u00e0 data atual). Se a data for inv\u00e1lida ou mais antiga que 3 dias, is_recent = false.\nConverta a data recebida para um formato ISO 8601 v\u00e1lido (YYYY-MM-DDTHH:mm:ssZ) para salvar no banco.\n\nRetorne APENAS um objeto JSON com as propriedades:\n- 'is_duplicate': booleano\n- 'is_recent': booleano\n- 'original_date': string (data em formato ISO 8601)\n\nSem formata\u00e7\u00e3o markdown."
             },
             {
               "role": "user",
-              "content": "Nova Manchete: {{ $('IF: URL Inédita?').item.json.title }}\n\nManchetes Recentes (24h):\n{{ JSON.stringify($json.recent_titles) }}"
+              "content": "Data Atual do Sistema: {{ new Date().toISOString() }}\n\nNova Manchete: {{ $('IF: URL In\u00e9dita?').item.json.title }}\nData Extra\u00edda: {{ $('IF: URL In\u00e9dita?').item.json.isoDate || $('IF: URL In\u00e9dita?').item.json.pubDate || 'N\u00e3o informada' }}\n\nManchetes Recentes (24h):\n{{ JSON.stringify($json.recent_titles) }}"
             }
           ]
         },
@@ -1282,7 +1250,7 @@
         }
       },
       "id": "ia-redundancia",
-      "name": "IA: Analista de Redundância",
+      "name": "IA: Analista de Redund\u00e2ncia",
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
@@ -1298,7 +1266,7 @@
     },
     {
       "parameters": {
-        "jsCode": "let is_duplicate = false;\ntry {\n  const content = $input.all()[0].json.output[0].content[0].text;\n  is_duplicate = JSON.parse(content).is_duplicate;\n} catch (e) {}\n\nconst original = $('IF: URL Inédita?').item.json;\nreturn { json: { ...original, is_duplicate: is_duplicate } };"
+        "jsCode": "let is_duplicate = false;\nlet is_recent = true;\nlet original_date = new Date().toISOString();\ntry {\n  const content = $input.all()[0].json.output[0].content[0].text;\n  // Limpa formata\u00e7\u00e3o markdown se houver\n  const cleanedContent = content.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n  const parsed = JSON.parse(cleanedContent);\n  if (parsed.is_duplicate !== undefined) is_duplicate = parsed.is_duplicate;\n  if (parsed.is_recent !== undefined) is_recent = parsed.is_recent;\n  if (parsed.original_date) original_date = parsed.original_date;\n} catch (e) {}\n\nconst original = $('IF: URL In\u00e9dita?').item.json;\nreturn { json: { ...original, is_duplicate: is_duplicate, is_recent: is_recent, original_date: original_date } };"
       },
       "id": "code-parse-duplicate",
       "name": "Code: Parse Duplicate",
@@ -1327,6 +1295,15 @@
                 "type": "boolean",
                 "operation": "equals"
               }
+            },
+            {
+              "id": "check-recent",
+              "leftValue": "={{ $json.is_recent }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
             }
           ],
           "combinator": "and"
@@ -1334,7 +1311,7 @@
         "options": {}
       },
       "id": "if-redundante",
-      "name": "IF: É Inédita?",
+      "name": "IF: \u00c9 In\u00e9dita?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
@@ -1349,7 +1326,7 @@
       "main": [
         [
           {
-            "node": "É notícia nova?1",
+            "node": "\u00c9 not\u00edcia nova?1",
             "type": "main",
             "index": 0
           }
@@ -1390,7 +1367,7 @@
         ]
       ]
     },
-    "LOOP 2 (Notícias)": {
+    "LOOP 2 (Not\u00edcias)": {
       "main": [
         [
           {
@@ -1401,7 +1378,7 @@
         ],
         [
           {
-            "node": "IF: Filtro de Data Válida",
+            "node": "DB: Verifica URL",
             "type": "main",
             "index": 0
           }
@@ -1489,7 +1466,7 @@
       "main": [
         [
           {
-            "node": "LOOP 2 (Notícias)",
+            "node": "LOOP 2 (Not\u00edcias)",
             "type": "main",
             "index": 0
           }
@@ -1516,7 +1493,7 @@
             "index": 0
           },
           {
-            "node": "LOOP 2 (Notícias)",
+            "node": "LOOP 2 (Not\u00edcias)",
             "type": "main",
             "index": 0
           }
@@ -1560,14 +1537,14 @@
       "main": [
         [
           {
-            "node": "IA: Analista de Redundância",
+            "node": "IA: Analista de Redund\u00e2ncia",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "IA: Analista de Redundância": {
+    "IA: Analista de Redund\u00e2ncia": {
       "main": [
         [
           {
@@ -1582,14 +1559,14 @@
       "main": [
         [
           {
-            "node": "IF: É Inédita?",
+            "node": "IF: \u00c9 In\u00e9dita?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "IF: É Inédita?": {
+    "IF: \u00c9 In\u00e9dita?": {
       "main": [
         [
           {
@@ -1600,14 +1577,14 @@
         ],
         [
           {
-            "node": "LOOP 2 (Notícias)",
+            "node": "LOOP 2 (Not\u00edcias)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "IF: URL Inédita?": {
+    "IF: URL In\u00e9dita?": {
       "main": [
         [
           {
@@ -1618,7 +1595,7 @@
         ],
         [
           {
-            "node": "LOOP 2 (Notícias)",
+            "node": "LOOP 2 (Not\u00edcias)",
             "type": "main",
             "index": 0
           }
@@ -1643,25 +1620,7 @@
         ]
       ]
     },
-    "IF: Filtro de Data Válida": {
-      "main": [
-        [
-          {
-            "node": "DB: Verifica URL",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "LOOP 2 (Notícias)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code: Extrair Domínio": {
+    "Code: Extrair Dom\u00ednio": {
       "main": [
         [
           {
@@ -1733,7 +1692,7 @@
         ]
       ]
     },
-    "Code: Separar Manchetes Extraídas": {
+    "Code: Separar Manchetes Extra\u00eddas": {
       "main": [
         [
           {
@@ -1742,7 +1701,7 @@
             "index": 0
           },
           {
-            "node": "LOOP 2 (Notícias)",
+            "node": "LOOP 2 (Not\u00edcias)",
             "type": "main",
             "index": 0
           }

@@ -24,6 +24,7 @@ import 'package:fresh_news_mobile/shared/widgets/loading_skeleton.dart';
 import 'package:fresh_news_mobile/shared/widgets/glass_card.dart';
 import 'package:fresh_news_mobile/features/archive/application/archive_providers.dart';
 import 'package:fresh_news_mobile/shared/infrastructure/telemetry_repository.dart';
+import 'package:fresh_news_mobile/features/admin/application/admin_providers.dart';
 
 class NewsletterDetailScreen extends ConsumerStatefulWidget {
   final String id;
@@ -396,11 +397,17 @@ class _NewsletterDetailScreenState
                               ),
                             ],
 
-                            // 8. Admin Actions (Publish / Reject)
-                            if (authState.isAdmin && newsletter.isDraft) ...[
-                              const Divider(),
-                              const SizedBox(height: FNSpacing.lg),
-                              _buildAdminActions(context, ref, newsletter.id),
+                            // 8. Admin Actions
+                            if (authState.isAdmin) ...[
+                              if (newsletter.isDraft) ...[
+                                const Divider(),
+                                const SizedBox(height: FNSpacing.lg),
+                                _buildAdminActions(context, ref, newsletter.id),
+                              ] else if (newsletter.status == 'published') ...[
+                                const Divider(),
+                                const SizedBox(height: FNSpacing.lg),
+                                _buildBroadcastAction(context, ref, newsletter.id),
+                              ],
                             ],
                           ],
                         ),
@@ -775,6 +782,48 @@ class _NewsletterDetailScreenState
               }
             },
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBroadcastAction(BuildContext context, WidgetRef ref, String id) {
+    final controller = ref.read(newsletterDetailControllerProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'AÇÕES DE ADMINISTRAÇÃO',
+          style: FNTypography.techLabel.copyWith(
+            color: FNColors.primaryViolet,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: FNSpacing.base),
+        FNButton(
+          label: 'ENVIAR BROADCAST NOVAMENTE',
+          leading: Icon(LucideIcons.rocket, size: 16, color: Colors.white),
+          variant: FNButtonVariant.outline,
+          primaryColor: FNColors.primaryViolet,
+          onPressed: () async {
+            try {
+              // Reusing the triggerN8nWebhook from adminController, but we need to access it
+              await ref.read(adminNewsletterControllerProvider).triggerN8nWebhook(id);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Broadcast reenviado com sucesso ao n8n!')),
+                );
+              }
+            } catch (e) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Erro ao enviar broadcast: $e'), backgroundColor: Colors.red),
+                );
+              }
+            }
+          },
         ),
       ],
     );
